@@ -5,7 +5,7 @@ from keras.optimizers import Adadelta
 from keras.utils.np_utils import to_categorical
 
 from nltk import TweetTokenizer
-from data_utils import evalitalia_loader, fbeta_score
+from data_utils import tsv_sentiment_loader, fbeta_score
 
 import matplotlib.pyplot as plt
 import _pickle as cPickle
@@ -50,7 +50,7 @@ tknzr = TweetTokenizer(reduce_len=True)
 
 # load datase
 alphabet = cPickle.load(open(vocab_path, 'rb'))
-tids, sentiments, texts, nlabels = evalitalia_loader(data_path, alphabet, tknzr)
+tids, sentiments, texts, nlabels = tsv_sentiment_loader(data_path, alphabet, tknzr)
 dummy_word_idx = alphabet.get('DUMMY_WORD_IDX', 1)
 
 # evaluate loaded model on test data

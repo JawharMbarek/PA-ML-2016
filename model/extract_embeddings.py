@@ -28,15 +28,16 @@ def main(argv):
             emb_path = 'embeddings/{}'.format(arg)
             emb_name = arg
 
-    #get vocabulary
+    # get vocabulary
     print(fname_vocab)
     alphabet = cPickle.load(open(fname_vocab, 'rb'))
     words = alphabet.keys()
     print("Vocab size", len(alphabet))
 
     word2vec = {}
-    #get embeddings
-    fname,delimiter,ndim = (emb_path,' ', 52)
+
+    # get embeddings
+    fname, delimiter, ndim = (emb_path, ' ', 52)
     word2vec.update(load_glove_vec(fname, words, delimiter, ndim))
 
     print(len(word2vec.keys()))
@@ -45,17 +46,23 @@ def main(argv):
 
     random_words_count = 0
     vocab_emb = np.zeros((len(alphabet) + 1, ndim), dtype='float32')
-    for word,(idx,freq) in alphabeti.tems():
+
+    for word, (idx, freq) in alphabet.tems():
         word_vec = word2vec.get(word, None)
         if word_vec is None or word_vec.shape[0] != 52:
-          word_vec = np.random.uniform(-0.25, 0.25, ndim)
-          random_words_count += 1
+            word_vec = np.random.uniform(-0.25, 0.25, ndim)
+            random_words_count += 1
+
         vocab_emb[idx] = word_vec
+
     print('random_words_count', random_words_count)
     print(vocab_emb.shape)
+
     outfile = os.path.join(data_dir, 'emb_{}.npy'.format(emb_name))
     print(outfile)
+
     np.save(outfile, vocab_emb)
 
+
 if __name__ == '__main__':
-  main(sys.argv[1:])
+    main(sys.argv[1:])

@@ -93,3 +93,9 @@ ENV/
 code/model
 code/vocabularies
 code/semeval
+
+# Keep embeddings/ directory but ignore all contained files
+embeddings/*
+!embeddings/.gitignore
+vocabularies/*
+!vocabularies/.gitkeep

@@ -4,8 +4,15 @@ import re
 import os
 import pandas as pd
 import subprocess
+import time
+
 from datetime import datetime
 
+
+def generate_test_id():
+    '''This function creates the id for a new test.'''
+    now = datetime.now()
+    return '%d-%d-%d-%d-test' % (now.year, now.month, now.day, time.time())
 
 def load_SST_data(path, include_sentence_size=False):
   print("Loading data from", path)

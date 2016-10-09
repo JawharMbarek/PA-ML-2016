@@ -3,7 +3,7 @@ import numpy as np
 import os
 import getopt
 import sys
-from data_utils import evalitalia_loader
+from data_utils import tsv_sentiment_loader
 import matplotlib.pyplot as plt
 from nltk import TweetTokenizer
 import _pickle as cPickle
@@ -17,7 +17,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils.np_utils import to_categorical
 
 
-np.random.seed(1337)  # for reproducibility
+
 embedding_fname = ''
 language = ''
 vocab_fname = ''
@@ -74,7 +74,7 @@ dummy_word_idx = alphabet.get('DUMMY_WORD_IDX', 1)
 print("alphabet", len(alphabet))
 print('dummy word: ', dummy_word_idx)
 
-tids, sentiments, text, nlabels = evalitalia_loader('semeval/crossdomain/DAI_tweets_full.tsv', alphabet, tknzr)
+tids, sentiments, text, nlabels = tsv_sentiment_loader('semeval/crossdomain/DAI_tweets_full.tsv', alphabet, tknzr)
 
 ##Layers
 print('Build Model...')

@@ -1,1 +1,0 @@
-python extract_embeddings.py -v vocab_en300M_reduced -e smiley_tweets_embedding_english_590M
