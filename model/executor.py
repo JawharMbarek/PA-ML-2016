@@ -28,7 +28,7 @@ class Executor(object):
     # default params
     #
     batch_size = 500
-    nb_epoch = 5
+    nb_epoch = 100
     validation_split = 0.2
 
     def __init__(self, name, params):
@@ -40,7 +40,12 @@ class Executor(object):
         self.weights_path = path.join(self.results_path, 'weights.h5')
         self.model_path = path.join(self.results_path, 'model.json')
         self.params_path = path.join(self.results_path, 'params.json')
-        self.history_path = path.join(self.results_path, 'history.json')
+
+        self.validation_metric_path = path.join(self.results_path,
+                                                'validation_metrics.json')
+
+        self.history_path = path.join(self.results_path,
+                                      'test_metrics.json')
 
         self.create_results_directories()
 

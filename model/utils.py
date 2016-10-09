@@ -1,9 +1,4 @@
-import scipy.io
 import numpy
-import re
-import os
-import pandas as pd
-import subprocess
 import time
 
 from datetime import datetime
@@ -19,9 +14,9 @@ def generate_test_id(params=None):
 
     return '%d-%d-%d-%d-%s' % (now.year, now.month, now.day, time.time(), name)
 
+
 def load_bin_vec(fname, words):
     '''Loads 300x1 word vecs from Google (Mikolov) word2vec.'''
-
     vocab = set(words)
     word_vecs = {}
 
@@ -31,13 +26,13 @@ def load_bin_vec(fname, words):
         binary_len = numpy.dtype('float32').itemsize * layer1_size
         print('vocab_size, layer1_size', vocab_size, layer1_size)
         count = 0
-        
-        for i, line in enumerate(xrange(vocab_size)):
+
+        for i, line in enumerate(range(vocab_size)):
             if i % 1000 == 0:
                 print('.',)
-            
+
             word = []
-            
+
             while True:
                 ch = f.read(1)
 
@@ -51,7 +46,8 @@ def load_bin_vec(fname, words):
 
             if word in vocab:
                 count += 1
-                word_vecs[word] = numpy.fromstring(f.read(binary_len), dtype='float32')
+                word_vecs[word] = numpy.fromstring(f.read(binary_len),
+                                                   dtype='float32')
             else:
                 f.read(binary_len)
 
@@ -60,7 +56,7 @@ def load_bin_vec(fname, words):
         return word_vecs
 
 
-def load_glove_vec(fname,words,delimiter,dim):
+def load_glove_vec(fname, words, delimiter, dim):
     vocab = set(words)
     word_vecs = {}
 
@@ -71,13 +67,14 @@ def load_glove_vec(fname,words,delimiter,dim):
             if line == '':
                 continue
 
-            splits = line.replace('\n','').split(delimiter)
+            splits = line.replace('\n', '').split(delimiter)
             word = splits[0]
 
             if (word in vocab) or (word.lower() in vocab) or len(vocab) == 0:
                 count += 1
-                word_vecs[word] = numpy.asarray(splits[1:dim+1],dtype='float32')
-                
+                word_vecs[word] = numpy.asarray(splits[1:dim + 1],
+                                                dtype='float32')
+
                 if count % 100000 == 0:
                     print('Word2Vec count: ', count)
 

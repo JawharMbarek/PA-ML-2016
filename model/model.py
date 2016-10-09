@@ -6,6 +6,8 @@ from keras.layers import Convolution1D, MaxPooling1D, Flatten
 
 from keras.optimizers import Adadelta
 
+from data_utils import fbeta_score
+
 
 class Model(object):
     '''This class is responsible for storing our current the keras model.
@@ -82,6 +84,6 @@ class Model(object):
         adadelta = Adadelta(lr=1.0, rho=0.95, epsilon=1e-6)
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=adadelta, metrics=['accuracy'])
+                      optimizer=adadelta, metrics=['accuracy', fbeta_score])
 
         return model
