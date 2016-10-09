@@ -40,6 +40,7 @@ class Executor(object):
         self.weights_path = path.join(self.results_path, 'weights.h5')
         self.model_path = path.join(self.results_path, 'model.json')
         self.params_path = path.join(self.results_path, 'params.json')
+        self.history_path = path.join(self.results_path, 'history.json')
 
         self.create_results_directories()
 
@@ -88,10 +89,12 @@ class Executor(object):
 
     def train(self, m, X, Y):
         '''This method trains the given model.'''
-        m.fit(X, to_categorical(Y),
-              nb_epoch=self.nb_epoch, batch_size=self.batch_size,
-              verbose=1, validation_split=self.validation_split,
-              callbacks=self.get_callbacks())
+        history = m.fit(X, to_categorical(Y),
+                        nb_epoch=self.nb_epoch, batch_size=self.batch_size,
+                        verbose=1, validation_split=self.validation_split,
+                        callbacks=self.get_callbacks())
+
+        self.store_history(history)
 
     def validate(self, m, X_val, Y_val):
         '''This method validates a trained model.'''
@@ -137,6 +140,11 @@ class Executor(object):
         '''Stores the current params as a json file at the params_path.'''
         with open(self.params_path, 'w+') as f:
             f.write(json.dumps(self.params))
+
+    def store_history(self, history):
+        '''Stores the history of learning as a npy file at the history_path.'''
+        with open(self.history_path, 'w+') as f:
+            f.write(json.dumps(history.history))
 
     def create_results_directories(self):
         '''This function is responsible for creating the results directory.'''

@@ -47,6 +47,6 @@ np.random.seed(RNG_SEED)
 #
 # Execute the run!
 #
-test_id = generate_test_id()
+test_id = generate_test_id(params)
 executor = Executor(test_id, params)
 executor.run()

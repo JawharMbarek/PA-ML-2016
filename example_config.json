@@ -1,4 +1,5 @@
 {
+  "name": "my-fancy-experiment",
   "nb_epoch": 50,
   "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
   "test_data_path": "testdata/DAI_tweets_full.tsv",

@@ -9,10 +9,15 @@ import time
 from datetime import datetime
 
 
-def generate_test_id():
+def generate_test_id(params=None):
     '''This function creates the id for a new test.'''
     now = datetime.now()
-    return '%d-%d-%d-%d-test' % (now.year, now.month, now.day, time.time())
+    name = 'test'
+
+    if params is not None and 'name' in params:
+        name = params['name']
+
+    return '%d-%d-%d-%d-%s' % (now.year, now.month, now.day, time.time(), name)
 
 def load_SST_data(path, include_sentence_size=False):
   print("Loading data from", path)
