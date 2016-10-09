@@ -68,7 +68,8 @@ def load_glove_vec(fname,words,delimiter,dim):
         count = 0
 
         for line in f:
-            continue if line == ''
+            if line == '':
+                continue
 
             splits = line.replace('\n','').split(delimiter)
             word = splits[0]
