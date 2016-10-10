@@ -88,14 +88,8 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# Ignore embeddings, models and vocabularies since they're just too large for git to handle
-*_embedding_*
-code/model
-code/vocabularies
-code/semeval
-
 # Keep embeddings/ directory but ignore all contained files
 embeddings/*
-!embeddings/.gitignore
+!embeddings/.gitkeep
 vocabularies/*
 !vocabularies/.gitkeep
