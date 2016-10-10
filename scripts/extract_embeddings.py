@@ -1,7 +1,8 @@
-import cPickle
+#!/usr/bin/env python
+
+import _pickle as cPickle
 import os
 import numpy as np
-from alphabet import Alphabet
 import getopt
 import sys
 
@@ -15,24 +16,27 @@ def main(argv):
     emb_path = ''
     emb_name = ''
     fname_vocab = ''
+    out_dir = ''
 
     try:
-        opts, args = getopt.getopt(argv, "v:e:", ["vocab=", "embedding="])
+        opts, args = getopt.getopt(argv, "v:e:o:", ['out=', "vocab=", "embedding="])
     except getopt.GetoptError:
         print('test.py -i <inputfile> -o <outputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-v", "--vocab"):
-            fname_vocab = os.path.join(vocab_dir, '{}.pickle'.format(arg))
+            fname_vocab = arg
         elif opt in ("-e", "--embedding"):
-            emb_path = 'embeddings/{}'.format(arg)
+            emb_path = arg
             emb_name = arg
+        elif opt in ('-o', '--output'):
+            out_dir = arg
 
     # get vocabulary
     print(fname_vocab)
-    alphabet = cPickle.load(open(fname_vocab, 'rb'))
-    words = alphabet.keys()
-    print("Vocab size", len(alphabet))
+    alph = cPickle.load(open(fname_vocab, 'rb'))
+    words = alph.keys()
+    print("Vocab size", len(alph))
 
     word2vec = {}
 
@@ -45,9 +49,9 @@ def main(argv):
     print('ndim', ndim)
 
     random_words_count = 0
-    vocab_emb = np.zeros((len(alphabet) + 1, ndim), dtype='float32')
+    vocab_emb = np.zeros((len(alph) + 1, ndim), dtype='float32')
 
-    for word, (idx, freq) in alphabet.tems():
+    for word, (idx, freq) in alph.items():
         word_vec = word2vec.get(word, None)
         if word_vec is None or word_vec.shape[0] != 52:
             word_vec = np.random.uniform(-0.25, 0.25, ndim)
@@ -58,7 +62,7 @@ def main(argv):
     print('random_words_count', random_words_count)
     print(vocab_emb.shape)
 
-    outfile = os.path.join(data_dir, 'emb_{}.npy'.format(emb_name))
+    outfile = '{}_emb.npy'.format(emb_name)
     print(outfile)
 
     np.save(outfile, vocab_emb)
