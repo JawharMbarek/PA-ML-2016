@@ -24,17 +24,24 @@ class Executor(object):
     RESULTS_DIRECTORY = path.realpath(
         path.join(path.dirname(__file__), '../results'))
 
-    #
-    # default params
-    #
-    batch_size = 500
-    nb_epoch = 100
-    validation_split = 0.2
+    DEFAULT_PARAMS = {
+        'batch_size': 500,
+        'nb_epoch': 100,
+        'validation_split': 0.2
+    }
 
     def __init__(self, name, params):
         '''Constructor for the TestRun class.'''
         self.params = params
         self.name = name
+
+        # merge with default params
+        self.params = self.DEFAULT_PARAMS.copy()
+        self.params.update(params)
+
+        self.nb_epoch = int(self.params['nb_epoch'])
+        self.batch_size = int(self.params['batch_size'])
+        self.validation_split = float(self.params['validation_split'])
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, name)
         self.weights_path = path.join(self.results_path, 'weights.h5')
@@ -118,7 +125,12 @@ class Executor(object):
 
     def create_early_stopping(self):
         '''Creates the early stopping callback for the model.'''
-        return EarlyStopping(monitor='val_acc', patience=50,
+        monitor = 'val_acc'
+
+        if self.validation_split == 0.0:
+            monitor = 'acc'
+
+        return EarlyStopping(monitor=monitor, patience=50,
                              verbose=1, mode='max')
 
     def load_test_data(self, path, vocabulary):
