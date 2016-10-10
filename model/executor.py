@@ -6,10 +6,13 @@ import json
 from model import Model
 from os import path
 
+from sklearn.cross_validation import StratifiedKFold
+
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils.np_utils import to_categorical
 
 from data_utils import tsv_sentiment_loader
+from evaluation_metrics import f1_score
 
 from nltk import TweetTokenizer
 
@@ -27,7 +30,9 @@ class Executor(object):
     DEFAULT_PARAMS = {
         'batch_size': 500,
         'nb_epoch': 100,
-        'validation_split': 0.2
+        'nb_kfold_cv': 1,
+        'monitor_metric': 'f1_score',
+        'monitor_metric_mode': 'max'
     }
 
     def __init__(self, name, params):
@@ -41,34 +46,35 @@ class Executor(object):
 
         self.nb_epoch = int(self.params['nb_epoch'])
         self.batch_size = int(self.params['batch_size'])
-        self.validation_split = float(self.params['validation_split'])
+        self.nb_kfold_cv = int(self.params['nb_kfold_cv'])
+        self.monitor_metric = self.params['monitor_metric']
+        self.monitor_metric_mode = self.params['monitor_metric_mode']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, name)
-        self.weights_path = path.join(self.results_path, 'weights.h5')
+        self.weights_path = path.join(self.results_path, 'weights_%s.h5')
         self.model_path = path.join(self.results_path, 'model.json')
         self.params_path = path.join(self.results_path, 'params.json')
         self.validation_metrics_path = path.join(self.results_path,
                                                  'validation_metrics.json')
 
-        self.history_path = path.join(self.results_path,
-                                      'test_metrics.json')
+        self.train_metrics_path = path.join(self.results_path,
+                                            'train_metrics_all.json')
+
+        self.train_metrics_opt_path = path.join(self.results_path,
+                                                'train_metrics_opt.json')
 
         self.create_results_directories()
 
     def run(self):
         '''Starts the experiment with the given params.'''
         self.log('Starting run...')
-
-        self.log('Loading current model')
+        self.store_params()
 
         test_data_path = self.params['test_data_path']
         validation_data_path = self.params['validation_data_path']
         vocabulary_path = self.params['vocabulary_path']
         vocab_emb_path = self.params['vocabulary_embeddings']
-
-        curr_model = Model(self.name, np.load(vocab_emb_path)).build()
-
-        self.log('Model loaded')
+        vocab_emb = np.load(vocab_emb_path)
 
         self.log('Loading test data')
 
@@ -80,57 +86,99 @@ class Executor(object):
 
         self.log('Test data loaded')
 
-        self.log('Start training')
-        self.train(curr_model, texts, sentiments)
-        self.log('Finished training')
+        if self.nb_kfold_cv > 1:
+            self.log('Using %d-fold cross-validation' % self.nb_kfold_cv)
 
-        self.store_params()
-        self.store_model(curr_model)
+        kf = StratifiedKFold(sentiments, n_folds=self.nb_kfold_cv)
+        count = 1
+        histories = {}
+        scores = []
+        model_stored = False
 
-        if 'validation_data_path' in self.params:
-            self.log('Starting validation on %s' % validation_data_path)
+        for train, test in kf:
+            self.log('Loading model (round #%d)' % count)
 
-            tids, sentiments, texts, nlabels = self.load_test_data(
-                validation_data_path, vocabulary
-            )
+            curr_model = Model(self.name, vocab_emb).build()
 
-            self.validate(curr_model, texts, sentiments)
+            # store the model only on the first iteration
+            if not model_stored:
+                self.store_model(curr_model)
+                model_stored = True
 
-            self.log('Finished validation')
+            self.log('Model loaded (round #%d)' % count)
 
-    def train(self, m, X, Y):
+            X_train = texts[train]
+            X_test = texts[test]
+
+            Y_train = sentiments[train]
+            Y_test = sentiments[test]
+
+            self.log('Start training (round #%d)' % count)
+
+            history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
+            histories[count] = history.history
+
+            self.log('Finished training (round #%d)' % count)
+            self.log('Validating trained model (round #%d)' % count)
+
+            curr_model.load_weights(self.weights_path % count)
+
+            score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
+            scores.append(score)
+
+            self.log('Finished validating trained model (round #%d)' % count)
+
+            count += 1
+
+        self.store_validation_results(curr_model, scores)
+
+        # Now we check all histories and only keep the model with the best f1 score
+        monitor_metric_opt = 0.0
+        monitor_metric_opt_nr = -1
+
+        for nr, metrics in histories.items():
+            if self.monitor_metric not in metrics:
+                raise Exception('the metric "%s" is not available!' % self.monitor_metric)
+
+            values = metrics[self.monitor_metric]
+            store = False
+
+            for v in values:
+                store = self.monitor_metric_mode == 'max' and v > monitor_metric_opt
+                store = store or self.monitor_metric_mode == 'min' and v < monitor_metric_opt
+
+                if store:
+                    monitor_metric_opt = v
+                    monitor_metric_opt_nr = nr
+
+        self.log('Looks like run #%d was the most successful with %s=%f' %
+                 (monitor_metric_opt_nr, self.monitor_metric, monitor_metric_opt))
+
+        self.store_histories(histories, monitor_metric_opt_nr)
+        self.cleanup_weights_files(monitor_metric_opt_nr)
+
+
+    def train(self, m, X_train, Y_train, X_test, Y_test, count):
         '''This method trains the given model.'''
-        history = m.fit(X, to_categorical(Y),
-                        nb_epoch=self.nb_epoch, batch_size=self.batch_size,
-                        verbose=1, validation_split=self.validation_split,
-                        callbacks=self.get_callbacks())
+        return m.fit(X_train, to_categorical(Y_train),
+                     validation_data=(X_test, to_categorical(Y_test)),
+                     nb_epoch=self.nb_epoch,
+                     batch_size=self.batch_size,
+                     callbacks=self.get_callbacks(count))
 
-        self.store_history(history)
-
-    def validate(self, m, X_val, Y_val):
-        '''This method validates a trained model.'''
-        score = m.evaluate(X_val, to_categorical(Y_val), verbose=1)
-        self.store_validation_results(m, score)
-
-    def get_callbacks(self):
+    def get_callbacks(self, counter):
         '''Creates the necessary callbacks for the keras model
            and returns them.'''
-        return [self.create_early_stopping(), self.create_model_checkpoint()]
+        return [self.create_early_stopping(), self.create_model_checkpoint(counter)]
 
-    def create_model_checkpoint(self):
+    def create_model_checkpoint(self, count):
         '''Creates the model checkpoint callback for the model.'''
-        return ModelCheckpoint(filepath=self.weights_path, verbose=1,
-                               save_best_only=True, monitor='val_acc',
-                               mode='max')
+        return ModelCheckpoint(filepath=self.weights_path % count, mode='max',
+                               save_best_only=True, monitor='val_f1_score')
 
     def create_early_stopping(self):
         '''Creates the early stopping callback for the model.'''
-        monitor = 'val_acc'
-
-        if self.validation_split == 0.0:
-            monitor = 'acc'
-
-        return EarlyStopping(monitor=monitor, patience=50,
+        return EarlyStopping(monitor='val_f1_score', patience=50,
                              verbose=1, mode='max')
 
     def load_test_data(self, path, vocabulary):
@@ -152,19 +200,43 @@ class Executor(object):
         with open(self.params_path, 'w+') as f:
             f.write(json.dumps(self.params))
 
-    def store_history(self, history):
-        '''Stores the history of learning as a npy file at the history_path.'''
-        with open(self.history_path, 'w+') as f:
-            f.write(json.dumps(history.history))
+    def store_histories(self, histories, opt_nr):
+        '''Stores the history of learning as a npy file at the train_metrics_path.'''
+        with open(self.train_metrics_opt_path, 'w+') as f:
+            f.write(json.dumps(histories[opt_nr]))
 
-    def store_validation_results(self, model, score):
+        with open(self.train_metrics_path, 'w+') as f:
+            f.write(json.dumps(histories))
+
+    def store_validation_results(self, model, scores):
+        '''Stores the average over multiple evaluation scores as a JSON file.'''
         metrics = {}
+        metrics_names = model.metrics_names
 
-        for i in range(0, len(model.metrics_names)):
-            metrics[model.metrics_names[i]] = score[i]
+        for i in range(0, len(metrics_names)):
+            name = metrics_names[i]
+
+            for s in scores:
+                if name not in metrics:
+                    metrics[name] = 0.0
+
+                metrics[name] += s[i]
+
+        for n, v in metrics.items():
+            metrics[n] = metrics[n] / len(scores)
 
         with open(self.validation_metrics_path, 'w+') as f:
             f.write(json.dumps(metrics))
+
+    def cleanup_weights_files(self, opt_nr):
+        opt_file = self.weights_path % 'opt'
+        os.rename(self.weights_path % opt_nr, opt_file)
+
+        for f in os.listdir(self.results_path):
+            file_path = path.join(self.results_path, f)
+
+            if f.endswith('.h5') and not file_path == opt_file:
+                os.remove(file_path)
 
     def create_results_directories(self):
         '''This function is responsible for creating the results directory.'''

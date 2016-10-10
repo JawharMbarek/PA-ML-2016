@@ -6,7 +6,7 @@ from keras.layers import Convolution1D, MaxPooling1D, Flatten
 
 from keras.optimizers import Adadelta
 
-from data_utils import fbeta_score
+from evaluation_metrics import f1_score
 
 
 class Model(object):
@@ -22,7 +22,7 @@ class Model(object):
     hidden_dims = nb_filter
     nb_labels = 3
 
-    def __init__(self, name, vocab_emb, verbose=True):
+    def __init__(self, name, vocab_emb, verbose=False):
         '''Constructor for the model class.'''
         self.vocabulary_embeddings = vocab_emb
         self.max_features = vocab_emb.shape[0]
@@ -84,6 +84,6 @@ class Model(object):
         adadelta = Adadelta(lr=1.0, rho=0.95, epsilon=1e-6)
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=adadelta, metrics=['accuracy', fbeta_score])
+                      optimizer=adadelta, metrics=['accuracy', f1_score])
 
         return model

@@ -1,6 +1,7 @@
 {
   "name": "MPQ_reviews_on_MPQ_reviews",
   "nb_epoch": 50,
+  "nb_kfold_cv": 10,
   "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
   "test_data_path": "testdata/MPQ_reviews_train.tsv",
   "validation_data_path": "testdata/MPQ_reviews_test.tsv",
