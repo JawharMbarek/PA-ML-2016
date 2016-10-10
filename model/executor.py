@@ -40,9 +40,8 @@ class Executor(object):
         self.weights_path = path.join(self.results_path, 'weights.h5')
         self.model_path = path.join(self.results_path, 'model.json')
         self.params_path = path.join(self.results_path, 'params.json')
-
-        self.validation_metric_path = path.join(self.results_path,
-                                                'validation_metrics.json')
+        self.validation_metrics_path = path.join(self.results_path,
+                                                 'validation_metrics.json')
 
         self.history_path = path.join(self.results_path,
                                       'test_metrics.json')
@@ -104,12 +103,7 @@ class Executor(object):
     def validate(self, m, X_val, Y_val):
         '''This method validates a trained model.'''
         score = m.evaluate(X_val, to_categorical(Y_val), verbose=1)
-
-        # newline required since keras omits it..
-        print('')
-
-        for i in range(0, len(m.metrics_names)):
-            print("%s: %.2f" % (m.metrics_names[i], score[i]))
+        self.store_validation_results(m, score)
 
     def get_callbacks(self):
         '''Creates the necessary callbacks for the keras model
@@ -150,6 +144,15 @@ class Executor(object):
         '''Stores the history of learning as a npy file at the history_path.'''
         with open(self.history_path, 'w+') as f:
             f.write(json.dumps(history.history))
+
+    def store_validation_results(self, model, score):
+        metrics = {}
+
+        for i in range(0, len(model.metrics_names)):
+            metrics[model.metrics_names[i]] = score[i]
+
+        with open(self.validation_metrics_path, 'w+') as f:
+            f.write(json.dumps(metrics))
 
     def create_results_directories(self):
         '''This function is responsible for creating the results directory.'''
