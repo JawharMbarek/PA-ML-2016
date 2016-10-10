@@ -1,0 +1,8 @@
+{
+  "name": "DIL_reviews_on_MPQ_reviews",
+  "nb_epoch": 50,
+  "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
+  "test_data_path": "testdata/MPQ_reviews_full.tsv",
+  "validation_data_path": "testdata/DIL_Reviews.tsv",
+  "vocabulary_path": "vocabularies/vocab_en300M_reduced.pickle"
+}
