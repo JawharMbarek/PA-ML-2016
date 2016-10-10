@@ -1,6 +1,6 @@
 {
   "name": "SemEval_tweets_on_MPQ_reviews",
-  "nb_epoch": 50,
+  "nb_epoch": 1000,
   "nb_kfold_cv": 10,
   "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
   "test_data_path": "testdata/MPQ_reviews_full.tsv",
