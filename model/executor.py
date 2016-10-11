@@ -31,6 +31,7 @@ class Executor(object):
         'batch_size': 500,
         'nb_epoch': 100,
         'nb_kfold_cv': 1,
+        'validation_split': 0.0,
         'monitor_metric': 'f1_score',
         'monitor_metric_mode': 'max'
     }
@@ -47,6 +48,7 @@ class Executor(object):
         self.nb_epoch = int(self.params['nb_epoch'])
         self.batch_size = int(self.params['batch_size'])
         self.nb_kfold_cv = int(self.params['nb_kfold_cv'])
+        self.validation_split = float(self.params['validation_split'])
         self.monitor_metric = self.params['monitor_metric']
         self.monitor_metric_mode = self.params['monitor_metric_mode']
 
@@ -89,13 +91,18 @@ class Executor(object):
         if self.nb_kfold_cv > 1:
             self.log('Using %d-fold cross-validation' % self.nb_kfold_cv)
 
-        kf = StratifiedKFold(sentiments, n_folds=self.nb_kfold_cv)
         count = 1
         histories = {}
         scores = []
         model_stored = False
+        data_iter = None
 
-        for train, test in kf:
+        if self.nb_kfold_cv > 1:
+            data_iter = StratifiedKFold(sentiments, n_folds=self.nb_kfold_cv)
+        else:
+            data_iter = [[range(0, len(sentiments)), []]]
+
+        for train, test in data_iter:
             self.log('Loading model (round #%d)' % count)
 
             curr_model = Model(self.name, vocab_emb).build()
@@ -108,10 +115,16 @@ class Executor(object):
             self.log('Model loaded (round #%d)' % count)
 
             X_train = texts[train]
-            X_test = texts[test]
+            X_test = []
+
+            if len(test) > 0:
+                X_test = texts[test]
 
             Y_train = sentiments[train]
-            Y_test = sentiments[test]
+            Y_test = []
+
+            if len(test) > 0:
+                Y_test = sentiments[test]
 
             self.log('Start training (round #%d)' % count)
 
@@ -123,10 +136,11 @@ class Executor(object):
 
             curr_model.load_weights(self.weights_path % count)
 
-            score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
-            scores.append(score)
+            if len(X_test) > 0 and len(Y_test) > 0:
+                score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
+                scores.append(score)
 
-            self.log('Finished validating trained model (round #%d)' % count)
+                self.log('Finished validating trained model (round #%d)' % count)
 
             count += 1
 
@@ -160,9 +174,18 @@ class Executor(object):
 
     def train(self, m, X_train, Y_train, X_test, Y_test, count):
         '''This method trains the given model.'''
+        validation_data = ()
+        validation_split = None
+
+        if len(X_test) > 0 and len(Y_test) > 0:
+            validation_data = (X_test, to_categorical(Y_test))
+        elif self.validation_split > 0.0:
+            validation_split = self.validation_split
+
         return m.fit(X_train, to_categorical(Y_train),
-                     validation_data=(X_test, to_categorical(Y_test)),
+                     validation_data=validation_data,
                      nb_epoch=self.nb_epoch,
+                     validation_split=validation_split,
                      batch_size=self.batch_size,
                      callbacks=self.get_callbacks(count))
 
@@ -222,7 +245,16 @@ class Executor(object):
 
                 metrics[name] += s[i]
 
+        for n in metrics_names:
+            metrics['%s_std' % n] = 0
+            metrics['%s_mean' % n] = 0
+
         for n, v in metrics.items():
+            if n.endswith('_std') or n.endswith('_mean'):
+                continue
+
+            metrics['%s_std' % n] = np.std(metrics[n])
+            metrics['%s_mean' % n] = np.mean(metrics[n])
             metrics[n] = metrics[n] / len(scores)
 
         with open(self.validation_metrics_path, 'w+') as f:

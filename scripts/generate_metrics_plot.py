@@ -10,7 +10,7 @@ image_file = ''
 only_list = []
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'm:o:i',
+    opts, args = getopt.getopt(sys.argv[1:], 'm:o:i:',
                                ['metrics=', 'image=', 'include='])
 except getopt.GetoptError:
     print('./generate_metric_plot.py -m <metrics> -i <image.png>')
@@ -42,4 +42,4 @@ plt.legend(metric_names, loc='upper left')
 if image_file == '':
     plt.show()
 else:
-    plt.savefig(image_file + '.png')
+    plt.savefig(image_file)
