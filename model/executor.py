@@ -169,7 +169,6 @@ class Executor(object):
                  (monitor_metric_opt_nr, self.monitor_metric, monitor_metric_opt))
 
         self.store_histories(histories, monitor_metric_opt_nr)
-        self.cleanup_weights_files(monitor_metric_opt_nr)
 
 
     def train(self, m, X_train, Y_train, X_test, Y_test, count):
@@ -259,16 +258,6 @@ class Executor(object):
 
         with open(self.validation_metrics_path, 'w+') as f:
             f.write(json.dumps(metrics))
-
-    def cleanup_weights_files(self, opt_nr):
-        opt_file = self.weights_path % 'opt'
-        os.rename(self.weights_path % opt_nr, opt_file)
-
-        for f in os.listdir(self.results_path):
-            file_path = path.join(self.results_path, f)
-
-            if f.endswith('.h5') and not file_path == opt_file:
-                os.remove(file_path)
 
     def create_results_directories(self):
         '''This function is responsible for creating the results directory.'''
