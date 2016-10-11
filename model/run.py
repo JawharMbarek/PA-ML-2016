@@ -7,28 +7,27 @@ import numpy as np
 
 from executor import Executor
 from utils import generate_test_id
+import time
+
 from subprocess import Popen, PIPE
 
 #
 # Constants
 #
 RESULTS_PATH = path.join(path.dirname(path.realpath(__file__)), 'results')
-RNG_SEED = 1337
-
-#
-# Basic setup
-#
-np.random.seed(RNG_SEED)
 
 #
 # Parameters for the run
 #
 vocabulary_path = ''
 embeddings_path = ''
-test_data_path = ''
+test_data = ''
 validation_data_path = ''
 verbose = False
 git_sha = ''
+np_rand_seed = int(time.time())
+
+np.random.seed(np_rand_seed)
 
 #
 # Argument handling
@@ -60,6 +59,7 @@ for i in range(0, len(argv)):
 
     # Store the git hash in the params
     params['git_rev'] = git_rev
+    params['np_rand_seed'] = np_rand_seed
 
     #
     # Execute the run!

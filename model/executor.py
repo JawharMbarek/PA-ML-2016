@@ -11,11 +11,8 @@ from sklearn.cross_validation import StratifiedKFold
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils.np_utils import to_categorical
 
-from data_utils import tsv_sentiment_loader
+from data_loader import DataLoader
 from evaluation_metrics import f1_score
-
-from nltk import TweetTokenizer
-
 
 class Executor(object):
     '''This class is responsible for loading all necessary data
@@ -72,7 +69,7 @@ class Executor(object):
         self.log('Starting run...')
         self.store_params()
 
-        test_data_path = self.params['test_data_path']
+        test_data = self.params['test_data']
         validation_data_path = self.params['validation_data_path']
         vocabulary_path = self.params['vocabulary_path']
         vocab_emb_path = self.params['vocabulary_embeddings']
@@ -81,10 +78,7 @@ class Executor(object):
         self.log('Loading test data')
 
         vocabulary = self.load_vocabulary(vocabulary_path)
-
-        tids, sentiments, texts, nlabels = self.load_test_data(
-            test_data_path, vocabulary
-        )
+        sentiments, texts, nlabels = DataLoader.load(test_data, vocabulary)
 
         self.log('Test data loaded')
 
@@ -232,32 +226,43 @@ class Executor(object):
 
     def store_validation_results(self, model, scores):
         '''Stores the average over multiple evaluation scores as a JSON file.'''
-        metrics = {}
+        avg_metrics = {}
+        all_metrics = []
         metrics_names = model.metrics_names
+
+        for i in range(0, len(scores)):
+            all_metrics.append({})
 
         for i in range(0, len(metrics_names)):
             name = metrics_names[i]
 
-            for s in scores:
-                if name not in metrics:
-                    metrics[name] = 0.0
+            for j, s in enumerate(scores):
+                if name not in avg_metrics:
+                    avg_metrics[name] = 0.0
 
-                metrics[name] += s[i]
+                avg_metrics[name] += s[i]
+                all_metrics[j][name] = s[i]
+                all_metrics[j]['round'] = j + 1
 
         for n in metrics_names:
-            metrics['%s_std' % n] = 0
-            metrics['%s_mean' % n] = 0
+            avg_metrics['%s_std' % n] = 0
+            avg_metrics['%s_mean' % n] = 0
 
-        for n, v in metrics.items():
+        for n, v in avg_metrics.items():
             if n.endswith('_std') or n.endswith('_mean'):
                 continue
 
-            metrics['%s_std' % n] = np.std(metrics[n])
-            metrics['%s_mean' % n] = np.mean(metrics[n])
-            metrics[n] = metrics[n] / len(scores)
+            avg_metrics['%s_std' % n] = np.std(avg_metrics[n])
+            avg_metrics['%s_mean' % n] = np.mean(avg_metrics[n])
+            avg_metrics[n] = avg_metrics[n] / len(scores)
+
+        final_metrics = {
+            'avg': avg_metrics,
+            'all': all_metrics
+        }
 
         with open(self.validation_metrics_path, 'w+') as f:
-            f.write(json.dumps(metrics))
+            f.write(json.dumps(final_metrics))
 
     def create_results_directories(self):
         '''This function is responsible for creating the results directory.'''
