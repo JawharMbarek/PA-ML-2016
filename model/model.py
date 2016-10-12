@@ -6,8 +6,7 @@ from keras.layers import Convolution1D, MaxPooling1D, Flatten
 
 from keras.optimizers import Adadelta
 
-from evaluation_metrics import f1_score
-
+import evaluation_metrics as ev
 
 class Model(object):
     '''This class is responsible for storing our current the keras model.
@@ -84,6 +83,8 @@ class Model(object):
         adadelta = Adadelta(lr=1.0, rho=0.95, epsilon=1e-6)
 
         model.compile(loss='categorical_crossentropy',
-                      optimizer=adadelta, metrics=['accuracy', f1_score])
+                      optimizer=adadelta, metrics=['accuracy',
+                      ev.f1_score, ev.f1_score_pos, ev.f1_score_neg,
+                      ev.f1_score_pos_neg, ev.f1_score_neu])
 
         return model

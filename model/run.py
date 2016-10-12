@@ -27,8 +27,6 @@ verbose = False
 git_sha = ''
 np_rand_seed = int(time.time())
 
-np.random.seed(np_rand_seed)
-
 #
 # Argument handling
 #
@@ -59,7 +57,13 @@ for i in range(0, len(argv)):
 
     # Store the git hash in the params
     params['git_rev'] = git_rev
-    params['np_rand_seed'] = np_rand_seed
+
+    if 'np_rand_seed' not in params:
+        params['np_rand_seed'] = np_rand_seed
+    else:
+        np_rand_seed = params['np_rand_seed']
+
+    np.random.seed(np_rand_seed)
 
     #
     # Execute the run!

@@ -3,16 +3,15 @@ import numpy as np
 import os
 import json
 
+from data_loader import DataLoader
 from model import Model
+
 from os import path
 
 from sklearn.cross_validation import StratifiedKFold
 
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils.np_utils import to_categorical
-
-from data_loader import DataLoader
-from evaluation_metrics import f1_score
 
 class Executor(object):
     '''This class is responsible for loading all necessary data
@@ -30,6 +29,7 @@ class Executor(object):
         'nb_kfold_cv': 1,
         'validation_split': 0.0,
         'monitor_metric': 'f1_score',
+        'model_checkpoint_monitor_metric': 'val_f1_score',
         'monitor_metric_mode': 'max'
     }
 
@@ -48,6 +48,7 @@ class Executor(object):
         self.validation_split = float(self.params['validation_split'])
         self.monitor_metric = self.params['monitor_metric']
         self.monitor_metric_mode = self.params['monitor_metric_mode']
+        self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
@@ -189,8 +190,9 @@ class Executor(object):
 
     def create_model_checkpoint(self, count):
         '''Creates the model checkpoint callback for the model.'''
-        return ModelCheckpoint(filepath=self.weights_path % count, mode='max',
-                               save_best_only=True, monitor='val_f1_score')
+        return ModelCheckpoint(filepath=self.weights_path % count,
+                               mode='max', save_best_only=True,
+                               monitor=self.model_checkpoint_monitor_metric)
 
     def create_early_stopping(self):
         '''Creates the early stopping callback for the model.'''
@@ -238,23 +240,16 @@ class Executor(object):
 
             for j, s in enumerate(scores):
                 if name not in avg_metrics:
-                    avg_metrics[name] = 0.0
+                    avg_metrics[name] = []
 
-                avg_metrics[name] += s[i]
+                avg_metrics[name].append(s[i])
                 all_metrics[j][name] = s[i]
                 all_metrics[j]['round'] = j + 1
 
         for n in metrics_names:
-            avg_metrics['%s_std' % n] = 0
-            avg_metrics['%s_mean' % n] = 0
-
-        for n, v in avg_metrics.items():
-            if n.endswith('_std') or n.endswith('_mean'):
-                continue
-
             avg_metrics['%s_std' % n] = np.std(avg_metrics[n])
             avg_metrics['%s_mean' % n] = np.mean(avg_metrics[n])
-            avg_metrics[n] = avg_metrics[n] / len(scores)
+            avg_metrics[n] = np.sum(avg_metrics[n]) / len(scores)
 
         final_metrics = {
             'avg': avg_metrics,
