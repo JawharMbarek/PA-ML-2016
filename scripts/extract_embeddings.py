@@ -6,7 +6,7 @@ import numpy as np
 import getopt
 import sys
 
-from utils import load_glove_vec
+from gensim.models import Word2Vec
 
 
 def main(argv):
@@ -34,36 +34,31 @@ def main(argv):
 
     # get vocabulary
     print(fname_vocab)
-    alph = cPickle.load(open(fname_vocab, 'rb'))
-    words = alph.keys()
-    print("Vocab size", len(alph))
+    vocab = cPickle.load(open(fname_vocab, 'rb'))
+    words = vocab.keys()
+    print('The vocabulary size is: %d' % len(vocab))
 
-    word2vec = {}
+    word2vec = Word2Vec.load(emb_path)
+    emb_dim = len(word2vec[list(word2vec.vocab.keys())[0]])
 
-    # get embeddings
-    fname, delimiter, ndim = (emb_path, ' ', 52)
-    word2vec.update(load_glove_vec(fname, words, delimiter, ndim))
-
-    print(len(word2vec.keys()))
-    ndim = len(word2vec[list(word2vec.keys())[0]])
-    print('ndim', ndim)
+    print('Size of the embeddings vocabulary: %d' % len(word2vec.vocab))
+    print('Dimensionality of the embeddings: %d' % emb_dim)
 
     random_words_count = 0
-    vocab_emb = np.zeros((len(alph) + 1, ndim), dtype='float32')
+    vocab_emb = np.zeros((len(vocab) + 1, emb_dim), dtype='float32')
 
-    for word, (idx, freq) in alph.items():
-        word_vec = word2vec.get(word, None)
-        if word_vec is None or word_vec.shape[0] != 52:
-            word_vec = np.random.uniform(-0.25, 0.25, ndim)
+    for word, (idx, freq) in vocab.items():
+        if word not in word2vec or word2vec[word].shape[0] != 52:
+            word_vec = np.random.uniform(-0.25, 0.25, emb_dim)
             random_words_count += 1
 
         vocab_emb[idx] = word_vec
 
-    print('random_words_count', random_words_count)
-    print(vocab_emb.shape)
+    print('Words with random embeddings: %d' % random_words_count)
+    print('Shape of the embeddings matrix: %s' % str(vocab_emb.shape))
 
     outfile = '{}_emb.npy'.format(emb_name)
-    print(outfile)
+    print('Saving embedding matrix to: %s' % outfile)
 
     np.save(outfile, vocab_emb)
 
