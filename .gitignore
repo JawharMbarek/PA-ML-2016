@@ -96,3 +96,5 @@ vocabularies/*
 
 # Let's ignore weights for now
 *.h5
+
+.DS_Store
