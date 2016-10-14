@@ -98,3 +98,6 @@ vocabularies/*
 *.h5
 
 .DS_Store
+
+# Ignore test results
+results/*my-fancy*
