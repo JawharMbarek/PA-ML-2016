@@ -1,15 +1,15 @@
 {
   "test_data": {
-    "testdata/DAI_tweets_train.tsv": 1197,
+    "testdata/DAI_tweets_train.tsv": 1365,
     "testdata/JCR_Quotations.tsv": 1290,
-    "testdata/MPQ_News.tsv": 60,
-    "testdata/SEM_Headlines.tsv": 35,
-    "testdata/SemEval_tweets_train.tsv": 1500,
-    "testdata/DIL_reviews_train.tsv": 3200,
-    "testdata/HUL_Reviews.tsv": 260,
-    "testdata/SFU_Reviews.tsv": 33,
-    "testdata/TAC_Reviews.tsv": 291,
-    "testdata/MPQ_reviews_train.tsv": 3341
+    "testdata/MPQ_News.tsv": 2730,
+    "testdata/SEM_Headlines.tsv": 1250,
+    "testdata/SemEval_tweets_train.tsv": 1365,
+    "testdata/DIL_reviews_train.tsv": 1645,
+    "testdata/HUL_Reviews.tsv": 1645,
+    "testdata/SFU_Reviews.tsv": 400,
+    "testdata/TAC_Reviews.tsv": 1645,
+    "testdata/MPQ_reviews_train.tsv": 1645
   },
   "name": "CrossDomain_with_90Percent_on_MPQ_reviews",
   "nb_epoch": 1000,

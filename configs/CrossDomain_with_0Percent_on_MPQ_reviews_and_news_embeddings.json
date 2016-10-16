@@ -1,10 +1,10 @@
 {
   "test_data": {
-    "testdata/DAI_tweets_train.tsv": 1197,
+    "testdata/DAI_tweets_train.tsv": 1365,
     "testdata/JCR_Quotations.tsv": 1290,
-    "testdata/MPQ_News.tsv": 60,
-    "testdata/SEM_Headlines.tsv": 35,
-    "testdata/SemEval_tweets_train.tsv": 1500,
+    "testdata/MPQ_News.tsv": 2730,
+    "testdata/SEM_Headlines.tsv": 1250,
+    "testdata/SemEval_tweets_train.tsv": 1365,
     "testdata/DIL_reviews_train.tsv": 0,
     "testdata/HUL_Reviews.tsv": 0,
     "testdata/SFU_Reviews.tsv": 0,
