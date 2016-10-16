@@ -11,7 +11,7 @@
     "testdata/DAI_tweets_train.tsv": 388,
     "testdata/SemEval_tweets_train.tsv": 388
   },
-  "name": "CrossDomain_with_10Percent_on_SemEval_tweets_train",
+  "name": "CrossDomain_with_10Percent_on_SemEval_tweets_train_and_news_embeddings",
   "nb_epoch": 1000,
   "nb_kfold_cv": 10,
   "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
