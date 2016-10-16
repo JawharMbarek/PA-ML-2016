@@ -28,8 +28,8 @@ class Executor(object):
         'nb_epoch': 100,
         'nb_kfold_cv': 1,
         'validation_split': 0.0,
-        'monitor_metric': 'f1_score',
-        'model_checkpoint_monitor_metric': 'val_f1_score',
+        'monitor_metric': 'val_f1_score_pos_neg',
+        'model_checkpoint_monitor_metric': 'val_f1_score_pos_neg',
         'monitor_metric_mode': 'max'
     }
 
