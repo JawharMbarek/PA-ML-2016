@@ -28,6 +28,9 @@ word_vectors = {}
 word_embeddings = Word2Vec.load(embeddings_file)
 counter = 0
 
+import pdb
+pdb.set_trace()
+
 for word in word_embeddings.vocab.keys():
     word_vectors[word] = word_embeddings[word]
     counter += 1
