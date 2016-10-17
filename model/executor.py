@@ -196,7 +196,7 @@ class Executor(object):
 
     def create_early_stopping(self):
         '''Creates the early stopping callback for the model.'''
-        return EarlyStopping(monitor='val_f1_score', patience=50,
+        return EarlyStopping(monitor='val_f1_score_pos_neg', patience=50,
                              verbose=1, mode='max')
 
     def load_test_data(self, path, vocabulary):
