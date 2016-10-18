@@ -79,7 +79,8 @@ class Executor(object):
         self.log('Loading test data')
 
         vocabulary = self.load_vocabulary(vocabulary_path)
-        sentiments, texts, nlabels = DataLoader.load(test_data, vocabulary)
+        sents, txts, nlabels = DataLoader.load(test_data, vocabulary)
+        sents_val, txts_val, nlabels = DataLoader.load(validation_data_path, vocabulary)
 
         self.log('Test data loaded')
 
@@ -93,9 +94,9 @@ class Executor(object):
         data_iter = None
 
         if self.nb_kfold_cv > 1:
-            data_iter = StratifiedKFold(sentiments, n_folds=self.nb_kfold_cv)
+            data_iter = StratifiedKFold(sents, n_folds=self.nb_kfold_cv)
         else:
-            data_iter = [[range(0, len(sentiments)), []]]
+            data_iter = [[range(0, len(sents)), []]]
 
         for train, test in data_iter:
             self.log('Loading model (round #%d)' % count)
@@ -109,21 +110,21 @@ class Executor(object):
 
             self.log('Model loaded (round #%d)' % count)
 
-            X_train = texts[train]
+            X_train = txts[train]
             X_test = []
 
             if len(test) > 0:
-                X_test = texts[test]
+                X_test = txts[test]
 
-            Y_train = sentiments[train]
+            Y_train = sents[train]
             Y_test = []
 
             if len(test) > 0:
-                Y_test = sentiments[test]
+                Y_test = sents[test]
 
             self.log('Start training (round #%d)' % count)
 
-            history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
+            history = self.train(curr_model, X_train, Y_train, txts_val, sents_val, count)
             histories[count] = history.history
 
             self.log('Finished training (round #%d)' % count)
@@ -132,7 +133,7 @@ class Executor(object):
             curr_model.load_weights(self.weights_path % count)
 
             if len(X_test) > 0 and len(Y_test) > 0:
-                score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
+                score = curr_model.evaluate(txts_val, to_categorical(sents_val), verbose=1)
                 scores.append(score)
 
                 self.log('Finished validating trained model (round #%d)' % count)
