@@ -55,6 +55,11 @@ for i in range(0, len(argv)):
     with open(config_path) as f:
         params = json.loads(f.read())
 
+    # Take the config name for the results directory
+    # in case of no name is defined
+    if not 'name' in params:
+        params['name'] = path.splitext(path.basename(config_path))[0]
+
     # Store the git hash in the params
     params['git_rev'] = git_rev
 

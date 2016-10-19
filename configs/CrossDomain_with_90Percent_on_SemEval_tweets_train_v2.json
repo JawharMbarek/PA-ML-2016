@@ -1,0 +1,19 @@
+{
+  "test_data": {
+    "testdata/JCR_Quotations.tsv": 1290,
+    "testdata/MPQ_News.tsv": 2730,
+    "testdata/SEM_Headlines.tsv": 1250,
+    "testdata/DIL_reviews_train.tsv": 583,
+    "testdata/HUL_Reviews.tsv": 583,
+    "testdata/SFU_Reviews.tsv": 400,
+    "testdata/TAC_Reviews.tsv": 582,
+    "testdata/MPQ_reviews_train.tsv": 582,
+    "testdata/DAI_tweets_train.tsv": 3492,
+    "testdata/SemEval_tweets_train.tsv": 3492
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 10,
+  "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
+  "validation_data_path": "testdata/SemEval_tweets_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_en300M_reduced.pickle"
+}
