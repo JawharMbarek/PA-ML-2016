@@ -42,6 +42,11 @@ class Executor(object):
         self.params = self.DEFAULT_PARAMS.copy()
         self.params.update(params)
 
+        if 'group_id' in params:
+            self.group_id = params['group_id']
+        else:
+            self.group_id = ''
+
         self.nb_epoch = int(self.params['nb_epoch'])
         self.batch_size = int(self.params['batch_size'])
         self.nb_kfold_cv = int(self.params['nb_kfold_cv'])
@@ -50,7 +55,7 @@ class Executor(object):
         self.monitor_metric_mode = self.params['monitor_metric_mode']
         self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
 
-        self.results_path = path.join(self.RESULTS_DIRECTORY, name)
+        self.results_path = path.join(self.RESULTS_DIRECTORY, self.group_id, self.name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
         self.model_path = path.join(self.results_path, 'model.json')
         self.params_path = path.join(self.results_path, 'params.json')
@@ -143,7 +148,7 @@ class Executor(object):
         self.store_validation_results(curr_model, scores)
 
         # Now we check all histories and only keep the model with the best f1 score
-        monitor_metric_opt = 0.0
+        monitor_metric_opt = -1.0
         monitor_metric_opt_nr = -1
 
         for nr, metrics in histories.items():
@@ -263,7 +268,7 @@ class Executor(object):
     def create_results_directories(self):
         '''This function is responsible for creating the results directory.'''
         if not path.isdir(self.results_path):
-            os.mkdir(self.results_path)
+            os.makedirs(self.results_path)
 
     def log(self, msg):
         '''Simple logging function which only works in verbose mode.'''
