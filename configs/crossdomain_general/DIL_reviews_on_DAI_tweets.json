@@ -1,4 +1,5 @@
 {
+  "group_id": "crossdomain_general",
   "name": "DIL_reviews_on_DAI_tweets",
   "nb_epoch": 1000,
   "nb_kfold_cv": 10,

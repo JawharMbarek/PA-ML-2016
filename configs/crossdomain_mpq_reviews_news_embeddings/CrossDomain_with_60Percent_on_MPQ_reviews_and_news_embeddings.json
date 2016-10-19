@@ -1,4 +1,5 @@
 {
+  "group_id": "crossdomain_mpq_reviews_news_embeddings",
   "test_data": {
     "testdata/DAI_tweets_train.tsv": 1365,
     "testdata/JCR_Quotations.tsv": 1290,
