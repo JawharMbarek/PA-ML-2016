@@ -2,13 +2,13 @@
 
 import json
 import sys
-import os.path as path
+import os
 import numpy as np
-
-from executor import Executor
-from utils import generate_test_id
 import time
 
+from os import path
+from executor import Executor
+from utils import generate_test_id
 from subprocess import Popen, PIPE
 
 #
@@ -50,31 +50,43 @@ if git_err != 0:
 
 for i in range(0, len(argv)):
     config_path = argv[i]
-    print('Starting run with file %s' % config_path)
+    configs = []
 
-    with open(config_path) as f:
-        params = json.loads(f.read())
-
-    # Take the config name for the results directory
-    # in case of no name is defined
-    if not 'name' in params:
-        params['name'] = path.splitext(path.basename(config_path))[0]
-
-    # Store the git hash in the params
-    params['git_rev'] = git_rev
-
-    if 'np_rand_seed' not in params:
-        params['np_rand_seed'] = np_rand_seed
+    if path.isdir(config_path):
+        for c in os.listdir(config_path):
+            if c.endswith('.json'):
+                configs.append(path.join(config_path, c))
     else:
-        np_rand_seed = params['np_rand_seed']
+        configs = [config_path]
 
-    np.random.seed(np_rand_seed)
+    print('The following configs will be run:\n* %s' % '\n* '.join(configs))
 
-    #
-    # Execute the run!
-    #
-    test_id = generate_test_id(params)
-    executor = Executor(test_id, params)
-    executor.run()
+    for cfg in configs:
+        print('Starting run with file %s' % cfg)
 
-    print('Finished run with file %s' % config_path)
+        with open(cfg) as f:
+            params = json.loads(f.read())
+
+        # Take the config name for the results directory
+        # in case of no name is defined
+        if not 'name' in params:
+            params['name'] = path.splitext(path.basename(config_path))[0]
+
+        # Store the git hash in the params
+        params['git_rev'] = git_rev
+
+        if 'np_rand_seed' not in params:
+            params['np_rand_seed'] = np_rand_seed
+        else:
+            np_rand_seed = params['np_rand_seed']
+
+        np.random.seed(np_rand_seed)
+
+        #
+        # Execute the run!
+        #
+        test_id = generate_test_id(params)
+        executor = Executor(test_id, params)
+        executor.run()
+
+        print('Finished run with file %s' % config_path)
