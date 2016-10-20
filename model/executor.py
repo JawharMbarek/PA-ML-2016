@@ -123,9 +123,6 @@ class Executor(object):
             Y_train = sents[train]
             Y_test = sents_val
 
-            if len(test) > 0:
-                Y_test = sents[test]
-
             self.log('Start training (round #%d)' % count)
 
             history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
