@@ -21,7 +21,7 @@ class Executor(object):
     # Constants
     #
     RESULTS_DIRECTORY = path.realpath(
-        path.join(path.dirname(__file__), '../results'))
+    path.join(path.dirname(__file__), '../results'))
 
     DEFAULT_PARAMS = {
         'batch_size': 500,
@@ -30,6 +30,7 @@ class Executor(object):
         'validation_split': 0.0,
         'monitor_metric': 'val_f1_score_pos_neg',
         'model_checkpoint_monitor_metric': 'val_f1_score_pos_neg',
+        'early_stopping_monitor_metric': 'val_f1_score_pos_neg',
         'monitor_metric_mode': 'max'
     }
 
@@ -54,6 +55,7 @@ class Executor(object):
         self.monitor_metric = self.params['monitor_metric']
         self.monitor_metric_mode = self.params['monitor_metric_mode']
         self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
+        self.early_stopping_monitor_metric = self.params['early_stopping_monitor_metric']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, self.group_id, self.name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
@@ -116,20 +118,17 @@ class Executor(object):
             self.log('Model loaded (round #%d)' % count)
 
             X_train = txts[train]
-            X_test = []
-
-            if len(test) > 0:
-                X_test = txts[test]
+            X_test = txts_val
 
             Y_train = sents[train]
-            Y_test = []
+            Y_test = sents_val
 
             if len(test) > 0:
                 Y_test = sents[test]
 
             self.log('Start training (round #%d)' % count)
 
-            history = self.train(curr_model, X_train, Y_train, txts_val, sents_val, count)
+            history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
             histories[count] = history.history
 
             self.log('Finished training (round #%d)' % count)
@@ -138,7 +137,7 @@ class Executor(object):
             curr_model.load_weights(self.weights_path % count)
 
             if len(X_test) > 0 and len(Y_test) > 0:
-                score = curr_model.evaluate(txts_val, to_categorical(sents_val), verbose=1)
+                score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
                 scores.append(score)
 
                 self.log('Finished validating trained model (round #%d)' % count)
@@ -171,7 +170,6 @@ class Executor(object):
 
         self.store_histories(histories, monitor_metric_opt_nr)
 
-
     def train(self, m, X_train, Y_train, X_test, Y_test, count):
         '''This method trains the given model.'''
         validation_data = ()
@@ -202,8 +200,8 @@ class Executor(object):
 
     def create_early_stopping(self):
         '''Creates the early stopping callback for the model.'''
-        return EarlyStopping(monitor='val_f1_score_pos_neg', patience=50,
-                             verbose=1, mode='max')
+        return EarlyStopping(patience=50, verbose=1, mode='max',
+                             monitor=self.early_stopping_monitor_metric)
 
     def load_test_data(self, path, vocabulary):
         '''Loads the file at the given path with the tsv loader.'''
@@ -238,24 +236,28 @@ class Executor(object):
         all_metrics = []
         metrics_names = model.metrics_names
 
+        if len(scores) == 0:
+            self.log('ERROR: no validation metrics available to store')
+            return
+
         for i in range(0, len(scores)):
             all_metrics.append({})
 
         for i in range(0, len(metrics_names)):
-            name = metrics_names[i]
+                name = metrics_names[i]
 
-            for j, s in enumerate(scores):
-                if name not in avg_metrics:
-                    avg_metrics[name] = []
+                for j, s in enumerate(scores):
+                    if name not in avg_metrics:
+                        avg_metrics[name] = []
 
-                avg_metrics[name].append(s[i])
-                all_metrics[j][name] = s[i]
-                all_metrics[j]['round'] = j + 1
+                    avg_metrics[name].append(s[i])
+                    all_metrics[j][name] = s[i]
+                    all_metrics[j]['round'] = j + 1
 
         for n in metrics_names:
-            avg_metrics['%s_std' % n] = np.std(avg_metrics[n])
-            avg_metrics['%s_mean' % n] = np.mean(avg_metrics[n])
-            avg_metrics[n] = np.sum(avg_metrics[n]) / len(scores)
+                avg_metrics['%s_std' % n] = np.std(avg_metrics[n])
+                avg_metrics['%s_mean' % n] = np.mean(avg_metrics[n])
+                avg_metrics[n] = np.sum(avg_metrics[n]) / len(scores)
 
         final_metrics = {
             'avg': avg_metrics,
