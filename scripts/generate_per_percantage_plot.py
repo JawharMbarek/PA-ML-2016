@@ -41,10 +41,11 @@ for perc in range(0, 10):
 
             with open(metrics_path) as f:
                 metrics = json.load(f)
+                stop_idx = len(metrics['all'])
 
                 x_data.append(float(perc) / 100.0)
                 y_data.append(np.mean([
-                    metrics['all'][i]['f1_score_pos_neg'] for i in range(0, 10)
+                    metrics['all'][i]['f1_score_pos_neg'] for i in range(0, stop_idx)
                 ]))
 
 
