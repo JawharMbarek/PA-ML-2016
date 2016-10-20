@@ -70,7 +70,7 @@ for i in range(0, len(argv)):
         # Take the config name for the results directory
         # in case of no name is defined
         if not 'name' in params:
-            params['name'] = path.splitext(path.basename(config_path))[0]
+            params['name'] = path.splitext(path.basename(cfg))[0]
 
         # Store the git hash in the params
         params['git_rev'] = git_rev
