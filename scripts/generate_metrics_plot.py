@@ -36,6 +36,8 @@ plt.title('metrics')
 plt.xlabel('epoch')
 plt.ylabel('%')
 
+plt.ylim(0.0, 1.0)
+
 if metrics_file.endswith('_all.json'):
     if nb_run == -1:
         print('Number of run to plot is missing (argument -n)')
@@ -49,7 +51,7 @@ for name, values in metrics.items():
         plt.plot(metrics[name])
 
 plt.legend(metric_names, loc='upper left')
-
+plt
 if image_file == '':
     plt.show()
 else:
