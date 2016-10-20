@@ -29,7 +29,7 @@ valid_count = 7000
 x_data = []
 y_data = []
 
-for perc in range(1, 10):
+for perc in range(0, 10):
     perc *= 10
     perc_str = str('%dPercent' % perc)
 
