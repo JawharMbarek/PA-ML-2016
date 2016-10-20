@@ -23,13 +23,10 @@ header = ','.join([
     'f1_score_neu\n'
 ])
 
-metrics_line = '%s,%d,%f,%f,%f,%f,%f,%f,%f\n'
+metrics_line = '%s,%s,%s,%s,%s,%s,%s,%s,%s\n'
 
 with open(out_file % int(time.time()), 'w+') as f:
     f.write(header)
-
-    nb_kfold = -1 # is set after loading the first
-                  # set of metrics
 
     for results_dir in argv:
         metrics_file = path.join(results_dir, 'validation_metrics.json')
@@ -47,21 +44,22 @@ with open(out_file % int(time.time()), 'w+') as f:
         with open(metrics_file, 'r') as metrics_f:
             metrics = json.loads(metrics_f.read())
 
-            all_metrics = metrics['all']
-            avg_metrics = metrics['avg']
+            all_metrics = []
 
-            if nb_kfold == -1:
-                nb_kfold = len(all_metrics)
+            if 'all' in metrics:
+                all_metrics = metrics['all']
+            else:
+                all_metrics.append(metrics)
 
             for m in all_metrics:
                 f.write(metrics_line % (
                     name,
-                    m['round'],
-                    m['acc'],
-                    m['loss'],
-                    m['f1_score'],
-                    m['f1_score_pos_neg'],
-                    m['f1_score_pos'],
-                    m['f1_score_neg'],
-                    m['f1_score_neu']
+                    m.get('round', '-'),
+                    m.get('acc', '-'),
+                    m.get('loss', '-'),
+                    m.get('f1_score', '-'),
+                    m.get('f1_score_pos_neg', '-'),
+                    m.get('f1_score_pos', '-'),
+                    m.get('f1_score_neg', '-'),
+                    m.get('f1_score_neu', '-')
                 ))
