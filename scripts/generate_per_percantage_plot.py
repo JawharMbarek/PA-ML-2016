@@ -31,10 +31,11 @@ y_data = []
 
 for perc in range(0, 10):
     perc *= 10
-    perc_str = str('%dPercent' % perc)
+    perc_str = str('_%dPercent' % perc)
+    already_loaded = False
 
     for dir in os.listdir(results_path):
-        if perc_str in dir:
+        if perc_str in dir and not already_loaded:
             print('Loading data for %s (for %f%%)' % (dir, perc))
 
             metrics_path = path.join(results_path, dir, 'validation_metrics.json')
@@ -48,6 +49,7 @@ for perc in range(0, 10):
                     metrics['all'][i]['f1_score_pos_neg'] for i in range(0, stop_idx)
                 ]))
 
+            already_loaded = True
 
 plt.plot(x_data, y_data)
 plt.xlim(0.0, 1.0)
