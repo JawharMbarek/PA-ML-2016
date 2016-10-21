@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import matplotlib.pyplot as plt
 import getopt
 import sys
@@ -12,16 +14,18 @@ absolute_values = False
 results_path = ''
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'a:r:',
-                               ['results=', 'absolute'])
+    opts, args = getopt.getopt(sys.argv[1:], 'a:r:i:',
+                               ['results=', 'image=', 'absolute'])
 except getopt.GetoptError:
-    print('./generate_per_percentage_plot.py <results-directory> (-a)')
+    print('./generate_per_percentage_plot.py <results-directory> -a -i <image>')
     sys.exit(2)
 for opt, arg in opts:
     if opt in ('-a', '--absolute'):
         absolute_values = True
     elif opt in ('-r', '--results'):
         results_path = arg
+    elif opt in ('-i', '--image'):
+        image_path = arg
 
 base_count  = 8000
 valid_count = 7000
@@ -56,4 +60,8 @@ plt.xlim(0.0, 1.0)
 plt.ylim(0.0, 1.0)
 plt.ylabel('F1 Score (Pos/Neg)')
 plt.xlabel('Percentage of domain specific training data')
-plt.show()
+
+if image_path == '':
+    plt.show()
+else:
+    plt.savefig(image_path)

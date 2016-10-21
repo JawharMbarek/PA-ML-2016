@@ -3,18 +3,29 @@ $(function () {
   var resultsUrl = '/results';
   var groupUrl = '/results/:groupid';
   var expUrl = '/results/:groupid/:name';
+  var generatePlotUrl = '/generate_plot';
+
+  var currMetrics = null;
+  var currExpUrl = null;
 
   var $pathText = $('#path_container h3');
   var $entriesList = $('#content_container ul');
   var $loadingText = $('#content_container h3');
   var $resultViewer = $('#result_viewer');
+  var $plotPlaceholder = $('#plot_placeholder');
+  var $plotCreateButton = $('#result_plots button');
+  var $resetButton = $('#reset_button');
+  var $metricsCombo = $('#metrics_combo');
+  var $plotType = $('#plot_type');
 
   var loadExp = function (groupid, expName) {
-    var currExpUrl = expUrl.replace(':groupid', groupid)
-                           .replace(':name', expName);
+    var exactExpUrl = expUrl.replace(':groupid', groupid)
+                             .replace(':name', expName);
 
+    $.get(exactExpUrl, function (metrics) {
+      currMetrics = metrics;
+      currExpUrl = exactExpUrl;
 
-    $.get(currExpUrl, function (metrics) {
       $resultViewer.jsonViewer(metrics, {collapsed: true});
     });
   }
@@ -59,5 +70,25 @@ $(function () {
       $newEntryLink.appendTo($newEntry);
       $newEntry.appendTo($entriesList);
     });
+  });
+
+  $plotCreateButton.click(function () {
+    if (!currExpUrl) {
+      alert('No experiment selected!');
+    }
+
+    var fullName = currExpUrl.replace('/results/', '');
+    var params = {
+      'metrics': $metricsCombo.val().join(','),
+      'plot_type': $plotType.val(),
+      'full_name': fullName
+    };
+
+    var plotUrl = generatePlotUrl + '?' + $.param(params);
+    $plotPlaceholder.attr('src', plotUrl);
+  });
+
+  $resetButton.click(function () {
+    window.location.reload();
   });
 });
