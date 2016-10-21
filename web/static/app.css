@@ -58,8 +58,14 @@ h1 {
   padding: 10px;
 }
 
-#content_container #result_plots {
-  height: 300px;
+#content_container #result_plots td {
+  height: 1500px;
+  padding-left: 20px;
+}
+
+#content_container #result_plots img {
+  margin-left: 30px;
+  height: 1250px;
 }
 
 #content_container #result_plots .col {
