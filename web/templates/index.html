@@ -11,12 +11,50 @@
     <h1>[PA-ML-2016 runner web view]</h1>
     <div id="path_container">
       <h3>/results</h3>
+      <button type="button" id="reset_button">RESET PATH</button>
     </div>
     <div id="content_container">
       <ul id="content_entries">
       </ul>
-      <div id="result_hypen"></div>
+      <div class="result_hypen"></div>
       <div id="result_viewer"></div>
+      <div class="result_hypen"></div>
+      <div id="result_plots">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <label>Plot type: </label>
+                <select id="plot_type">
+                  <option value="standard">Standard</option>
+                  <option value="per-percentage">Per pertencage</option>
+                </select>
+                <br /><br />
+                <label>Metrics combo: </label>
+                <select id="metrics_combo" multiple>
+                  <option value="val_f1_score_pos_neg">val_f1_score_pos_neg</option>
+                  <option value="val_f1_score_pos">val_f1_score_pos</option>
+                  <option value="val_f1_score_neg">val_f1_score_neg</option>
+                  <option value="val_f1_score_neu">val_f1_score_neu</option>
+                  <option value="f1_score_pos_neg">f1_score_pos_neg</option>
+                  <option value="f1_score_pos">f1_score_pos</option>
+                  <option value="f1_score_neg">f1_score_neg</option>
+                  <option value="f1_score_neu">f1_score_neu</option>
+                  <option value="val_acc">val_acc</option>
+                  <option value="acc">acc</option>
+                </select>
+                <br /><br />
+                <button type="button">Create</button>
+                <br />
+                <br />
+              </td>
+              <td>
+                <img id="plot_placeholder"></img>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </body>
 </html>

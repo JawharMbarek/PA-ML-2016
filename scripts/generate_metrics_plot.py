@@ -51,7 +51,7 @@ for name, values in metrics.items():
         plt.plot(metrics[name])
 
 plt.legend(metric_names, loc='upper left')
-plt
+
 if image_file == '':
     plt.show()
 else:

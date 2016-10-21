@@ -1,14 +1,18 @@
 import os
 import flask
 import json
+import tempfile
 
 from os import path
+from subprocess import Popen, PIPE
 
 app = flask.Flask(__name__)
 
 dirname = path.dirname(__file__)
 index_path = path.join(dirname, 'index.html')
 results_path = path.join(dirname, os.pardir, 'results')
+gen_plot_path = path.join(dirname, os.pardir, 'scripts', 'generate_metrics_plot.py')
+gen_pp_plot_path = path.join(dirname, os.pardir, 'scripts', 'generate_per_percentage_plot.py')
 
 @app.route('/')
 def index():
@@ -40,6 +44,55 @@ def results_groupid_exp(groupid, exp):
                 metrics_files[f] = json.load(fd)
 
     return flask.jsonify(metrics_files)
+
+@app.route('/generate_plot')
+def generate_plot():
+    with tempfile.NamedTemporaryFile(suffix='.png') as tf:
+        tf_name = tf.name
+        plot_type = flask.request.args.get('plot_type')
+        only_metrics = flask.request.args.get('metrics')
+        full_name = flask.request.args.get('full_name')
+        metrics_file_path = os.path.join(results_path, full_name, 'train_metrics_opt.json')
+
+        print('Using %s as a tempfile' % tf_name)
+        print('For the metrics file %s' % metrics_file_path)
+
+        if plot_type == 'standard':
+            plot_proc = Popen([
+                gen_plot_path,
+                '-i', tf_name,
+                '-o', only_metrics,
+                '-m', metrics_file_path
+            ], stdout=PIPE, stderr=PIPE)
+
+            plot_proc.communicate()
+            plot_err = plot_proc.returncode
+
+            print('generate_metrics_plot.py return the error code %s' % plot_err)
+
+            if plot_err == 0:
+                return flask.send_file(tf_name, mimetype='image/png')
+            else:
+                return '500 error', 500
+        elif plot_type == 'per-percentage':
+            groupid = path.split(full_name)[0]
+
+            plot_proc = Popen([
+                gen_pp_plot_path,
+                '-r', path.join(results_path, groupid),
+                '-i', tf_name
+            ], stdout=PIPE, stderr=PIPE)
+
+            plot_proc.communicate()
+            plot_err = plot_proc.returncode
+
+            print('generate_per_percentage_plot.py return the error code %s' % plot_err)
+
+            if plot_err == 0:
+                return flask.send_file(tf_name, mimetype='image/png')
+            else:
+                return '500 error', 500
+
 
 def get_exp_names(groupid):
     groupid = groupid.replace('/', '')
