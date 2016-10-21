@@ -59,6 +59,7 @@ def generate_plot():
 
         if plot_type == 'standard':
             plot_proc = Popen([
+                'python',
                 gen_plot_path,
                 '-i', tf_name,
                 '-o', only_metrics,
@@ -78,15 +79,17 @@ def generate_plot():
             groupid = path.split(full_name)[0]
 
             plot_proc = Popen([
+                'python',
                 gen_pp_plot_path,
                 '-r', path.join(results_path, groupid),
                 '-i', tf_name
-            ], stdout=PIPE, stderr=PIPE)
+            ], stdout=PIPE, stderr=PIPE, shell=True)
 
-            plot_proc.communicate()
+            output = plot_proc.communicate()
             plot_err = plot_proc.returncode
 
             print('generate_per_percentage_plot.py return the error code %s' % plot_err)
+            print('output: %s' % str(output))
 
             if plot_err == 0:
                 return flask.send_file(tf_name, mimetype='image/png')

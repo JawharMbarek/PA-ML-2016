@@ -1,0 +1,27 @@
+
+.container div.jumbotron.row {
+  background-color: #f5f5f5;
+}
+
+#content_outter_container {
+  display: none;
+}
+
+#plot_modal .modal-body #image_container {
+  width: 800px;
+  height: 600px;
+}
+
+#plot_modal .modal-dialog {
+  width: 830px;
+}
+
+#plot_modal .modal-body {
+  max-height: 100%;
+  max-width: 1000px;
+}
+
+#plot_modal .modal-content {
+  max-height: 100%;
+  width: 830px;
+}
