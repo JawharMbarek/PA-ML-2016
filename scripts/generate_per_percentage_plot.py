@@ -65,12 +65,18 @@ for perc in range(0, 10):
 
             already_loaded = True
 
+keys = []
+
 for k, m in y_data.items():
     plt.plot(x_data, m)
-    plt.xlim(0.0, 1.0)
-    plt.ylim(0.0, 1.0)
-    plt.ylabel(k)
-    plt.xlabel('Percentage of domain specific training data')
+    keys.append(k)
+
+plt.xlim(0.0, 1.0)
+plt.ylim(0.0, 1.0)
+plt.ylabel(', '.join(keys))
+plt.xlabel('Percentage of domain specific training data')
+
+plt.legend(keys, loc='best')
 
 if image_path == '':
     plt.show()
