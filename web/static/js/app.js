@@ -7,12 +7,18 @@ $(function () {
 
   var currMetrics = null;
   var currExpUrl = null;
+  var currEvaluatorMappings = {
+    'm_train': null,
+    'm_all': null,
+    'm_val': null
+  };
 
   var $pathBreadcrumbs = $('#path_container ol');
   var $pathText = $('#path_container h3');
   var $contentOutterContainer = $('#content_outter_container');
   var $contentContainer = $('#content_container');
   var $contentContainerTitle = $('#content_container_title');
+  var $pathSelectionContainer = $('#path_selection_container');
   var $entriesList = $('#path_selection_container #content_entries');
   var $resultViewer = $('#result_viewer');
   var $plotPlaceholder = $('#plot_placeholder');
@@ -22,6 +28,10 @@ $(function () {
   var $plotType = $('#plot_type');
   var $resultsLink = $('#results_link');
   var $plotModal = $('#plot_modal');
+
+  var $evaluateTextArea = $('#evaluate_editor_txt');
+  var $evaluateButton = $('#evaluate_button');
+  var $evaluateResults = $('#evaluate_results');
 
   var loadGroups = function () {
     $contentOutterContainer.hide();
@@ -36,6 +46,7 @@ $(function () {
 
         $newEntryLink.text(groupid);
         $newEntryLink.click(function () {
+          $pathSelectionContainer.show();
           loadGroup(groupid);
         });
 
@@ -56,10 +67,11 @@ $(function () {
     $.get(exactExpUrl, function (metrics) {
       currMetrics = metrics;
       currExpUrl = exactExpUrl;
-      setBreadcrumbs(groupid, expName);
+      setBreadcrumbs(groupid, expName, true);
       $resultViewer.jsonViewer(metrics, {collapsed: true});
       $contentOutterContainer.find('h5').text(groupid + '/' + expName);
       $contentOutterContainer.show();
+      $pathSelectionContainer.hide();
     });
   };
 
@@ -103,6 +115,7 @@ $(function () {
     $newBreadcrumbGroupLink.text(groupid);
     $newBreadcrumbGroupLink.click(function (e) {
       e.preventDefault();
+      $pathSelectionContainer.show();
       loadGroup(groupid);
     });
 
@@ -112,18 +125,32 @@ $(function () {
     var $newBreadcrumbExp = $breadcrumbTmpl.clone();
     var $newBreadcrumbExpLink = $breadcrumbLinkTmpl.clone();
 
-    $newBreadcrumbExpLink.text(expName);
-    $newBreadcrumbExpLink.click(function (e) {
-      e.preventDefault();
-      loadExp(groupid, expName);
-    });
-
-    $newBreadcrumbExpLink.appendTo($newBreadcrumbExp);
-    $newBreadcrumbExp.appendTo($pathBreadcrumbs);
+    $newBreadcrumbExp.text(expName).appendTo($pathBreadcrumbs);
   };
 
-  $resultsLink.click(function () {
+  $resultsLink.click(function (e) {
+    e.preventDefault();
+    $pathSelectionContainer.show();
     loadGroups();
+  });
+
+  $evaluateButton.click(function (e) {
+    e.preventDefault();
+
+    currEvaluatorMappings = {
+      m_opt: currMetrics['train_metrics_opt.json'],
+      m_all: currMetrics['train_metrics_all.json'],
+      m_val: currMetrics['validation_metrics.json']
+    };
+
+    try {    
+      var evalText = $evaluateTextArea.val();
+      var result = math.eval(evalText, currEvaluatorMappings);
+
+      $evaluateResults.find('p').text(result);
+    } catch (e) {
+      $evaluateResults.find('p').text('ERROR: ' + e.toString());
+    }
   });
 
   $plotCreateButton.click(function (e) {
