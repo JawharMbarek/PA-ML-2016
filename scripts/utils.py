@@ -1,4 +1,5 @@
 import numpy
+import matplotlib.pyplot as plt
 
 def load_bin_vec(fname, words):
     '''Loads 300x1 word vecs from Google (Mikolov) word2vec.'''
@@ -64,3 +65,9 @@ def load_glove_vec(fname, words, delimiter, dim):
                     print('Word2Vec count: ', count)
 
     return word_vecs
+
+def set_figure_size(X=12, Y=6):
+    fig_size = plt.rcParams['figure.figsize']
+    fig_size[0] = 16
+    fig_size[1] = 12
+    plt.rcParams['figure.figsize'] = fig_size

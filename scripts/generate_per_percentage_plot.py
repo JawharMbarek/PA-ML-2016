@@ -9,6 +9,9 @@ import json
 import numpy as np
 
 from os import path
+from utils import set_figure_size
+
+set_figure_size()
 
 image_path = ''
 absolute_values = False
