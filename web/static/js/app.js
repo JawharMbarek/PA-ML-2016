@@ -168,10 +168,18 @@ $(function () {
       return;
     }
 
+    var plotType = $plotType.val();
+    var metrics = $metricsCombo.val();
+
+    if (plotType == 'boxplot' && metrics.length > 1) {
+      alert('You cannot select "Boxplot" with multiple metrics, only select one!');
+      return;
+    }
+
     var fullName = currExpUrl.replace('/results/', '');
     var params = {
-      'metrics': $metricsCombo.val().join(','),
-      'plot_type': $plotType.val(),
+      'metrics': metrics.join(','),
+      'plot_type': plotType,
       'full_name': fullName,
       'time': new Date().getTime()
     };

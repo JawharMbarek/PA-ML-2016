@@ -64,8 +64,9 @@ plt.boxplot(list(y_data.values()), patch_artist=True)
 plt.legend(keys, loc='best')
 plt.ylim(0.0, 1.0)
 
-# plt.xlabel('Boxplots of %s' % ', '.join(keys))
+plt.xlabel('Boxplots of %s for 10%%-90%% domain specific data' % metric)
 
+# plt.xlabel('Boxplots of %s' % ', '.join(keys))
 # plt.legend(keys, loc='best')
 
 if image_path == '':
