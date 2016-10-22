@@ -13,6 +13,7 @@ index_path = path.join(dirname, 'index.html')
 results_path = path.join(dirname, os.pardir, 'results')
 gen_plot_path = path.join(dirname, os.pardir, 'scripts', 'generate_metrics_plot.py')
 gen_pp_plot_path = path.join(dirname, os.pardir, 'scripts', 'generate_per_percentage_plot.py')
+gen_bp_plot_path = path.join(dirname, os.pardir, 'scripts', 'generate_boxplot_per_percentage_plot.py')
 
 @app.route('/')
 def index():
@@ -91,6 +92,28 @@ def generate_plot():
 
             print('generate_per_percentage_plot.py return the error code %s' % plot_err)
             print('generate_per_percentage_plot.py output %s' % str(output))
+
+            if plot_err == 0:
+                return flask.send_file(tf_name, mimetype='image/png')
+            else:
+                return '500 error', 500
+
+        elif plot_type == 'boxplot':
+            groupid = path.split(full_name)[0]
+
+            plot_proc = Popen([
+                'python',
+                gen_bp_plot_path,
+                '-r', path.join(results_path, groupid),
+                '-i', tf_name,
+                '-m', only_metrics
+            ], stdout=PIPE, stderr=PIPE)
+
+            output = plot_proc.communicate()
+            plot_err = plot_proc.returncode
+
+            print('generate_boxplot_per_percentage_plot.py return the error code %s' % plot_err)
+            print('generate_boxplot_per_percentage_plot.py output %s' % str(output))
 
             if plot_err == 0:
                 return flask.send_file(tf_name, mimetype='image/png')

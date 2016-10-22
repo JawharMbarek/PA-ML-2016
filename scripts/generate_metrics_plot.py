@@ -5,6 +5,10 @@ import getopt
 import sys
 import json
 
+from utils import set_figure_size
+
+set_figure_size()
+
 metrics_file = ''
 image_file = ''
 only_list = []
