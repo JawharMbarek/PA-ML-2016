@@ -172,7 +172,8 @@ $(function () {
     var params = {
       'metrics': $metricsCombo.val().join(','),
       'plot_type': $plotType.val(),
-      'full_name': fullName
+      'full_name': fullName,
+      'time': new Date().getTime()
     };
 
     var plotUrl = generatePlotUrl + '?' + $.param(params);

@@ -24,6 +24,11 @@ select {
   height: 600px;
 }
 
+#plot_modal .modal-body img {
+  max-width: 800px;
+  max-height: 600px;
+}
+
 #plot_modal .modal-dialog {
   width: 830px;
 }
