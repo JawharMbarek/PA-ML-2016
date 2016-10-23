@@ -62,7 +62,7 @@ keys = []
 
 plt.boxplot(list(y_data.values()), patch_artist=True)
 plt.legend(keys, loc='best')
-plt.ylim(0.0, 2.0)
+plt.ylim(0.0, 1.0)
 
 plt.xlabel('Boxplots of %s for 10%%-200%% domain specific data' % metric)
 
