@@ -40,7 +40,7 @@ valid_count = 7000
 x_data = []
 y_data = {}
 
-for perc in range(0, 10):
+for perc in range(0, 21):
     perc *= 10
     perc_str = str('_%dPercent' % perc)
     already_loaded = False
@@ -62,12 +62,9 @@ keys = []
 
 plt.boxplot(list(y_data.values()), patch_artist=True)
 plt.legend(keys, loc='best')
-plt.ylim(0.0, 1.0)
+plt.ylim(0.0, 2.0)
 
-plt.xlabel('Boxplots of %s for 10%%-90%% domain specific data' % metric)
-
-# plt.xlabel('Boxplots of %s' % ', '.join(keys))
-# plt.legend(keys, loc='best')
+plt.xlabel('Boxplots of %s for 10%%-200%% domain specific data' % metric)
 
 if image_path == '':
     plt.show()

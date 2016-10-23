@@ -42,7 +42,7 @@ y_data = {}
 
 only_metrics = list(set([x.replace('val_', '') for x in only_metrics]))
 
-for perc in range(0, 10):
+for perc in range(0, 21):
     perc *= 10
     perc_str = str('_%dPercent' % perc)
     already_loaded = False
@@ -74,7 +74,7 @@ for k, m in y_data.items():
     plt.plot(x_data, m)
     keys.append(k)
 
-plt.xlim(0.0, 1.0)
+plt.xlim(0.0, 2.0)
 plt.ylim(0.0, 1.0)
 plt.ylabel(', '.join(keys))
 plt.xlabel('Percentage of domain specific training data')
