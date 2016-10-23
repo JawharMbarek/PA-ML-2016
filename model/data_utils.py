@@ -9,6 +9,22 @@ POLARITY_TASK_CONVERSION = {
     'positive': 2
 }
 
+def compute_class_weights(sentiments):
+    '''Computes the class weights for the given list of sentiments.'''
+    class_weights = {}
+    tmp_class_weights = {}
+    nb_per_class = len(sentiments) / 3
+
+    for s in sentiments:
+        if not s in tmp_class_weights:
+            tmp_class_weights[s] = 0
+
+        tmp_class_weights[s] += 1
+
+    for k, n in tmp_class_weights.items():
+        class_weights[k] = nb_per_class / n
+
+    return class_weights
 
 def tsv_sentiment_loader(fname, alphabet, tokenizer, delimiter='\t'):
     '''This function loads a TSV file containing example texts with
@@ -40,7 +56,7 @@ def tsv_sentiment_loader(fname, alphabet, tokenizer, delimiter='\t'):
 
     tweet_idx = parse_utils.convert2indices(tweets, alphabet, dummy_word_idx)
 
-    return [], lables, tweet_idx, nlabels
+    return [], lables, tweet_idx, data_raw, nlabels
 
 
 def fbeta_score(y_true, y_pred, beta=1):

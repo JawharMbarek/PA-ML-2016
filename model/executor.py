@@ -3,6 +3,7 @@ import numpy as np
 import os
 import json
 
+from data_utils import compute_class_weights
 from data_loader import DataLoader
 from model import Model
 
@@ -31,7 +32,9 @@ class Executor(object):
         'monitor_metric': 'val_f1_score_pos_neg',
         'model_checkpoint_monitor_metric': 'val_f1_score_pos_neg',
         'early_stopping_monitor_metric': 'val_f1_score_pos_neg',
-        'monitor_metric_mode': 'max'
+        'monitor_metric_mode': 'max',
+        'randomize_test_data': True,
+        'set_class_weights': False
     }
 
     def __init__(self, name, params):
@@ -56,6 +59,8 @@ class Executor(object):
         self.monitor_metric_mode = self.params['monitor_metric_mode']
         self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
         self.early_stopping_monitor_metric = self.params['early_stopping_monitor_metric']
+        self.randomize_test_data = self.params['randomize_test_data']
+        self.set_class_weights = self.params['set_class_weights']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, self.group_id, self.name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
@@ -86,8 +91,19 @@ class Executor(object):
         self.log('Loading test data')
 
         vocabulary = self.load_vocabulary(vocabulary_path)
-        sents, txts, nlabels = DataLoader.load(test_data, vocabulary)
-        sents_val, txts_val, nlabels = DataLoader.load(validation_data_path, vocabulary)
+
+        sents, txts, raw_data, nlabels = DataLoader.load(
+            test_data, vocabulary,
+            randomize=self.params['randomize_test_data']
+        )
+
+        sents_val, txts_val, raw_data_val, nlabels = DataLoader.load(
+            validation_data_path, vocabulary,
+            randomize=self.params['randomize_test_data']
+        )
+
+        self.store_tsv_data(raw_data, 'train')
+        self.store_tsv_data(raw_data_val, 'validation')
 
         self.log('Test data loaded')
 
@@ -171,11 +187,18 @@ class Executor(object):
         '''This method trains the given model.'''
         validation_data = ()
         validation_split = None
+        class_weights = None
 
         if len(X_test) > 0 and len(Y_test) > 0:
             validation_data = (X_test, to_categorical(Y_test))
         elif self.validation_split > 0.0:
             validation_split = self.validation_split
+
+        if self.set_class_weights:
+            class_weights = compute_class_weights(Y_train)
+
+        for k, w in class_weights.items():
+            print('%d => %.2f' % (k, w))
 
         return m.fit(X_train, to_categorical(Y_train),
                      validation_data=validation_data,
@@ -199,11 +222,6 @@ class Executor(object):
         '''Creates the early stopping callback for the model.'''
         return EarlyStopping(patience=50, verbose=1, mode='max',
                              monitor=self.early_stopping_monitor_metric)
-
-    def load_test_data(self, path, vocabulary):
-        '''Loads the file at the given path with the tsv loader.'''
-        tokenizer = TweetTokenizer(reduce_len=True)
-        return tsv_sentiment_loader(path, vocabulary, tokenizer)
 
     def load_vocabulary(self, path):
         '''Loads the vocabulary stored as a pickle file.'''
@@ -263,6 +281,21 @@ class Executor(object):
 
         with open(self.validation_metrics_path, 'w+') as f:
             f.write(json.dumps(final_metrics))
+
+    def store_tsv_data(self, raw_data, name):
+        file_path = path.join(self.results_path, '%s_data.tsv' % name)
+        entry_id = 1
+        entry_format = '%s\t%s\t%s\n'
+
+        sentiment_mapping = {
+            0: 'negative',
+            1: 'neutral',
+            2: 'positive'
+        }
+
+        with open(file_path, 'w+') as f:
+            for d in raw_data:
+                f.write('%s\n' % '\t'.join(d))
 
     def create_results_directories(self):
         '''This function is responsible for creating the results directory.'''
