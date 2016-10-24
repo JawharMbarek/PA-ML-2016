@@ -34,7 +34,8 @@ class Executor(object):
         'early_stopping_monitor_metric': 'val_f1_score_pos_neg',
         'monitor_metric_mode': 'max',
         'randomize_test_data': True,
-        'set_class_weights': False
+        'set_class_weights': False,
+        'model_id': 1
     }
 
     def __init__(self, name, params):
@@ -61,6 +62,7 @@ class Executor(object):
         self.early_stopping_monitor_metric = self.params['early_stopping_monitor_metric']
         self.randomize_test_data = self.params['randomize_test_data']
         self.set_class_weights = self.params['set_class_weights']
+        self.model_id = self.params['model_id']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, self.group_id, self.name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
@@ -124,7 +126,7 @@ class Executor(object):
         for train, test in data_iter:
             self.log('Loading model (round #%d)' % count)
 
-            curr_model = Model(self.name, vocab_emb).build()
+            curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
 
             # store the model only on the first iteration
             if not model_stored:
