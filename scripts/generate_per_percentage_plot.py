@@ -28,7 +28,7 @@ for opt, arg in opts:
     if opt in ('-a', '--absolute'):
         absolute_values = True
     elif opt in ('-r', '--results'):
-        results_path = arg
+        results_path = arg.split(',')
     elif opt in ('-i', '--image'):
         image_path = arg
     elif opt in ('-m', '--only-metrics'):
@@ -42,41 +42,58 @@ y_data = {}
 
 only_metrics = list(set([x.replace('val_', '') for x in only_metrics]))
 
+already_loaded = {}
+
 for perc in range(0, 21):
     perc *= 10
     perc_str = str('_%dPercent' % perc)
-    already_loaded = False
 
-    for dir in os.listdir(results_path):
-        if perc_str in dir and not already_loaded:
-            print('Loading data for %s (for %f%%)' % (dir, perc))
+    for rpath in results_path:
+        group_name = rpath.replace('results/', '')
 
-            metrics_path = path.join(results_path, dir, 'validation_metrics.json')
+        abs_perc = float(perc) / 100.0
 
-            with open(metrics_path) as f:
-                metrics = json.load(f)
-                stop_idx = len(metrics['all'])
-                x_data.append(float(perc) / 100.0)
+        if not abs_perc in x_data:
+            x_data.append(abs_perc)
 
-                for m in only_metrics:
-                    if not m in y_data:
-                        y_data[m] = []
+        if not group_name in y_data:
+            y_data[group_name] = {}
 
-                    y_data[m].append(np.mean([
-                        metrics['all'][i][m] for i in range(0, stop_idx)
-                    ]))
+        if not group_name in already_loaded or not perc_str in already_loaded[group_name]:
+            already_loaded[group_name] = {perc_str: False}
 
-            already_loaded = True
+        for dir in os.listdir(rpath):
+            if perc_str in dir and not already_loaded[group_name][perc_str]:
+                print('Loading data for %s (for %f%%)' % (dir, perc))
+
+                metrics_path = path.join(rpath, dir, 'validation_metrics.json')
+
+                with open(metrics_path) as f:
+                    metrics = json.load(f)
+                    stop_idx = len(metrics['all'])
+
+                    for m in only_metrics:
+                        if not m in y_data[group_name]:
+                            y_data[group_name][m] = []
+
+                        y_data[group_name][m].append(np.mean([metrics['all'][i][m] for i in range(0, stop_idx)]))
+
+                already_loaded[group_name][perc_str] = True
 
 keys = []
+max_entries_length = -1
 
-for k, m in y_data.items():
-    plt.plot(x_data, m)
-    keys.append(k)
+for r, m in y_data.items():
+    for k, values in m.items():
+        if len(values) > max_entries_length:
+            max_entries_length = len(values)
 
-plt.xlim(0.0, 2.0)
+        keys.append('%s (%s)' % (k, r))
+        plt.plot(x_data[0:len(values)], values)
+
+plt.xlim(0.0, (max_entries_length - 1) * 0.1)
 plt.ylim(0.0, 1.0)
-plt.ylabel(', '.join(keys))
+plt.ylabel(', '.join(only_metrics))
 plt.xlabel('Percentage of domain specific training data')
 
 plt.legend(keys, loc='best')
