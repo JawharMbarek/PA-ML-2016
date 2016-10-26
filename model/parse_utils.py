@@ -29,7 +29,7 @@ def convert2indices(data, alphabet, dummy_word_idx,
             sentence = sentence[:max_sent_length]
 
         for i, token in enumerate(sentence):
-            idx, freq = alphabet.get(token, (UNKNOWN_WORD_IDX, 0))
+            idx = alphabet.get(token, UNKNOWN_WORD_IDX)
             ex[i] = idx
 
             if idx == UNKNOWN_WORD_IDX:

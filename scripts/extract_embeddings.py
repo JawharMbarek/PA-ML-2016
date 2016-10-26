@@ -16,7 +16,7 @@ def main(argv):
     emb_path = ''
     emb_name = ''
     fname_vocab = ''
-    out_dir = ''
+    outfile = ''
 
     try:
         opts, args = getopt.getopt(argv, "v:e:o:", ['out=', "vocab=", "embedding="])
@@ -30,7 +30,7 @@ def main(argv):
             emb_path = arg
             emb_name = arg
         elif opt in ('-o', '--output'):
-            out_dir = arg
+            outfile = arg
 
     # get vocabulary
     print(fname_vocab)
@@ -47,17 +47,19 @@ def main(argv):
     random_words_count = 0
     vocab_emb = np.zeros((len(vocab) + 1, emb_dim), dtype='float32')
 
-    for word, (idx, freq) in vocab.items():
+    for word, idx in vocab.items():
+        word_vec = None
+
         if word not in word2vec or word2vec[word].shape[0] != 52:
             word_vec = np.random.uniform(-0.25, 0.25, emb_dim)
             random_words_count += 1
+        else:
+            word_vec = word2vec[word]
 
         vocab_emb[idx] = word_vec
 
     print('Words with random embeddings: %d' % random_words_count)
     print('Shape of the embeddings matrix: %s' % str(vocab_emb.shape))
-
-    outfile = '{}_emb.npy'.format(emb_name)
     print('Saving embedding matrix to: %s' % outfile)
 
     np.save(outfile, vocab_emb)
