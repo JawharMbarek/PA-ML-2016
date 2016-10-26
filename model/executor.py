@@ -199,9 +199,6 @@ class Executor(object):
         if self.set_class_weights:
             class_weights = compute_class_weights(Y_train)
 
-        for k, w in class_weights.items():
-            print('%d => %.2f' % (k, w))
-
         return m.fit(X_train, to_categorical(Y_train),
                      validation_data=validation_data,
                      nb_epoch=self.nb_epoch,
