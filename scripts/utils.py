@@ -66,8 +66,8 @@ def load_glove_vec(fname, words, delimiter, dim):
 
     return word_vecs
 
-def set_figure_size(X=12, Y=6):
+def set_figure_size(X=12, Y=8):
     fig_size = plt.rcParams['figure.figsize']
-    fig_size[0] = 16
-    fig_size[1] = 12
+    fig_size[0] = X
+    fig_size[1] = Y
     plt.rcParams['figure.figsize'] = fig_size
