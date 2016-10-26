@@ -39,13 +39,14 @@ $(function () {
     $.get(resultsUrl, function (groups) {
       $entriesList.find('li').remove();
 
-      $.each(groups, function () {
+      $.each(groups.sort(), function () {
         var $newEntry = $('<li />');
         var $newEntryLink = $('<a />');
         var groupid = this;
 
         $newEntryLink.text(groupid);
-        $newEntryLink.click(function () {
+        $newEntryLink.click(function (e) {
+          e.preventDefault();
           $pathSelectionContainer.show();
           loadGroup(groupid);
         });
@@ -84,13 +85,14 @@ $(function () {
 
       $entriesList.find('li').remove();
 
-      $.each(exps, function () {
+      $.each(exps.sort(), function () {
         var $newEntry = $('<li />');
         var $newEntryLink = $('<a />');
         var expName = this;
 
         $newEntryLink.text(expName);
-        $newEntryLink.click(function () {
+        $newEntryLink.click(function (e) {
+          e.preventDefault();
           loadExp(groupid, expName);
         });
 
