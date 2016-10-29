@@ -1,5 +1,5 @@
 {
-  "group_id": "crossdomain_mpq_reviews_v6",
+  "group_id": "crossdomain_mpq_reviews_v8",
   "set_class_weights": true,
   "test_data": {
     "testdata/MPQ_reviews_train.tsv": 6000
