@@ -1,0 +1,16 @@
+{
+  "group_id": "crossdomain_mpq_reviews_news_embeddings_v9",
+  "set_class_weights": true,
+  "test_data": {
+    "testdata/JCR_Quotations.tsv": 1000,
+    "testdata/MPQ_News.tsv": 1000,
+    "testdata/SEM_Headlines.tsv": 1000,
+    "testdata/SemEval_tweets_train.tsv": 1000,
+    "testdata/MPQ_reviews_train.tsv": 2800
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_wiki_emb.npy",
+  "validation_data_path": "testdata/MPQ_reviews_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_wiki_emb.pickle"
+}
