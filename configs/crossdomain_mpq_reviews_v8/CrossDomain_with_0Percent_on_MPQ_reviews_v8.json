@@ -1,8 +1,8 @@
 {
-  "group_id": "crossdomain_mpq_reviews_v6",
+  "group_id": "crossdomain_mpq_reviews_v8",
   "set_class_weights": true,
   "test_data": {
-    "testdata/MPQ_reviews_train.tsv": 0
+    "testdata/MPQ_reviews_train.tsv": 1
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,
