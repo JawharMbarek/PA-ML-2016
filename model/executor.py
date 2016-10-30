@@ -35,7 +35,10 @@ class Executor(object):
         'monitor_metric_mode': 'max',
         'randomize_test_data': True,
         'set_class_weights': False,
-        'model_id': 1
+        'model_id': 1,
+        'samples_per_epoch': 100000,
+        'use_generator': False,
+        'validation_data_path': None
     }
 
     def __init__(self, name, params):
@@ -63,6 +66,8 @@ class Executor(object):
         self.randomize_test_data = self.params['randomize_test_data']
         self.set_class_weights = self.params['set_class_weights']
         self.model_id = self.params['model_id']
+        self.use_generator = self.params['use_generator']
+        self.samples_per_epoch = self.params['samples_per_epoch']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, self.group_id, self.name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
@@ -90,74 +95,88 @@ class Executor(object):
         vocab_emb_path = self.params['vocabulary_embeddings']
         vocab_emb = np.load(vocab_emb_path)
 
-        self.log('Loading test data')
-
         vocabulary = self.load_vocabulary(vocabulary_path)
 
-        sents, txts, raw_data, nlabels = DataLoader.load(
-            test_data, vocabulary,
-            randomize=self.params['randomize_test_data']
-        )
+        if self.use_generator:
+            self.log('Loading model')
+            self.log('Will be using a generator for large amounts of test data!')
 
-        sents_val, txts_val, raw_data_val, nlabels = DataLoader.load(
-            validation_data_path, vocabulary,
-            randomize=self.params['randomize_test_data']
-        )
+            model = Model(self.name, vocab_emb, True).build(self.model_id)
+            generator = TsvDataLoader(test_data).load_lazy()
 
-        self.store_tsv_data(raw_data, 'train')
-        self.store_tsv_data(raw_data_val, 'validation')
+            history = model.fit_generator(
+                generator, self.samples_per_epoch, 
+                nb_epoch=self.nb_epoch
+            )
 
-        self.log('Test data loaded')
-
-        if self.nb_kfold_cv > 1:
-            self.log('Using %d-fold cross-validation' % self.nb_kfold_cv)
-
-        count = 1
-        histories = {}
-        scores = []
-        model_stored = False
-        data_iter = None
-
-        if self.nb_kfold_cv > 1:
-            data_iter = StratifiedKFold(sents, n_folds=self.nb_kfold_cv)
-        else:
-            data_iter = [[range(0, len(sents)), []]]
-
-        for train, test in data_iter:
-            self.log('Loading model (round #%d)' % count)
-
-            curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
-
-            # store the model only on the first iteration
-            if not model_stored:
-                self.store_model(curr_model)
-                model_stored = True
-
-            self.log('Model loaded (round #%d)' % count)
-
-            X_train = txts[train]
-            X_test = txts_val
-
-            Y_train = sents[train]
-            Y_test = sents_val
-
-            self.log('Start training (round #%d)' % count)
-
-            history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
             histories[count] = history.history
+            self.log('Finished training')
+        else:
+            self.log('Loading test data')
 
-            self.log('Finished training (round #%d)' % count)
-            self.log('Validating trained model (round #%d)' % count)
+            sents, txts, raw_data, nlabels = DataLoader.load(
+                test_data, vocabulary,
+                randomize=self.params['randomize_test_data']
+            )
 
-            curr_model.load_weights(self.weights_path % count)
+            sents_val, txts_val, raw_data_val, nlabels = DataLoader.load(
+                validation_data_path, vocabulary,
+                randomize=self.params['randomize_test_data']
+            )
 
-            if len(X_test) > 0 and len(Y_test) > 0:
-                score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
-                scores.append(score)
+            self.store_tsv_data(raw_data, 'train')
+            self.store_tsv_data(raw_data_val, 'validation')
 
-                self.log('Finished validating trained model (round #%d)' % count)
+            self.log('Test data loaded')
 
-            count += 1
+            if self.nb_kfold_cv > 1:
+                self.log('Using %d-fold cross-validation' % self.nb_kfold_cv)
+
+            count = 1
+            histories = {}
+            scores = []
+            model_stored = False
+            data_iter = None
+            if self.nb_kfold_cv > 1:
+                data_iter = StratifiedKFold(sents, n_folds=self.nb_kfold_cv)
+            else:
+                data_iter = [[range(0, len(sents)), []]]
+
+            for train, test in data_iter:
+                self.log('Loading model (round #%d)' % count)
+
+                curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
+
+                # store the model only on the first iteration
+                if not model_stored:
+                    self.store_model(curr_model)
+                    model_stored = True
+
+                self.log('Model loaded (round #%d)' % count)
+
+                X_train = txts[train]
+                X_test = txts_val
+
+                Y_train = sents[train]
+                Y_test = sents_val
+
+                self.log('Start training (round #%d)' % count)
+
+                history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
+                histories[count] = history.history
+
+                self.log('Finished training (round #%d)' % count)
+
+                if len(X_test) > 0 and len(Y_test) > 0:
+                    self.log('Validating trained model (round #%d)' % count)
+
+                    curr_model.load_weights(self.weights_path % count)
+                    score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
+                    scores.append(score)
+
+                    self.log('Finished validating trained model (round #%d)' % count)
+
+                count += 1
 
         self.store_validation_results(curr_model, scores)
 
@@ -190,14 +209,14 @@ class Executor(object):
         validation_data = ()
         validation_split = None
         class_weights = None
+        result = None
 
+        if self.set_class_weights:
+            class_weights = compute_class_weights(Y_train)
         if len(X_test) > 0 and len(Y_test) > 0:
             validation_data = (X_test, to_categorical(Y_test))
         elif self.validation_split > 0.0:
             validation_split = self.validation_split
-
-        if self.set_class_weights:
-            class_weights = compute_class_weights(Y_train)
 
         return m.fit(X_train, to_categorical(Y_train),
                      validation_data=validation_data,
@@ -205,6 +224,7 @@ class Executor(object):
                      validation_split=validation_split,
                      batch_size=self.batch_size,
                      callbacks=self.get_callbacks(count))
+
 
     def get_callbacks(self, counter):
         '''Creates the necessary callbacks for the keras model

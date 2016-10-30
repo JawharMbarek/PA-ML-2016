@@ -14,7 +14,7 @@ class Model(object):
        can be created.'''
 
     # hyperparameters
-    input_maxlen = 140
+    input_maxlen = 500
     nb_filter = 200
     nb_embedding_dims = 52
     filter_length = 6
