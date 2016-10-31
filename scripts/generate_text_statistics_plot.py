@@ -11,7 +11,7 @@ from utils import set_figure_size
 set_figure_size()
 
 SENTIMENT_COLOR = {
-    'neutral': 'brown',
+    'neutral': 'lightblue',
     'positive': 'green',
     'negative': 'red'
 }
@@ -39,7 +39,7 @@ with sns.axes_style('white'):
     sns.set_context('talk')
 
     # plot details
-    bar_width = 0.35
+    bar_width = 0.2
     epsilon = .015
     line_width = 1
     opacity = 0.7
@@ -67,4 +67,5 @@ plt.xlabel('Data files')
 plt.ylabel('Percentage of samples')
 plt.xticks(pos_bar_positions + bar_width, stats_files, rotation=90, fontsize=8)
 plt.ylim(0.0, 1.0)
+plt.gcf().subplots_adjust(bottom=0.25)
 plt.show()
