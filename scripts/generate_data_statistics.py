@@ -37,8 +37,6 @@ stats_vocab = {}
 with open(vocabulary_path, 'rb') as f:
     vocabulary = pickle.load(f)
 
-id_set = set()
-
 for file_path in data_paths:
     if file_path.endswith('.tsv'):
         sentiments, _, data, _ = DataLoader.load(file_path, vocabulary)
@@ -57,11 +55,6 @@ for file_path in data_paths:
         sentiment_neu_count = sum([x == 0 for x in sentiments])
 
         for t in map(lambda x: x[-1], data):
-            if t in id_set:
-                continue
-            else:
-                id_set.add(t)
-
             words = tokenizer.tokenize(parse_utils.preprocess_tweet(t))
 
             for w in words:

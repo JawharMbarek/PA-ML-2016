@@ -1,5 +1,5 @@
 {
-  "group_id": "crossdomain_semeval_tweets_news_embeddings_v6",
+  "group_id": "crossdomain_semeval_tweets_news_embeddings_v8",
   "set_class_weights": true,
   "test_data": {
     "testdata/SemEval_tweets_train.tsv": 4400

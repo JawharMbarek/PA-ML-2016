@@ -5,12 +5,12 @@ import pickle
 
 from gensim.models import Word2Vec
 
-argv = sys.argv[1:]
-
-if len(argv) != 2:
+if len(sys.argv) != 3:
     print('ERROR: To much/few arguments!')
     print('       python scripts/extract_embeddings_vocabulary.py <embeddings> <vocab out>')
+    sys.exit(2)
 
+argv = sys.argv[1:]
 
 emb_path = argv[0]
 out_path = argv[1]
