@@ -51,8 +51,8 @@ for file_path in data_paths:
         words_present_in_vocab = 0
 
         sentiment_pos_count = sum([x == 2 for x in sentiments])
-        sentiment_neg_count = sum([x == 1 for x in sentiments])
-        sentiment_neu_count = sum([x == 0 for x in sentiments])
+        sentiment_neu_count = sum([x == 1 for x in sentiments])
+        sentiment_neg_count = sum([x == 0 for x in sentiments])
 
         for t in map(lambda x: x[-1], data):
             words = tokenizer.tokenize(parse_utils.preprocess_tweet(t))
