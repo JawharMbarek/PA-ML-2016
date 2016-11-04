@@ -99,10 +99,24 @@ class Executor(object):
 
         if self.use_generator:
             self.log('Loading model')
-            self.log('Will be using a generator for large amounts of test data!')
 
-            model = Model(self.name, vocab_emb, True).build(self.model_id)
-            generator = TsvDataLoader(test_data).load_lazy()
+            curr_batch = 1
+
+            with open('x_train_amazon_distant.npy', 'rb') as xf:
+                with open('y_train_amazon_distant.npy', 'rb') as yf:
+                    while True:
+                        try:
+                            curr_x = np.load(xf)
+                            curr_y = np.load(yf)
+
+                            metrics = model.train_on_batch(curr_x, curr_y)
+
+                            print('Finished training on batch %d' % curr_batch)
+                            print('Metrics of batch %d: %s' % (curr_batch, str(metrics)))
+
+                            curr_batch += 1
+                        except EOFError:
+                            break
 
             history = model.fit_generator(
                 generator, self.samples_per_epoch, 
