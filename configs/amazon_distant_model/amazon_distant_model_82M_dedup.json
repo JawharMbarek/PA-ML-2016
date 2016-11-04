@@ -1,9 +1,9 @@
 {
   "group_id": "amazon_distant_model",
   "use_generator": true,
-  "samples_per_epoch": 142800000,
+  "samples_per_epoch": 82400000,
   "test_data": "testdata/amazon_distant_train.tsv",
-  "name": "amazon_distant_model_142M_with_dups",
+  "name": "amazon_distant_model_82M_with_dups",
   "nb_epoch": 1,
   "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
   "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
