@@ -2,6 +2,7 @@ import _pickle as pickle
 import numpy as np
 import os
 import json
+import itertools
 
 from data_utils import compute_class_weights
 from data_loader import DataLoader
@@ -94,6 +95,7 @@ class Executor(object):
         vocabulary_path = self.params['vocabulary_path']
         vocab_emb_path = self.params['vocabulary_embeddings']
         vocab_emb = np.load(vocab_emb_path)
+        histories = {}
 
         vocabulary = self.load_vocabulary(vocabulary_path)
 
@@ -102,6 +104,8 @@ class Executor(object):
 
             curr_batch = 1
 
+            model = Model(self.name, vocab_emb).build(self.model_id)
+
             with open('x_train_amazon_distant.npy', 'rb') as xf:
                 with open('y_train_amazon_distant.npy', 'rb') as yf:
                     while True:
@@ -109,21 +113,31 @@ class Executor(object):
                             curr_x = np.load(xf)
                             curr_y = np.load(yf)
 
-                            metrics = model.train_on_batch(curr_x, curr_y)
+                            print('X-shape: %s' % str(curr_x.shape))
+                            print('Y-shape: %s' % str(curr_y.shape))
 
+                            def curr_generator():
+                                idx = 0
+
+                                while idx < len(curr_x):
+                                    yield (
+                                        curr_x[idx].reshape(1, 500),
+                                        curr_y[idx].reshape(1, 3)
+                                    )
+
+                                    idx += 1
+
+                            metrics = model.fit_generator(curr_generator(), len(curr_x), 1)
+
+                            histories[count] = history.history
+                            
                             print('Finished training on batch %d' % curr_batch)
-                            print('Metrics of batch %d: %s' % (curr_batch, str(metrics)))
+                            print('History of batch %d: %s' % (curr_batch, str(history.history)))
 
                             curr_batch += 1
                         except EOFError:
                             break
 
-            history = model.fit_generator(
-                generator, self.samples_per_epoch, 
-                nb_epoch=self.nb_epoch
-            )
-
-            histories[count] = history.history
             self.log('Finished training')
         else:
             self.log('Loading test data')
@@ -147,7 +161,6 @@ class Executor(object):
                 self.log('Using %d-fold cross-validation' % self.nb_kfold_cv)
 
             count = 1
-            histories = {}
             scores = []
             model_stored = False
             data_iter = None
