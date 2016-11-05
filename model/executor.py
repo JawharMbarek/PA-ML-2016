@@ -3,6 +3,7 @@ import numpy as np
 import os
 import json
 import itertools
+import time
 
 from data_utils import compute_class_weights
 from data_loader import DataLoader
@@ -102,41 +103,85 @@ class Executor(object):
         if self.use_generator:
             self.log('Loading model')
 
-            curr_batch = 1
-
             model = Model(self.name, vocab_emb).build(self.model_id)
 
             with open('x_train_amazon_distant.npy', 'rb') as xf:
                 with open('y_train_amazon_distant.npy', 'rb') as yf:
-                    while True:
+                    block_size = 1000
+                    final_weights_path = self.weights_path % 'model_amazon_distant_complete_final'
+
+                    while not path.isfile(final_weights_path):
                         try:
-                            curr_x = np.load(xf)
-                            curr_y = np.load(yf)
-
-                            print('X-shape: %s' % str(curr_x.shape))
-                            print('Y-shape: %s' % str(curr_y.shape))
-
                             def curr_generator():
-                                idx = 0
+                                total_count = 0
+                                max_sent_length = 500
 
-                                while idx < len(curr_x):
-                                    yield (
-                                        curr_x[idx].reshape(1, 500),
-                                        curr_y[idx].reshape(1, 3)
-                                    )
+                                start_time = time.time() 
 
-                                    idx += 1
+                                yield_x = np.ndarray(shape=(block_size, max_sent_length))
+                                yield_y = np.ndarray(shape=(block_size, 3))
 
-                            metrics = model.fit_generator(curr_generator(), len(curr_x), 1)
+                                while True:
+                                    try:
+                                        curr_x = np.load(xf)
+                                        curr_y = np.load(yf)
 
+                                        curr_idx = 0
+                                        yield_idx = 0
+
+                                        while curr_idx < len(curr_x):
+                                            yield_x[yield_idx] = curr_x[curr_idx].reshape(1, max_sent_length)
+                                            yield_y[yield_idx] = curr_y[curr_idx].reshape(1, 3)
+
+                                            if (yield_idx + 1) % block_size == 0 and yield_idx > 0:
+                                                if len(yield_x) != block_size or yield_x[0].shape[0] != max_sent_length:
+                                                    import pdb
+                                                    pdb.set_trace()
+
+                                                yield yield_x, yield_y
+
+                                                total_count += yield_idx + 1
+
+                                                print('\nProcessed %d training examples (total %d, took %.2fs)' % (
+                                                    (yield_idx + 1), total_count, time.time() - start_time
+                                                ))
+
+                                                print(len(yield_x))
+
+                                                yield_x = np.ndarray(shape=(block_size, max_sent_length))
+                                                yield_y = np.ndarray(shape=(block_size, 3))
+                                                yield_idx = 0
+
+                                            curr_idx += 1
+                                            yield_idx += 1
+
+                                        yield_x = np.ndarray(shape=(block_size, max_sent_length))
+                                        yield_y = np.ndarray(shape=(block_size, 3))
+
+                                        if total_count % 20e6 == 0:
+                                            name = 'model_amazon_distant_complete_%sM' % (str(total_count)[0:2])
+                                            model.save_weights(self.weights_path % name)
+                                            print('Model saved!')
+
+                                    except Exception as e:
+                                        if total_count < 40e6:
+                                            import pdb
+                                            pdb.set_trace()
+
+                                        print('Exception "%s" was thrown, resetting training data' % str(e))
+
+                                        xf.seek(0)
+                                        yf.seek(0)
+
+                            metrics = model.fit_generator(curr_generator(), self.samples_per_epoch / 10, 10, verbose=1)
                             histories[count] = history.history
-                            
-                            print('Finished training on batch %d' % curr_batch)
-                            print('History of batch %d: %s' % (curr_batch, str(history.history)))
+                            model.save_weights(final_weights_path)
 
-                            curr_batch += 1
-                        except EOFError:
-                            break
+                        except Exception as e:
+                            t = time.time()
+
+                            with open('%d-error.log' % t, 'w+') as f:
+                                f.write('ERROR occured while running at %d' % t)
 
             self.log('Finished training')
         else:
