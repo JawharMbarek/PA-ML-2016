@@ -4,6 +4,7 @@ import os
 import json
 import itertools
 import time
+import h5py
 
 from data_utils import compute_class_weights
 from data_loader import DataLoader
@@ -39,8 +40,10 @@ class Executor(object):
         'set_class_weights': False,
         'model_id': 1,
         'samples_per_epoch': 100000,
-        'use_generator': False,
-        'validation_data_path': None
+        'use_preprocessed_data': False,
+        'validation_data_path': None,
+        'max_sent_length': 140,
+        'preprocessed_data': None
     }
 
     def __init__(self, name, params):
@@ -68,8 +71,10 @@ class Executor(object):
         self.randomize_test_data = self.params['randomize_test_data']
         self.set_class_weights = self.params['set_class_weights']
         self.model_id = self.params['model_id']
-        self.use_generator = self.params['use_generator']
-        self.samples_per_epoch = self.params['samples_per_epoch']
+        self.max_sent_length = self.params['max_sent_length']
+
+        self.use_preprocessed_data = self.params['use_preprocessed_data']
+        self.preprocessed_data = self.params['preprocessed_data']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, self.group_id, self.name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
@@ -100,90 +105,64 @@ class Executor(object):
 
         vocabulary = self.load_vocabulary(vocabulary_path)
 
-        if self.use_generator:
+        if self.use_preprocessed_data:
             self.log('Loading model')
 
-            model = Model(self.name, vocab_emb).build(self.model_id)
+            model = Model(self.name, vocab_emb,
+                          input_maxlen=self.max_sent_length).build(self.model_id)
 
-            with open('x_train_amazon_distant.npy', 'rb') as xf:
-                with open('y_train_amazon_distant.npy', 'rb') as yf:
-                    block_size = 1000
-                    final_weights_path = self.weights_path % 'model_amazon_distant_complete_final'
+            self.log('Using preprocessed data: %s' % self.preprocessed_data)
 
-                    while not path.isfile(final_weights_path):
-                        try:
-                            def curr_generator():
-                                total_count = 0
-                                max_sent_length = 500
+            with h5py.File(self.preprocessed_data) as f:
+                train_x = f['x']
+                train_y = f['y']
 
-                                start_time = time.time() 
+                batch_size = self.batch_size
+                final_weights_path = self.weights_path % ('%s_complete_final' % self.name)
+                max_sent_length = len(train_x[0])
 
-                                yield_x = np.ndarray(shape=(block_size, max_sent_length))
-                                yield_y = np.ndarray(shape=(block_size, 3))
+                while not path.isfile(final_weights_path):
+                    def create_ndarray(max_size=max_sent_length):
+                        return np.ndarray(shape=(batch_size, max_size), dtype=np.int)
 
-                                while True:
-                                    try:
-                                        curr_x = np.load(xf)
-                                        curr_y = np.load(yf)
+                    def generator_function():
+                        total_count = 0
+                        base_idx = 0
+                        start_time = time.time()
 
-                                        curr_idx = 0
-                                        yield_idx = 0
+                        while total_count < len(train_x):
+                            yield_x = create_ndarray()
+                            yield_y = create_ndarray(3)
 
-                                        while curr_idx < len(curr_x):
-                                            yield_x[yield_idx] = curr_x[curr_idx].reshape(1, max_sent_length)
-                                            yield_y[yield_idx] = curr_y[curr_idx].reshape(1, 3)
+                            for i in range(0, batch_size):
+                                yield_x[i] = train_x[base_idx + i]
+                                yield_y[i] = train_y[base_idx + i]
 
-                                            if (yield_idx + 1) % block_size == 0 and yield_idx > 0:
-                                                if len(yield_x) != block_size or yield_x[0].shape[0] != max_sent_length:
-                                                    import pdb
-                                                    pdb.set_trace()
+                                total_count += 1
 
-                                                yield yield_x, yield_y
+                            base_idx += batch_size
 
-                                                total_count += yield_idx + 1
+                            yield yield_x, yield_y
 
-                                                print('\nProcessed %d training examples (total %d, took %.2fs)' % (
-                                                    (yield_idx + 1), total_count, time.time() - start_time
-                                                ))
+                            if total_count % 20e6 == 0:
+                                step = '%sM' % str(total_count)[0:2]
+                                name = 'model_amazon_distant_complete_%sM' % step
+                                model.save_weights(self.weights_path % name)
+                                self.log('Model saved after %d training examples' % step)
 
-                                                print(len(yield_x))
+                    metrics = model.fit_generator(
+                        generator_function(),
+                        len(train_x) / 10,
+                        10, verbose=1, nb_worker=1,
+                        max_q_size=batch_size
+                    )
 
-                                                yield_x = np.ndarray(shape=(block_size, max_sent_length))
-                                                yield_y = np.ndarray(shape=(block_size, 3))
-                                                yield_idx = 0
+                    histories[count] = history.history
 
-                                            curr_idx += 1
-                                            yield_idx += 1
+                    self.store_model(model)
+                    model.save_weights(final_weights_path)
 
-                                        yield_x = np.ndarray(shape=(block_size, max_sent_length))
-                                        yield_y = np.ndarray(shape=(block_size, 3))
-
-                                        if total_count % 20e6 == 0:
-                                            name = 'model_amazon_distant_complete_%sM' % (str(total_count)[0:2])
-                                            model.save_weights(self.weights_path % name)
-                                            print('Model saved!')
-
-                                    except Exception as e:
-                                        if total_count < 40e6:
-                                            import pdb
-                                            pdb.set_trace()
-
-                                        print('Exception "%s" was thrown, resetting training data' % str(e))
-
-                                        xf.seek(0)
-                                        yf.seek(0)
-
-                            metrics = model.fit_generator(curr_generator(), self.samples_per_epoch / 10, 10, verbose=1)
-                            histories[count] = history.history
-                            model.save_weights(final_weights_path)
-
-                        except Exception as e:
-                            t = time.time()
-
-                            with open('%d-error.log' % t, 'w+') as f:
-                                f.write('ERROR occured while running at %d' % t)
-
-            self.log('Finished training')
+                self.log('Finished training')
         else:
             self.log('Loading test data')
 

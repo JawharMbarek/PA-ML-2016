@@ -93,6 +93,8 @@ embeddings/*
 !embeddings/.gitkeep
 vocabularies/*
 !vocabularies/.gitkeep
+preprocessed/*
+!preprocessed/.gitkeep
 
 # Let's ignore weights for now
 *.h5

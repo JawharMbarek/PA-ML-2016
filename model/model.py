@@ -14,18 +14,19 @@ class Model(object):
        can be created.'''
 
     # hyperparameters
-    input_maxlen = 500
+    input_maxlen = 140
     nb_filter = 200
     nb_embedding_dims = 52
     filter_length = 6
     hidden_dims = nb_filter
     nb_labels = 3
 
-    def __init__(self, name, vocab_emb, verbose=False):
+    def __init__(self, name, vocab_emb, input_maxlen=140, verbose=False):
         '''Constructor for the model class.'''
         self.vocabulary_embeddings = vocab_emb
         self.max_features = vocab_emb.shape[0]
         self.verbose = verbose
+        self.input_maxlen = input_maxlen
 
     def build(self, id=1):
         '''This function builds the actual keras model which is then used
