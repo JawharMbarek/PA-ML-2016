@@ -96,20 +96,23 @@ class Executor(object):
         self.log('Starting run...')
         self.store_params()
 
+        curr_model = None
         test_data = self.params['test_data']
         validation_data_path = self.params['validation_data_path']
         vocabulary_path = self.params['vocabulary_path']
         vocab_emb_path = self.params['vocabulary_embeddings']
         vocab_emb = np.load(vocab_emb_path)
         histories = {}
+        scores = []
+        monitor_metric_opt_nr = None
 
         vocabulary = self.load_vocabulary(vocabulary_path)
 
         if self.use_preprocessed_data:
             self.log('Loading model')
 
-            model = Model(self.name, vocab_emb,
-                          input_maxlen=self.max_sent_length).build(self.model_id)
+            curr_model = Model(self.name, vocab_emb,
+                               input_maxlen=self.max_sent_length).build(self.model_id)
 
             self.log('Using preprocessed data: %s' % self.preprocessed_data)
 
@@ -117,15 +120,14 @@ class Executor(object):
                 train_x = f['x']
                 train_y = f['y']
 
-                batch_size = self.batch_size
                 final_weights_path = self.weights_path % ('%s_complete_final' % self.name)
                 max_sent_length = len(train_x[0])
 
                 while not path.isfile(final_weights_path):
                     def create_ndarray(max_size=max_sent_length):
-                        return np.ndarray(shape=(batch_size, max_size), dtype=np.int)
+                        return np.ndarray(shape=(self.batch_size, max_size), dtype=np.int)
 
-                    def generator_function():
+                    def generator_function(bsize):
                         total_count = 0
                         base_idx = 0
                         start_time = time.time()
@@ -134,33 +136,35 @@ class Executor(object):
                             yield_x = create_ndarray()
                             yield_y = create_ndarray(3)
 
-                            for i in range(0, batch_size):
+                            if bsize > (len(train_x) - total_count):
+                                bsize = total_count - len(train_x)
+
+                            for i in range(0, bsize):
                                 yield_x[i] = train_x[base_idx + i]
                                 yield_y[i] = train_y[base_idx + i]
 
                                 total_count += 1
 
-                            base_idx += batch_size
+                            base_idx += bsize
 
                             yield yield_x, yield_y
 
                             if total_count % 20e6 == 0:
                                 step = '%sM' % str(total_count)[0:2]
                                 name = 'model_amazon_distant_complete_%sM' % step
-                                model.save_weights(self.weights_path % name)
-                                self.log('Model saved after %d training examples' % step)
+                                curr_model.save_weights(self.weights_path % name)
+                                self.log('Model saved after %s training examples' % step)
 
-                    metrics = model.fit_generator(
-                        generator_function(),
+                    history = curr_model.fit_generator(
+                        generator_function(self.batch_size),
                         len(train_x) / 10,
-                        10, verbose=1, nb_worker=1,
-                        max_q_size=batch_size
+                        10, verbose=1, nb_worker=1
                     )
 
-                    histories[count] = history.history
+                    histories[1] = history.history
 
-                    self.store_model(model)
-                    model.save_weights(final_weights_path)
+                    self.store_model(curr_model)
+                    curr_model.save_weights(final_weights_path)
 
                 self.log('Finished training')
         else:
@@ -229,29 +233,30 @@ class Executor(object):
 
                 count += 1
 
-        self.store_validation_results(curr_model, scores)
+            if len(scores) > 0:
+                self.store_validation_results(curr_model, scores)
 
-        # Now we check all histories and only keep the model with the best f1 score
-        monitor_metric_opt = -1.0
-        monitor_metric_opt_nr = -1
+            # Now we check all histories and only keep the model with the best f1 score
+            monitor_metric_opt = -1.0
+            monitor_metric_opt_nr = -1
 
-        for nr, metrics in histories.items():
-            if self.monitor_metric not in metrics:
-                raise Exception('the metric "%s" is not available!' % self.monitor_metric)
+            for nr, metrics in histories.items():
+                if self.monitor_metric not in metrics:
+                    raise Exception('the metric "%s" is not available!' % self.monitor_metric)
 
-            values = metrics[self.monitor_metric]
-            store = False
+                values = metrics[self.monitor_metric]
+                store = False
 
-            for v in values:
-                store = self.monitor_metric_mode == 'max' and v > monitor_metric_opt
-                store = store or self.monitor_metric_mode == 'min' and v < monitor_metric_opt
+                for v in values:
+                    store = self.monitor_metric_mode == 'max' and v > monitor_metric_opt
+                    store = store or self.monitor_metric_mode == 'min' and v < monitor_metric_opt
 
-                if store:
-                    monitor_metric_opt = v
-                    monitor_metric_opt_nr = nr
+                    if store:
+                        monitor_metric_opt = v
+                        monitor_metric_opt_nr = nr
 
-        self.log('Looks like run #%d was the most successful with %s=%f' %
-                 (monitor_metric_opt_nr, self.monitor_metric, monitor_metric_opt))
+            self.log('Looks like run #%d was the most successful with %s=%f' %
+                     (monitor_metric_opt_nr, self.monitor_metric, monitor_metric_opt))
 
         self.store_histories(histories, monitor_metric_opt_nr)
 
@@ -309,8 +314,9 @@ class Executor(object):
 
     def store_histories(self, histories, opt_nr):
         '''Stores the history of learning as a npy file at the train_metrics_path.'''
-        with open(self.train_metrics_opt_path, 'w+') as f:
-            f.write(json.dumps(histories[opt_nr]))
+        if opt_nr is not None:
+            with open(self.train_metrics_opt_path, 'w+') as f:
+                f.write(json.dumps(histories[opt_nr]))
 
         with open(self.train_metrics_path, 'w+') as f:
             f.write(json.dumps(histories))
@@ -321,7 +327,7 @@ class Executor(object):
         all_metrics = []
         metrics_names = model.metrics_names
 
-        if len(scores) == 0:
+        if scores is None or len(scores) == 0:
             self.log('ERROR: no validation metrics available to store')
             return
 
