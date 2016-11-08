@@ -21,6 +21,9 @@ def convert2indices(data, alphabet, dummy_word_idx,
     max_len = 0
     unknown_words = 0
 
+    if type(data[0]) is str:
+        data = [data]
+
     for sentence in data:
         ex = np.ones(max_sent_length) * dummy_word_idx
         max_len = max(len(sentence), max_len)

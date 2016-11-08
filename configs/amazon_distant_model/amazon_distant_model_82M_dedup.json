@@ -1,0 +1,14 @@
+{
+  "group_id": "amazon_distant_model",
+  "use_preprocessed_data": true,
+  "preprocessed_data_x": "preprocessed/x_train_amazon_distant_500_tokens.npy",
+  "preprocessed_data_y": "preprocessed/y_train_amazon_distant_500_tokens.npy",
+  "samples_per_epoch": 82400000,
+  "test_data": "testdata/amazon_distant_train.tsv",
+  "name": "amazon_distant_model_82M_dedup",
+  "nb_epoch": 1,
+  "max_sent_length": 500,
+  "batch_size": 1000,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
+}

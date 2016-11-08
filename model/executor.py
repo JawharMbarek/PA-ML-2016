@@ -2,6 +2,9 @@ import _pickle as pickle
 import numpy as np
 import os
 import json
+import itertools
+import time
+import h5py
 
 from data_utils import compute_class_weights
 from data_loader import DataLoader
@@ -35,7 +38,12 @@ class Executor(object):
         'monitor_metric_mode': 'max',
         'randomize_test_data': True,
         'set_class_weights': False,
-        'model_id': 1
+        'model_id': 1,
+        'samples_per_epoch': 100000,
+        'use_preprocessed_data': False,
+        'validation_data_path': None,
+        'max_sent_length': 140,
+        'preprocessed_data': None
     }
 
     def __init__(self, name, params):
@@ -63,6 +71,10 @@ class Executor(object):
         self.randomize_test_data = self.params['randomize_test_data']
         self.set_class_weights = self.params['set_class_weights']
         self.model_id = self.params['model_id']
+        self.max_sent_length = self.params['max_sent_length']
+
+        self.use_preprocessed_data = self.params['use_preprocessed_data']
+        self.preprocessed_data = self.params['preprocessed_data']
 
         self.results_path = path.join(self.RESULTS_DIRECTORY, self.group_id, self.name)
         self.weights_path = path.join(self.results_path, 'weights_%s.h5')
@@ -84,104 +96,167 @@ class Executor(object):
         self.log('Starting run...')
         self.store_params()
 
+        curr_model = None
         test_data = self.params['test_data']
         validation_data_path = self.params['validation_data_path']
         vocabulary_path = self.params['vocabulary_path']
         vocab_emb_path = self.params['vocabulary_embeddings']
         vocab_emb = np.load(vocab_emb_path)
-
-        self.log('Loading test data')
+        histories = {}
+        scores = []
+        monitor_metric_opt_nr = None
 
         vocabulary = self.load_vocabulary(vocabulary_path)
 
-        sents, txts, raw_data, nlabels = DataLoader.load(
-            test_data, vocabulary,
-            randomize=self.params['randomize_test_data']
-        )
+        if self.use_preprocessed_data:
+            self.log('Loading model')
 
-        sents_val, txts_val, raw_data_val, nlabels = DataLoader.load(
-            validation_data_path, vocabulary,
-            randomize=self.params['randomize_test_data']
-        )
+            curr_model = Model(self.name, vocab_emb,
+                               input_maxlen=self.max_sent_length).build(self.model_id)
 
-        self.store_tsv_data(raw_data, 'train')
-        self.store_tsv_data(raw_data_val, 'validation')
+            self.log('Using preprocessed data: %s' % self.preprocessed_data)
 
-        self.log('Test data loaded')
+            with h5py.File(self.preprocessed_data) as f:
+                train_x = f['x']
+                train_y = f['y']
 
-        if self.nb_kfold_cv > 1:
-            self.log('Using %d-fold cross-validation' % self.nb_kfold_cv)
+                final_weights_path = self.weights_path % ('%s_complete_final' % self.name)
+                max_sent_length = len(train_x[0])
 
-        count = 1
-        histories = {}
-        scores = []
-        model_stored = False
-        data_iter = None
+                while not path.isfile(final_weights_path):
+                    def create_ndarray(max_size=max_sent_length):
+                        return np.ndarray(shape=(self.batch_size, max_size), dtype=np.int)
 
-        if self.nb_kfold_cv > 1:
-            data_iter = StratifiedKFold(sents, n_folds=self.nb_kfold_cv)
+                    def generator_function(bsize):
+                        total_count = 0
+                        base_idx = 0
+                        start_time = time.time()
+
+                        while total_count < len(train_x):
+                            yield_x = create_ndarray()
+                            yield_y = create_ndarray(3)
+
+                            if bsize > (len(train_x) - total_count):
+                                bsize = total_count - len(train_x)
+
+                            for i in range(0, bsize):
+                                yield_x[i] = train_x[base_idx + i]
+                                yield_y[i] = train_y[base_idx + i]
+
+                                total_count += 1
+
+                            base_idx += bsize
+
+                            yield yield_x, yield_y
+
+                            if total_count % 20e6 == 0:
+                                step = '%sM' % str(total_count)[0:2]
+                                name = 'model_amazon_distant_complete_%sM' % step
+                                curr_model.save_weights(self.weights_path % name)
+                                self.log('Model saved after %s training examples' % step)
+
+                    history = curr_model.fit_generator(
+                        generator_function(self.batch_size),
+                        len(train_x) / 10,
+                        10, verbose=1, nb_worker=1
+                    )
+
+                    histories[1] = history.history
+
+                    self.store_model(curr_model)
+                    curr_model.save_weights(final_weights_path)
+
+                self.log('Finished training')
         else:
-            data_iter = [[range(0, len(sents)), []]]
+            self.log('Loading test data')
 
-        for train, test in data_iter:
-            self.log('Loading model (round #%d)' % count)
+            sents, txts, raw_data, nlabels = DataLoader.load(
+                test_data, vocabulary,
+                randomize=self.params['randomize_test_data']
+            )
 
-            curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
+            sents_val, txts_val, raw_data_val, nlabels = DataLoader.load(
+                validation_data_path, vocabulary,
+                randomize=self.params['randomize_test_data']
+            )
 
-            # store the model only on the first iteration
-            if not model_stored:
-                self.store_model(curr_model)
-                model_stored = True
+            self.store_tsv_data(raw_data, 'train')
+            self.store_tsv_data(raw_data_val, 'validation')
 
-            self.log('Model loaded (round #%d)' % count)
+            self.log('Test data loaded')
 
-            X_train = txts[train]
-            X_test = txts_val
+            if self.nb_kfold_cv > 1:
+                self.log('Using %d-fold cross-validation' % self.nb_kfold_cv)
 
-            Y_train = sents[train]
-            Y_test = sents_val
+            count = 1
+            scores = []
+            model_stored = False
+            data_iter = None
+            if self.nb_kfold_cv > 1:
+                data_iter = StratifiedKFold(sents, n_folds=self.nb_kfold_cv)
+            else:
+                data_iter = [[range(0, len(sents)), []]]
 
-            self.log('Start training (round #%d)' % count)
+            for train, test in data_iter:
+                self.log('Loading model (round #%d)' % count)
 
-            history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
-            histories[count] = history.history
+                curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
 
-            self.log('Finished training (round #%d)' % count)
-            self.log('Validating trained model (round #%d)' % count)
+                # store the model only on the first iteration
+                if not model_stored:
+                    self.store_model(curr_model)
+                    model_stored = True
 
-            curr_model.load_weights(self.weights_path % count)
+                self.log('Model loaded (round #%d)' % count)
 
-            if len(X_test) > 0 and len(Y_test) > 0:
-                score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
-                scores.append(score)
+                X_train = txts[train]
+                X_test = txts_val
 
-                self.log('Finished validating trained model (round #%d)' % count)
+                Y_train = sents[train]
+                Y_test = sents_val
 
-            count += 1
+                self.log('Start training (round #%d)' % count)
 
-        self.store_validation_results(curr_model, scores)
+                history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
+                histories[count] = history.history
 
-        # Now we check all histories and only keep the model with the best f1 score
-        monitor_metric_opt = -1.0
-        monitor_metric_opt_nr = -1
+                self.log('Finished training (round #%d)' % count)
 
-        for nr, metrics in histories.items():
-            if self.monitor_metric not in metrics:
-                raise Exception('the metric "%s" is not available!' % self.monitor_metric)
+                if len(X_test) > 0 and len(Y_test) > 0:
+                    self.log('Validating trained model (round #%d)' % count)
 
-            values = metrics[self.monitor_metric]
-            store = False
+                    curr_model.load_weights(self.weights_path % count)
+                    score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
+                    scores.append(score)
 
-            for v in values:
-                store = self.monitor_metric_mode == 'max' and v > monitor_metric_opt
-                store = store or self.monitor_metric_mode == 'min' and v < monitor_metric_opt
+                    self.log('Finished validating trained model (round #%d)' % count)
 
-                if store:
-                    monitor_metric_opt = v
-                    monitor_metric_opt_nr = nr
+                count += 1
 
-        self.log('Looks like run #%d was the most successful with %s=%f' %
-                 (monitor_metric_opt_nr, self.monitor_metric, monitor_metric_opt))
+            if len(scores) > 0:
+                self.store_validation_results(curr_model, scores)
+
+            # Now we check all histories and only keep the model with the best f1 score
+            monitor_metric_opt = -1.0
+            monitor_metric_opt_nr = -1
+
+            for nr, metrics in histories.items():
+                if self.monitor_metric not in metrics:
+                    raise Exception('the metric "%s" is not available!' % self.monitor_metric)
+
+                values = metrics[self.monitor_metric]
+                store = False
+
+                for v in values:
+                    store = self.monitor_metric_mode == 'max' and v > monitor_metric_opt
+                    store = store or self.monitor_metric_mode == 'min' and v < monitor_metric_opt
+
+                    if store:
+                        monitor_metric_opt = v
+                        monitor_metric_opt_nr = nr
+
+            self.log('Looks like run #%d was the most successful with %s=%f' %
+                     (monitor_metric_opt_nr, self.monitor_metric, monitor_metric_opt))
 
         self.store_histories(histories, monitor_metric_opt_nr)
 
@@ -190,14 +265,14 @@ class Executor(object):
         validation_data = ()
         validation_split = None
         class_weights = None
+        result = None
 
+        if self.set_class_weights:
+            class_weights = compute_class_weights(Y_train)
         if len(X_test) > 0 and len(Y_test) > 0:
             validation_data = (X_test, to_categorical(Y_test))
         elif self.validation_split > 0.0:
             validation_split = self.validation_split
-
-        if self.set_class_weights:
-            class_weights = compute_class_weights(Y_train)
 
         return m.fit(X_train, to_categorical(Y_train),
                      validation_data=validation_data,
@@ -205,6 +280,7 @@ class Executor(object):
                      validation_split=validation_split,
                      batch_size=self.batch_size,
                      callbacks=self.get_callbacks(count))
+
 
     def get_callbacks(self, counter):
         '''Creates the necessary callbacks for the keras model
@@ -238,8 +314,9 @@ class Executor(object):
 
     def store_histories(self, histories, opt_nr):
         '''Stores the history of learning as a npy file at the train_metrics_path.'''
-        with open(self.train_metrics_opt_path, 'w+') as f:
-            f.write(json.dumps(histories[opt_nr]))
+        if opt_nr is not None:
+            with open(self.train_metrics_opt_path, 'w+') as f:
+                f.write(json.dumps(histories[opt_nr]))
 
         with open(self.train_metrics_path, 'w+') as f:
             f.write(json.dumps(histories))
@@ -250,7 +327,7 @@ class Executor(object):
         all_metrics = []
         metrics_names = model.metrics_names
 
-        if len(scores) == 0:
+        if scores is None or len(scores) == 0:
             self.log('ERROR: no validation metrics available to store')
             return
 
