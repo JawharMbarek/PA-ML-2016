@@ -100,9 +100,8 @@ with open(tsv_path, 'r') as tsvf:
 
                 curr_idx += len(tmp_x)
 
-                print('Processed and saved %d training examples (took %fs)' % (len(tmp_x), time.time() - start_time))
+                print('Processed and saved %d/%d training examples (took %fs)' % (curr_idx, max_count, time.time() - start_time))
             
-
             tmp_x = []
             tmp_y = []
 

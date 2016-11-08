@@ -52,7 +52,7 @@ def main(argv):
     random_words_count = 0
     vocab_emb = np.zeros((len(alph) + 1, ndim), dtype='float32')
 
-    for word, (idx, freq) in alph.items():
+    for word, idx in alph.items():
         word_vec = word2vec.get(word, None)
         if word_vec is None or word_vec.shape[0] != 52:
             word_vec = np.random.uniform(-0.25, 0.25, ndim)

@@ -5,6 +5,7 @@ import json
 import itertools
 import time
 import h5py
+import keras
 
 from data_utils import compute_class_weights
 from data_loader import DataLoader
@@ -43,7 +44,9 @@ class Executor(object):
         'use_preprocessed_data': False,
         'validation_data_path': None,
         'max_sent_length': 140,
-        'preprocessed_data': None
+        'preprocessed_data': None,
+        'model_json_path': None,
+        'model_weights_path': None
     }
 
     def __init__(self, name, params):
@@ -72,6 +75,9 @@ class Executor(object):
         self.set_class_weights = self.params['set_class_weights']
         self.model_id = self.params['model_id']
         self.max_sent_length = self.params['max_sent_length']
+
+        self.model_json_path = self.params['model_json_path']
+        self.model_weights_path = self.params['model_weights_path']
 
         self.use_preprocessed_data = self.params['use_preprocessed_data']
         self.preprocessed_data = self.params['preprocessed_data']
@@ -200,7 +206,19 @@ class Executor(object):
             for train, test in data_iter:
                 self.log('Loading model (round #%d)' % count)
 
-                curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
+                curr_model = None
+
+                if self.model_json_path and self.model_weights_path:
+                    self.log('Using model at %s' % self.model_json_path)
+                    self.log('Loading weights at %s' % self.model_weights_path)
+
+                    with open(self.model_json_path, 'r') as f:
+                        curr_model = keras.models.model_from_json(f.read())
+                        curr_model.load_weights(self.model_weights_path)
+
+                    curr_model = Model.compile(curr_model)
+                else:
+                    curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
 
                 # store the model only on the first iteration
                 if not model_stored:

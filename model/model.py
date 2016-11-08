@@ -89,14 +89,7 @@ class Model(object):
         if self.verbose:
             model.summary()
 
-        adadelta = Adadelta(lr=1.0, rho=0.95, epsilon=1e-6)
-
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=adadelta, metrics=['accuracy',
-                      ev.f1_score, ev.f1_score_pos, ev.f1_score_neg,
-                      ev.f1_score_pos_neg, ev.f1_score_neu])
-
-        return model
+        return Model.compile(model)
 
     def build2(self):
         '''Returns the version 2 of the model. This one uses
@@ -160,14 +153,7 @@ class Model(object):
         if self.verbose:
             model.summary()
 
-        adadelta = Adadelta(lr=1.0, rho=0.95, epsilon=1e-6)
-
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=adadelta, metrics=['accuracy',
-                      ev.f1_score, ev.f1_score_pos, ev.f1_score_neg,
-                      ev.f1_score_pos_neg, ev.f1_score_neu])
-
-        return model
+        return Model.compile(model)
 
     def build3(self):
         '''Returns the version 3 of the model. This one uses
@@ -243,6 +229,10 @@ class Model(object):
         if self.verbose:
             model.summary()
 
+        return Model.compile(model)
+
+    @staticmethod
+    def compile(model):
         adadelta = Adadelta(lr=1.0, rho=0.95, epsilon=1e-6)
 
         model.compile(loss='categorical_crossentropy',

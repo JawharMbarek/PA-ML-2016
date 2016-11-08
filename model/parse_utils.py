@@ -21,7 +21,7 @@ def convert2indices(data, alphabet, dummy_word_idx,
     max_len = 0
     unknown_words = 0
 
-    if type(data[0]) is str:
+    if type(data) is list and type(data[0]) is str:
         data = [data]
 
     for sentence in data:
