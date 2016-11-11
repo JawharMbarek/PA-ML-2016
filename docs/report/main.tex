@@ -1,0 +1,99 @@
+\documentclass[12pt,
+	a4paper,
+	listof=totoc,
+	bibliography=totoc,
+	parskip=full*
+	]{scrreprt}
+
+\usepackage[utf8x]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[babel,german=quotes]{csquotes}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{pdfpages}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{tabu}
+\usepackage{enumerate}
+\usepackage{adjustbox}
+\usepackage[left=3.00cm, right=2.00cm, top=1cm, bottom=1.5cm,includeheadfoot]{geometry}
+\usepackage{scrpage2}
+\pagestyle{scrheadings}
+\usepackage{todonotes}
+\usepackage[toc,nonumberlist]{glossaries}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+
+\renewcaptionname{ngerman}{\bibname}{Referenzen}
+
+\newenvironment{uctab}{%
+	\begin{minipage}{\textwidth}
+	\captionsetup{type=table}
+}{\end{minipage}\\*[6pt]}
+
+\input{glossary}
+\makeglossaries
+
+\newcommand{\mytitle}{PA HS16: Domänenübergreifende Sentiment-Analyse mit Deep Convolutional Neural Networks}
+\newcommand{\myauthor}{Dirk von Grünigen, Martin Weilenmann}
+
+\title{\mytitle}
+\author{\myauthor}
+
+\begin{document}
+\begin{titlepage}
+\includepdf{title}
+\end{titlepage}
+
+\include{abstract}
+
+\newgeometry{top=0.75cm,bottom=1cm}
+\tableofcontents
+\restoregeometry
+
+\include{introduction}
+\include{basics}
+\include{data}
+\include{methods}
+\include{results}
+\include{interpretation}
+\include{conclusion}
+\include{related_work}
+\include{appendix}
+
+
+\glsaddall
+\glossarystyle{altlistgroup}
+\printglossary[title=Glossar]
+\begin{thebibliography}{9}
+	
+	\bibitem{hess}
+	F. Hess. (25.05.2015). \emph{Alkoholrechner - Android-Apps auf Google Play} [Online]. URL: \url{https://play.google.com/store/apps/details?id=appinventor.ai_fabrice_hess1999.Alkoholrechner}
+	
+	\bibitem{promillekoll}
+	Systembolaget AB. (31.01.2014). \emph{Promillekoll - Android-Apps auf Google Play} [Online]. URL: \url{https://play.google.com/store/apps/details?id=se.systembolaget.promillekoll}
+	
+	\bibitem{android-ui}
+	\emph{Android 5.0 APIs - User Interface} [Online]. \url{https://developer.android.com/about/versions/android-5.0.html#UI}
+	
+	\bibitem{android-prefs}
+	\emph{Storage Options - Using Shared Preferences} [Online]. \url{https://developer.android.com/guide/topics/data/data-storage.html#pref}
+	
+	\bibitem{android-db}
+	\emph{Storage Options - Using Databases} [Online]. \url{https://developer.android.com/guide/topics/data/data-storage.html#db}
+	
+	\bibitem{larman}
+	C. Larman, \emph{UML 2 und Patterns angewendet. Objektorientierte Softwareentwicklung}, Heidelberg, München, Lanzberg, Frechen, Hamburg: mitp-Verlag, 2005
+	
+	
+\end{thebibliography}
+\listoftables
+\listoffigures
+
+\end{document}
