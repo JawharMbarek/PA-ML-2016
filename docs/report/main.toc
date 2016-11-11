@@ -7,8 +7,9 @@
 \contentsline {chapter}{\numberline {6}Interpretation}{8}{chapter.6}
 \contentsline {chapter}{\numberline {7}Schlussfolgerungen}{9}{chapter.7}
 \contentsline {chapter}{\numberline {8}\IeC {\"A}hnliche Arbeiten}{10}{chapter.8}
-\contentsline {chapter}{\numberline {9}Appendix}{11}{chapter.9}
-\contentsline {part}{Anhang}{11}{chapter.9}
-\contentsline {chapter}{\nonumberline Referenzen}{14}{chapter*.4}
-\contentsline {chapter}{\nonumberline Tabellenverzeichnis}{15}{chapter*.5}
-\contentsline {chapter}{\nonumberline Abbildungsverzeichnis}{16}{chapter*.6}
+\contentsline {chapter}{\numberline {9}Referenzen}{11}{chapter.9}
+\contentsline {chapter}{\nonumberline Referenzen}{12}{chapter*.2}
+\contentsline {chapter}{\numberline {10}Appendix}{14}{chapter.10}
+\contentsline {part}{Anhang}{14}{chapter.10}
+\contentsline {chapter}{\nonumberline Tabellenverzeichnis}{16}{chapter*.5}
+\contentsline {chapter}{\nonumberline Abbildungsverzeichnis}{17}{chapter*.6}
