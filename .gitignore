@@ -107,3 +107,10 @@ results/*my-fancy*
 # Ignore rendered plots
 plots/
 *.png
+
+# Ignore compiled tex files
+docs/**/*.aux
+docs/**/*.out
+docs/**/*.lof
+docs/**/*.synctex.gz
+docs/**/*.tex.*
