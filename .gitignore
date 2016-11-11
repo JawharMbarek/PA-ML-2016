@@ -100,6 +100,7 @@ preprocessed/*
 *.h5
 
 .DS_Store
+.fuse*
 
 # Ignore test results
 results/*my-fancy*
@@ -107,3 +108,10 @@ results/*my-fancy*
 # Ignore rendered plots
 plots/
 *.png
+
+# Ignore compiled tex files
+docs/**/*.aux
+docs/**/*.out
+docs/**/*.lof
+docs/**/*.synctex.gz
+docs/**/*.tex.*

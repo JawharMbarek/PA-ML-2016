@@ -1,0 +1,74 @@
+\documentclass[12pt,
+	a4paper,
+	listof=totoc,
+	bibliography=totoc,
+	parskip=full*
+	]{scrreprt}
+
+\usepackage[utf8x]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[babel,german=quotes]{csquotes}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{pdfpages}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{tabu}
+\usepackage{enumerate}
+\usepackage{adjustbox}
+\usepackage[left=3.00cm, right=2.00cm, top=1cm, bottom=1.5cm,includeheadfoot]{geometry}
+\usepackage{scrpage2}
+\pagestyle{scrheadings}
+\usepackage{todonotes}
+\usepackage[toc,nonumberlist]{glossaries}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+
+\renewcaptionname{ngerman}{\bibname}{Referenzen}
+
+\newenvironment{uctab}{%
+	\begin{minipage}{\textwidth}
+	\captionsetup{type=table}
+}{\end{minipage}\\*[6pt]}
+
+\input{glossary}
+\makeglossaries
+
+\newcommand{\mytitle}{PA HS16: Domänenübergreifende Sentiment-Analyse mit Deep Convolutional Neural Networks}
+\newcommand{\myauthor}{Dirk von Grünigen, Martin Weilenmann}
+
+\title{\mytitle}
+\author{\myauthor}
+
+\begin{document}
+\include{title_page}
+
+\include{abstract}
+
+\newgeometry{top=0.75cm,bottom=1cm}
+\tableofcontents
+\restoregeometry
+
+\include{introduction}
+\include{basics}
+\include{data}
+\include{methods}
+\include{results}
+\include{interpretation}
+\include{conclusion}
+\include{related_work}
+\include{references}
+\glsaddall
+\glossarystyle{altlistgroup}
+\printglossary[title=Glossar]
+\include{appendix}
+\listoftables
+\listoffigures
+
+\end{document}
