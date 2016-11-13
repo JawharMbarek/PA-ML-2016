@@ -296,7 +296,7 @@ class Executor(object):
         elif self.validation_split > 0.0:
             validation_split = self.validation_split
 
-        return m.fit(X_train, to_categorical(Y_train),
+        return m.fit(X_train, to_categorical(Y_train, nb_classes=3),
                      validation_data=validation_data,
                      nb_epoch=self.nb_epoch,
                      validation_split=validation_split,
