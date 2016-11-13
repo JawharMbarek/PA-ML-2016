@@ -120,6 +120,7 @@ class Executor(object):
             curr_model = Model(self.name, vocab_emb,
                                input_maxlen=self.max_sent_length).build(self.model_id)
 
+            self.store_model(curr_model)
             self.log('Using preprocessed data: %s' % self.preprocessed_data)
 
             with h5py.File(self.preprocessed_data) as f:
@@ -168,8 +169,6 @@ class Executor(object):
                     )
 
                     histories[1] = history.history
-
-                    self.store_model(curr_model)
                     curr_model.save_weights(final_weights_path)
 
                 self.log('Finished training')
@@ -218,7 +217,7 @@ class Executor(object):
 
                     curr_model = Model.compile(curr_model)
                 else:
-                    curr_model = Model(self.name, vocab_emb, True).build(self.model_id)
+                    curr_model = Model(self.name, vocab_emb).build(self.model_id)
 
                 # store the model only on the first iteration
                 if not model_stored:
@@ -235,15 +234,20 @@ class Executor(object):
 
                 self.log('Start training (round #%d)' % count)
 
-                history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
-                histories[count] = history.history
+                if len(X_train) > 0:
+                    history = self.train(curr_model, X_train, Y_train, X_test, Y_test, count)
+                    histories[count] = history.history
 
                 self.log('Finished training (round #%d)' % count)
+
+                weights_path = self.weights_path % count
 
                 if len(X_test) > 0 and len(Y_test) > 0:
                     self.log('Validating trained model (round #%d)' % count)
 
-                    curr_model.load_weights(self.weights_path % count)
+                    if path.isfile(weights_path):
+                        curr_model.load_weights(self.weights_path % count)
+
                     score = curr_model.evaluate(X_test, to_categorical(Y_test), verbose=1)
                     scores.append(score)
 
@@ -332,7 +336,7 @@ class Executor(object):
 
     def store_histories(self, histories, opt_nr):
         '''Stores the history of learning as a npy file at the train_metrics_path.'''
-        if opt_nr is not None:
+        if opt_nr is not None and opt_nr != -1:
             with open(self.train_metrics_opt_path, 'w+') as f:
                 f.write(json.dumps(histories[opt_nr]))
 
