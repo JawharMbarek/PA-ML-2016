@@ -115,3 +115,7 @@ docs/**/*.out
 docs/**/*.lof
 docs/**/*.synctex.gz
 docs/**/*.tex.*
+
+# Ignore models content
+models/*
+!models/.gitkeep
