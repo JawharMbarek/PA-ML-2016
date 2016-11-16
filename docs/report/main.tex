@@ -30,8 +30,10 @@
 \usepackage{lscape}
 \usepackage{rotating}
 \usepackage{blindtext}
+\usepackage{booktabs}
 
 \renewcaptionname{ngerman}{\bibname}{Referenzen}
+\setcounter{secnumdepth}{3}
 
 \newenvironment{uctab}{%
 	\begin{minipage}{\textwidth}
@@ -43,6 +45,12 @@
 
 \newcommand{\mytitle}{PA HS16: Domänenübergreifende Sentiment-Analyse mit Deep Convolutional Neural Networks}
 \newcommand{\myauthor}{Dirk von Grünigen, Martin Weilenmann}
+
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+\newcommand{\specialcell}[2][c]{%
+	\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
 
 \title{\mytitle}
 \author{\myauthor}
