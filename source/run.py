@@ -48,7 +48,7 @@ if git_err != 0:
     print('ERROR: error while fetching current git revision SHA')
     sys.exit(1)
 
-for i in range(0, len(argv)):
+for i, arg in enumerate(argv):
     config_path = argv[i]
     configs = []
 
@@ -75,10 +75,16 @@ for i in range(0, len(argv)):
         # Store the git hash in the params
         params['git_rev'] = git_rev
 
-        if 'np_rand_seed' not in params:
-            params['np_rand_seed'] = np_rand_seed
-        else:
+        if 'np_rand_seed' in params:
             np_rand_seed = params['np_rand_seed']
+            print('Using configured seed: %s' % str(np_rand_seed))
+        elif 'NP_RAND_SEED' in os.environ:
+            np_rand_seed = int(os.environ['NP_RAND_SEED'])
+            params['np_rand_seed'] = np_rand_seed
+            print('Using injected seed: %s' % str(np_rand_seed))
+        else:
+            params['np_rand_seed'] = np_rand_seed
+            print('Using unix timestamp as seed: %s' % np_rand_seed)
 
         np.random.seed(np_rand_seed)
 
