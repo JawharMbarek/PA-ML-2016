@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python model/run.py $@
+python 'source/run.py' $@
