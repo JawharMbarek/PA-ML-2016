@@ -3,20 +3,20 @@ In diesem Kapitel wird aufgezeigt, wie die im Kapitel Einführung genannten Frag
 Der Kern dieser Arbeit dreht sich um folgende Frage: Verbessert sich ein neuronales Netz für eine spezifische Domäne, durch das hinzufügen domänenfremder Daten während der supervised Phase.
 \section{F1 Score}
 Um die Ergebnisse der Experimente zu vergleichen, wurde der positive und negative gemittelte F1 Score gewählt.
-Der F1 Score wird folgendermassen berechnet:
+Der F1 Score wird folgendermassen berechnet:\\
 \begin{equation}
 F1 = 2*\frac{precission*recall}{precission+recalll}
-\end{equation}
-Der F1 Score wird für die positiven, wie auch die negativen Fälle berechnet und dann wie folgt gemittelt:
+\end{equation}\\
+Der F1 Score wird für die positiven, wie auch die negativen Fälle berechnet und dann wie folgt gemittelt:\\
 \begin{equation}
 F1_{pn} = \frac{F1_p+F1_n}{2}
-\end{equation}
+\end{equation}\\
 Dieser Wert gilt als Standart, um die Qualität binärer Klassifizierung zu messen. Der grosse Vorteil dieses Masses ist, dass durch eine einseitige, falsche Klassifizierung, der Wert sehr schlecht wird.
 \section{Word Embeddings und Distant-Phase}
 \subsection{Word Embeddings}
 Alle beschriebenen Experimente wurden mit 2 verschiedenen Embeddings durchgeführt. Dabei soll der Einfluss, vielleicht auch eine Korrelation, zwischen den gewählten Embedings und der Zieldomäne untersucht werden. Die Experimente wurden mit Tweets und News Embeddings durchgeführt. Dass Tweets häufig aus vielen kurzen, teilweise auch stark abgekürzte, Sätzen bestehen und News aus längeren, grammatikalisch korrekten Sätzen, wurde absichtlich so gewählt, damit der Unterschiede im Resultat gut ersichtlich währen.
 \subsection{Distant-Phase}
-Aus der Arbeit \cite{DeriuMasterThesis} ist ersichtlich, dass dieser Vorgang mit Tweets eine Verbesserung von fast 5 Prozentpunkte auf den $F1_{pn}$ Score erbrachte.
+Aus der Arbeit \cite{deriu2016sentiment} ist ersichtlich, dass dieser Vorgang mit Tweets eine Verbesserung von fast 5 Prozentpunkte auf den $F1_{pn}$ Score erbrachte.
 Deshalb wurde in dieser Arbeit eine Distant-Phase auf Reviews getestet. Alle nachfolgend beschrieben Experimente wurden einmal mit und einmal ohne einer Distanz-Phase auf Amazon Reviews durchgeführt.
 
 \section{Aufbau der Experimente}
