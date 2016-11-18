@@ -5,7 +5,7 @@
 	parskip=full*
 	]{scrreprt}
 
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 \usepackage[babel,german=quotes]{csquotes}
 \usepackage[hidelinks]{hyperref}
@@ -31,17 +31,10 @@
 \usepackage{rotating}
 \usepackage{blindtext}
 \usepackage{booktabs}
+\usepackage[backend=bibtex, style=ieee]{biblatex}
 
 \renewcaptionname{ngerman}{\bibname}{Referenzen}
 \setcounter{secnumdepth}{3}
-
-\newenvironment{uctab}{%
-	\begin{minipage}{\textwidth}
-	\captionsetup{type=table}
-}{\end{minipage}\\*[6pt]}
-
-\input{glossary}
-\makeglossaries
 
 \newcommand{\mytitle}{PA HS16: Domänenübergreifende Sentiment-Analyse mit Deep Convolutional Neural Networks}
 \newcommand{\myauthor}{Dirk von Grünigen, Martin Weilenmann}
@@ -51,6 +44,11 @@
 \newcommand{\specialcell}[2][c]{%
 	\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 
+\bibliography{biblio}
+\nocite{*}
+
+\input{glossary}
+\makeglossaries
 
 \title{\mytitle}
 \author{\myauthor}
@@ -73,10 +71,10 @@
 \include{conclusion}
 \include{related_work}
 \include{references}
+\include{appendix}
 \glsaddall
 \glossarystyle{altlistgroup}
 \printglossary[title=Glossar]
-\include{appendix}
 \listoftables
 \listoffigures
 
