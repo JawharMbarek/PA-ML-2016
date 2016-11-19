@@ -2,7 +2,7 @@
   "group_id": "crossdomain_semeval_tweets_v8",
   "set_class_weights": true,
   "test_data": {
-    "testdata/SemEval_tweets_train.tsv": 10
+    "testdata/SemEval_tweets_train.tsv": 1
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,
