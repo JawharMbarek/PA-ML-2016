@@ -11,3 +11,42 @@ In diesem Kapitel werden die theoretischen Grundlagen, welche in den  folgenden 
 \blindtext
 \section{Distant-Phase Learning}
 \blindtext
+\section{Technischer Aufbau}
+Im folgenden Abschnitt wird der technische Aufbau, welcher verwendet wurde, um die in \ref{experiments} beschriebenen Experimente durchzuführen.
+\subsection{Software}
+\subsubsection{Vorarbeiten}
+\label{technichal_setup:prework}
+Der Grundaufbau der verwendeten Software wurde von Jan Deriu mithilfe von Keras\footnote{https://keras.io/} implementiert und zur Durchführung dieser Arbeit zur Verfügung gestellt. Im Rahmen dieses Grundaufbaus wurde die folgende Funktionalität bereits implementiert:
+
+\begin{itemize}
+	\item Implementation des CNN in Keras
+	\item Implementation von Evaluations-Metriken
+	\item Scripte mit den folgenden Funktionalitäten:
+	\begin{itemize}
+		\item Trainieren des CNN
+		\item Laden von TSV-Dateien
+		\item Vorverarbeiten von Word-Embeddings
+	\end{itemize}
+\end{itemize}
+\subsubsection{Anforderungen}
+\label{technical_setup:requirements}
+Ein System, welches die in \ref{experiments} beschriebenen Experimente durchzuführen, soll folgende Eigenschaften aufweisen:
+
+\begin{itemize}
+	\item \textbf{Parametrisierbarkeit}: Dadurch dass eine grosse Anzahl kleiner Experimente durchgeführt werden muss soll das System die Möglichkeit bitten Experimente parametrisiert durchzuführen.
+	\item \textbf{Wiederholbarkeit}: Experimente sollen wenn nötig mehrfach durchgeführt werden ohne einen Mehraufwand zu verursachen. 
+	\item \textbf{Übersichtlichkeit}: Resultate der Experimente sollen übersichtlich und einfach zugänglich sein.
+	\item \textbf{Auswertbarkeit}: Resultate sollen \fixme{Bessers Wort für Einfach?} einfach ausgewertet werden können.
+\end{itemize}
+
+Die in \ref{technichal_setup:prework} beschriebenen Vorarbeiten bitten eine Basis um damit ein System aufzubauen, welche die oben beschriebenen Eigenschaften aufweist. Allerdings werden diese Eigenschaften von dem von Jan Deriu implementierten Grundaufbau nicht abgedeckt.
+\subsubsection{Funktionalität}
+Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften aufweist, zu erhalten, wurden die folgenden Komponenten implementiert:
+
+\begin{itemize}
+	\item Blub
+\end{itemize}
+\subsubsection{Weboberfläche}
+Um die dritte Anforderung nach Übersichtlichkeit zu erfüllen wurde eine Weboberfläche umgesetzt, mit welchem die Parameter und Resultate aller durchgeführten Experimente übersichtlich und an einem Ort zur Verfügung zu stellen.
+\subsection{Hardware}
+\blindtext
