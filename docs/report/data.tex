@@ -7,25 +7,26 @@ Die Trainingsdaten, welche in dieser Arbeit verwendet wurden können in zwei Kla
 
 \begin{itemize}
 	\item Die Daten, welche Annotationen mit den entsprechenden Sentiments bereits mitlieferern, im Folgenden \emph{Supervised} genannt.
-	\item Die zweite Klasse beinhaltet Daten, welche keine Annotationen mitliefern. Bei diesen lässt sich der Sentiment der einzelen Datensätze über Eigenschaften des Textes ableiten. Als Beispiel kann hier zum Beispiel die Emoticon-Annotation aus \cite{DeriuMasterThesis} erwähnt werden. Dabei wurde der Sentiment eines Tweets daraus abgeleitet ob positive oder negative Emoticon im Tweet vorhanden sind. Diese Art von Daten wird im Folgenden \emph{Unsupervised} genannt.
+	\item Die zweite Klasse beinhaltet Daten, welche keine Annotationen mitliefern. Bei diesen lässt sich der Sentiment der einzelen Datensätze über Eigenschaften des Textes ableiten. Als Beispiel kann hier zum Beispiel die Emoticon-Annotation aus \cite{deriu2016sentiment} erwähnt werden. Dabei wurde der Sentiment eines Tweets daraus abgeleitet ob positive oder negative Emoticon im Tweet vorhanden sind. Diese Art von Daten wird im Folgenden \emph{Unsupervised} genannt.
 \end{itemize}
 
 \subsubsection{Supervised}
-In der Klasse der Supervised Datensätze befinden sich alle, welche bereits Annotationen zum Sentiment mitliefern. Die hier verwendeten Datensätze wurden von Cieliebak et al. \cite{CielEtAlEssem} zur Verfügung gestellt.\\
+In der Klasse der Supervised Datensätze befinden sich alle, welche bereits Annotationen zum Sentiment mitliefern. Die hier verwendeten Datensätze wurden von Cieliebak et al. \cite{cieliebak2013potential} zur Verfügung gestellt.\\
 
 \begin{table*}\centering
 	\ra{1.3}
 	\begin{adjustbox}{max width=\textwidth}
 		\begin{tabular}{@{}lllcccccccl@{}}
 			\toprule
-			\multicolumn{9}{c}{Verteilung Sentiments}\\
+			& & & & & & \multicolumn{3}{c}{Verteilung Sentiments} &\\
 			\cmidrule(r){7-9}
-			& Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Länge} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Referenz &\\ \midrule
-			& JCR{\_}quotations & Zitate aus Reden & $1290$ & $147.4$ & $33.4$ & $15.0\%$ & $66.9\%$ & $18.1\%$ & \cite{CielEtAlEssem}\\
-			& MPQ{\_}news & Nachrichtentexte & 11'111 & $123.5$ & $27.3$ & $14.4\%$ & $55.4\%$ & $30.1\%$ & \cite{CielEtAlEssem}\\
-			& MPQ{\_}reviews & ??? & 11'111 & 4 & 5 & 6 & 7 & 8 & \cite{CielEtAlEssem}\\
-			& SEM{\_}headlines & Nachrichtenüberschriften & 1250 & 4 & 5 & 6 & 7 & 8 & \cite{CielEtAlEssem}\\
-			& SemEval{\_}tweets & Tweets & 12'039 & 4 & 5 & 6 & 7 & 8 & 9\\
+			& Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Referenz &\\ \midrule
+			& JCR{\_}quotations & Zitate aus Reden & $1'290$ & $147.4$ & $33.4$ & $15.0\%$ & $66.9\%$ & $18.1\%$ & \cite{cieliebak2013potential}\\
+			& MPQ{\_}news & Nachrichtentexte & $11'111$ & $123.5$ & $27.3$ & $14.4\%$ & $55.4\%$ & $30.2\%$ & \cite{cieliebak2013potential}\\
+			& MPQ{\_}reviews & Filmbewertungen & $11'111$ & $123.0$ & $26.8$  & $14.4\%$ & $55.4\%$ & $30.2\%$ & \cite{cieliebak2013potential}\\
+			& SEM{\_}headlines & Nachrichtenüberschriften & $1'250$ & $34.1$ & $7.1$ & $13.9\%$ & $61.1\%$ & $24.9\&$ & \cite{cieliebak2013potential}\\
+			& DIL{\_}reveiws & Produktbewertungen & $4'275$ & $74.3$ & $19.1$ & $31.3\%$ & $51.0\%$ & $17.7\%$ & \cite{cieliebak2013potential}\\
+			& SemEval{\_}tweets & Tweets & $12'039$ & $89.3$ & $22.5$ & $38.5\%$ & $45.5\%$ & $15.0\%$ & \cite{SemEval:2016:task4}\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
@@ -33,13 +34,13 @@ In der Klasse der Supervised Datensätze befinden sich alle, welche bereits Anno
 \end{table*}
 
 \subsubsection{Unsupervised}
-Für die Distant-Phase wurde ein Corpus von 82'000'000 Amazon Reviews verwendet, welche im Rahmen der Veröffentlichung von \cite{ZhangEtAlAmazon} öffentlich bereitgestellt wurden.
+Für die Distant-Phase wurde ein Corpus von 82 Mio. Amazon Reviews verwendet, welche im Rahmen der Veröffentlichung von \cite{zhang2015character} öffentlich bereitgestellt wurden. Aus den zur Verfügung stehenden Bewertungen wurden nur die Texte und die numerische Beurteilung (1-5 Sterne) verwendet. Details zur Verwendung während der Distant-Phase befinden sich im Kapitel XYZ. \fixme{Replace with correct chapter}
 
 \subsection{Text Corpora}
 Um die Word-Embeddings für die durchgeführten Experimente zu generieren wurden die unten beschriebenen Text Corpora verwendet.
 
 \subsubsection{Tweets}
-Für die Experimente, welche mit annotierten Tweets als Trainingsdaten durchgeführt wurden, wurden Word-Embeddings von Jan Deriu zur Verfügung gestellt. Diese Word-Embeddings wurden auf einem Corpus von 600'000'000 Tweets generiert.
+Für die Experimente, welche mit annotierten Tweets als Trainingsdaten durchgeführt wurden, wurden Word-Embeddings von Jan Deriu zur Verfügung gestellt. Diese Word-Embeddings wurden auf einem Corpus von 600 Mio. Tweets generiert.
 
 \subsubsection{News}
-Für die Experimente, welche mit annotierten Filmbewertungen durchgeführt wurden, wurden Word-Embeddings auf einem Corpus von englischen Nachrichten-Texten aus den Jahren 2007-2013 generiert. Diese wurden im Rahmen des neunten \emph{workshop on statistical machine translation} öffentlich zur Verfügung gestellt wurde\footnote{http://www.statmt.org/wmt14/training-monolingual-news-crawl/}. Der Corpus setzt sich aus 90'209'983 Nachrichtentexten und -überschriften zusammen, welche per Web-Crawling im Internet gesammelt wurden.
+Für die Experimente, welche mit annotierten Filmbewertungen durchgeführt wurden, wurden Word-Embeddings auf einem Corpus von englischen Nachrichten-Texten aus den Jahren 2007-2013 generiert. Diese wurden im Rahmen des neunten \emph{workshop on statistical machine translation} öffentlich zur Verfügung gestellt wurde\footnote{http://www.statmt.org/wmt14/training-monolingual-news-crawl/}. Der Corpus setzt sich aus 90.2 Mio Nachrichtentexten und -überschriften zusammen, welche per Web-Crawling im Internet gesammelt wurden. \fixme{Missing reference for news data?}

@@ -120,6 +120,13 @@ docs/report/*.ist
 docs/report/*.lot
 docs/report/*.pdf
 docs/report/*.toc
+docs/report/*.xml
+docs/report/*.bbl
+docs/report/*.bbg
+docs/report/*.blg
+docs/report/*blx.bib
+
+!docs/report/img/*
 
 # Ignore models content
 models/*
