@@ -19,9 +19,6 @@ Im zweiten Teil wird auf die Anforderungen sowie die Implementation der Software
 \blindtext
 \section{Technischer Aufbau}
 Im folgenden Abschnitt wird der technische Aufbau, welcher verwendet wurde, um die in \ref{experiments} beschriebenen Experimente durchzuführen.
-\subsection{Software}
-
-\subsubsection{}
 
 \subsubsection{Vorarbeiten}
 \label{technichal_setup:prework}
@@ -32,7 +29,7 @@ Der Grundaufbau der verwendeten Software wurde von Jan Deriu mithilfe von Keras\
 	\item Implementation von Evaluations-Metriken
 	\item Skripte mit den folgenden Funktionalitäten: Trainieren des CNN, Laden von TSV Dateien, Vorverarbeiten von Word-Embeddings
 \end{itemize}
-\clearpage
+
 \subsubsection{Anforderungen}
 \label{technical_setup:requirements}
 Ein System, welches die in \ref{experiments} beschriebenen Experimente durchzuführen, soll folgende Eigenschaften aufweisen:
@@ -49,7 +46,7 @@ Die in \ref{technichal_setup:prework} beschriebenen Vorarbeiten bitten eine Basi
 \label{technical_setup:functionality}
 Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften aufweist, zu erhalten, wurden die folgenden Komponenten implementiert:
 
-\begin{table*}
+\begin{table}[h]
 	\begin{adjustbox}{max width=\columnwidth}
 		\begin{tabular}{|p{4cm}|p{14cm}|}
 			\toprule
@@ -63,7 +60,7 @@ Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften
 		\end{tabular}
 	\end{adjustbox}
 	\caption{Funktionalität System}
-\end{table*}
+\end{table}
 \fixme{Referenze auf Code, Code-Style bei group{\_}id}
 
 Die oben beschriebenen Komponenten erlauben es Experimente mittels JSON Konfigurationen zu starten und 
@@ -73,10 +70,10 @@ Für die Durchführung der Experimente wurden diverse Skripte erstellt um die Ha
 
 \begin{itemize}[noitemsep]
 	\item Erstellen von Plots der Lernkurven und Metriken
-	\item Erstellen von Visualisierungen von Word-Embeddings
 	\item Erstellen von Word-Embeddings über einen Textcorpus
 	\item Erstellen von Statistiken zu Trainings- und Validierungsdaten
 	\item Vorverarbeitung von Trainingsdaten für die Distant-Phase
+	\item Erstellen von Visualisierungen von Word-Embeddings mittels t-SNE \cite{maaten2008visualizing}.
 	\item Diverse Wartungsscripkte zur Generierung und Verwaltung von Experimenten
 \end{itemize}
 
