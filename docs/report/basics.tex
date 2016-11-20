@@ -2,6 +2,11 @@
 Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}, im folgenden \gls{cnn} genannt. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Learning} \cite{deriu2016sentiment} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt.\\
 Im zweiten Teil wird auf die Anforderungen sowie die Implementation der Software zum Durchführen der Experimente eingegangen.
 
+\section{Definitionen}
+\subsection{Sentiment}
+\blindtext
+\subsection{Domäne / Crossdomain}
+\blindtext
 \section{Neuronale Netze}
 \blindtext
 \section{Deep Learning}
@@ -41,6 +46,7 @@ Ein System, welches die in \ref{experiments} beschriebenen Experimente durchzuf�
 
 Die in \ref{technichal_setup:prework} beschriebenen Vorarbeiten bitten eine Basis um damit ein System aufzubauen, welche die oben beschriebenen Eigenschaften aufweist.
 \subsubsection{Funktionalität}
+\label{technical_setup:functionality}
 Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften aufweist, zu erhalten, wurden die folgenden Komponenten implementiert:
 
 \begin{table*}
@@ -52,12 +58,13 @@ Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften
 			&\\
 			\emph{Executor} & Der \emph{Executor} ist zuständig für das Training der CNNs mithilfe von Keras. Beim Start akzeptiert er die Konfiguration als Parameter. Das Experiment wird mit dem Laden der benötigten Daten und dem anschliessenden Trainings des CNN gestartet. Am Ende jeder Epoche wird das aktuelle CNN auf den Validierungsdaten getestet und die konfigurierten Metriken ausgewertet. Diese werden am Ende zusammen mit dem trainierten CNN (Gewichte im HDF5-Format\footnote{https://support.hdfgroup.org/HDF5/}, das CNN Model als JSON) in einen für das Experiment vorgesehenen Ordner gespeichert. \\
 			&\\
-			\emph{DataLoader} & Mithilfe des \emph{DataLoader} können Trainings- und Validierungsdaten im TSV\footnote{https://reference.wolfram.com/language/ref/format/TSV.html} Dateiformat geladen werden.\\
+			\emph{DataLoader} & Mithilfe des \emph{DataLoader} können Trainings- und Validierungsdaten im TSV\footnote{https://reference.wolfram.com/language/ref/format/TSV.html} Dateiformat geladen werden. Die zu ladenden Daten können dabei aus einer oder mehreren TSV-Dateien stammen. Im Falle, dass mehrere Dateien angegeben werden, kö\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
 	\caption{Funktionalität System}
 \end{table*}
+\fixme{Referenze auf Code, Code-Style bei group{\_}id}
 
 Die oben beschriebenen Komponenten erlauben es Experimente mittels JSON Konfigurationen zu starten und 
 
@@ -68,24 +75,30 @@ Für die Durchführung der Experimente wurden diverse Skripte erstellt um die Ha
 	\item Erstellen von Plots der Lernkurven und Metriken
 	\item Erstellen von Visualisierungen von Word-Embeddings
 	\item Erstellen von Word-Embeddings über einen Textcorpus
-	\item Erstellen von Statistiken zu Trainings- und Validierungsdatne
+	\item Erstellen von Statistiken zu Trainings- und Validierungsdaten
 	\item Vorverarbeitung von Trainingsdaten für die Distant-Phase
 	\item Diverse Wartungsscripkte zur Generierung und Verwaltung von Experimenten
 \end{itemize}
 
 \subsubsection{Weboberfläche}
-Um die dritte Anforderung nach Übersichtlichkeit zu erfüllen wurde eine Weboberfläche umgesetzt, mit welchem die Parameter und Resultate aller durchgeführten Experimente übersichtlich und an einem Ort zur Verfügung gestellt werden. Für die Implementation wurde das Python Framework flask\footnote{http://flask.pocoo.org/} verwendet.\fixme{Bilder der Weboberfläche, Schrift flask}\\
+Um die dritte Anforderung nach Übersichtlichkeit und Auswertbarkeit (vgl. \ref{technical_setup:requirements}) zu erfüllen wurde eine Weboberfläche umgesetzt, mit welchem die Parameter und Resultate aller durchgeführten Experimente übersichtlich und an einem Ort zur Verfügung gestellt werden. Für die Implementation wurde das Python Framework flask\footnote{http://flask.pocoo.org/} verwendet.\fixme{Bilder der Weboberfläche, Schrift flask}\\
 Zur Auswertung der Experimente stehen drei Funktionen zur Verfügung:
 \begin{itemize}
-	\item Mittels der \emph{Create Plot} Funktion können Plots von Trainingsmetriken erstellt werden. Weiterhin können Plots und Boxplots über die die Validierungsmetriken der einzelnen Schritte der Crossdomain-Experimente (vgl. \ref{methods:v8}) erstellt werden.
+	\item Die Oberfläche gewährt Zugriff auf alle JSON Konfigurationen, welche zu einem Experiment gehören. Dazu zählen die Konfiguration selbst, die gespeicherten Trainings- und Validierungsmetriken und das CNN Model (vgl. \ref{technical_setup:functionality}).
+	\item Mittels der Plotting Funktion können Plots von Trainingsmetriken erstellt werden. Weiterhin können Plots und Boxplots über die die Validierungsmetriken der einzelnen Schritte der Crossdomain-Experimente (vgl. \ref{methods:v8}) erstellt werden.
+	\item Die gespeicherten Validierungs- und Trainingsmetriken können mithilfe von math.js\footnote{http://mathjs.org/} direkt im Browser ausgewertet werden.\fixme{Code-Style}
 \end{itemize}
-
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/web_gui}
+	\caption{Ansicht Experiment über Weboberfläche}
+	\label{fig:web_gui}
+\end{figure}
 \subsubsection{Betriebssystem \& Softwarepakete}
+\label{technical_setup:software}
 Alle Experimente wurden mit der unten beschriebenen Implementation durchgeführt. Auf beiden verwendeten Computer-Systemen (vgl. \ref{technichal_setup:prework}) wurde als Betriebssystem Ubuntu 16.04 installiert. Dazu wurden Python 3.5.2\footnote{https://www.python.org/}, Nvidia GPU Treiber und cuda8\footnote{https://developer.nvidia.com/cuda-toolkit} als Abhängigkeiten von Theano und Keras installiert.
 
 \subsection{Hardware}
 \label{technichal_setup:hardware}
-Zur Durchführung der Experimente wurden zwei unterschiedliche Computer verwendet. Im ersten System (S1) ist eine Nvidia GTX970 GPU, einen Intel i7 4950K CPU und 16GB Arbeitsspeicher installiert. Das zweite System besitzt eine Nvidia GTX1070 GPU, einen Intel i7 6700K CPU und ebenfalls 16GB Arbeitsspeicher.
+Zur Durchführung der Experimente wurden zwei unterschiedliche Computer verwendet. Im ersten System (S1) ist eine Nvidia GTX970 GPU, einen Intel i7 4950K CPU und 16GB Arbeitsspeicher installiert. Das zweite System besitzt eine Nvidia GTX1070 GPU, einen Intel i7 6700K CPU und ebenfalls 16GB Arbeitsspeicher. Die Unterschiede in der Hardware haben keinen Einfluss auf die Experimente, da auf beiden System dasselbe Betriebssystem mit den gleichen Softwarepaketen verwendet wurde (vgl. \ref{technical_setup:software}).
 
-\subsection{Benötigte Daten}
-\blindtext
