@@ -1,5 +1,5 @@
 {
-  "group_id": "crossdomain_with_20Percent_on_semeval_tweets_v71",
+  "group_id": "crossdomain_semeval_tweets_v71",
   "set_class_weights": true,
   "test_data": {
     "testdata/SemEval_tweets_train.tsv": 4000,
