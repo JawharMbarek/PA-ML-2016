@@ -9,7 +9,7 @@ import pickle
 from os import path
 
 # Hack to be able to import DataLoader / parse_utils
-dlp = path.realpath(path.join(path.dirname(__file__), '..', 'model'))
+dlp = path.realpath(path.join(path.dirname(__file__), '..', 'source'))
 sys.path.insert(0, dlp)
 
 import parse_utils
