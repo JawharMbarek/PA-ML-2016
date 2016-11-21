@@ -79,7 +79,7 @@ w_{ik} = w_{ik} - \eta \frac{\delta E}{\delta w_{ik}}
 
 Dies wird nun für jedes Neuron der Hidden- und Ausgabeschicht berechnet und die Gewichte werden entsprechend angepasst. Die Lernrate $\eta$ beschreibt dabei, wie gross der Einfluss eines einzelnen Backpropagation-Durchlaufs auf die Gewichte des neuronalen Netzwerks hat.
 \subsubsection{AdaDelta}
-Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird. \emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}.
+Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird. \emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}.\fixme{More infomrations!}
 \section{Convolutional Neural Network}
 \emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen Neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}). 
 \section{Word Embeddings}
