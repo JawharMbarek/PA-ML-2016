@@ -60,7 +60,7 @@ Um nun ein vollständiges neuronales Netzwerk zu erhalten werden die zuvor erwä
 	\caption{Schematische Darstellung eines neuronalen Netzwerkes}
 \end{figure}
 
-Über die Eingabeschicht treten die Eingabedaten $x_1, x_2, ..., x_n$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht weitergereicht und diese berechnen damit jeweils ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Dieser Vorgang wird auch als Vorwärtspropagation bezeichnet.\\\\
+Über die Eingabeschicht treten die Eingabedaten $x_1, x_2, ..., x_n$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht weitergereicht und diese berechnen damit jeweils ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Dieser Vorgang wird auch als Vorwärtspropagierung bezeichnet. Bei einem neuronalen Netzwerk mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}.\\\\
 Die Anzahl der Neuronen und ihre Aktivierungen in der Ausgabeschicht hängt von der konkreten Problemstellung ab. Im Falle dieser Arbeit sind in der Ausgabeschicht drei Neuronen vorhanden, wobei jedes für einen bestimmten Sentiment steht.
 
 \subsection{Backpropagation}
@@ -81,7 +81,14 @@ Dies wird nun für jedes Neuron der Hidden- und Ausgabeschicht berechnet und die
 \subsubsection{AdaDelta}
 Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird. \emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}.\fixme{More infomrations!}
 \section{Convolutional Neural Network}
-\emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen Neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}). 
+\emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}), sondern mittels Filter über lokale Konnektivität versucht wird Muster zu erkennen.
+\subsection{Filter}
+Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schicht verbunden sind, werden hier sogenannte Filter verwendet. Es handelt sich hierbei um eine $n\times m$-Matrix. Die Aktivierung eines Neurons wird dabei über eine \emph{Convolution} (dt. Faltung) berechnet. Dabei wird die Filter-Matrix über die Eingabedaten bewegt und es wird jeweils das innere Produkt der Filter-Matrix und dem Ausschnitt der Eingabedaten berechnet auf welchem der Filter aktuell positioniert ist. Das Bewegungsmuster des Filters wird auch \emph{Stride} (dt. durchschreiten) genannt. Je nach Eingabedaten bzw. Ausgabedaten der vorherigen Schicht lässt sich nur eine bestimmte Anzahl an "sinnvollen" Strides definieren.\\\\Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, an die nächste Schicht weitergereicht. Diese hat bei den gegebenen Eingabedimensionen $h\times w$, Dimension der Filter $a\times b$, Stride $s$ und Anzahl der Filter $n$ die Dimensionen $n\times (n-h+1)$\fixme{WRONG!}. Diese wird in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet.
+\subsection{Max-Pooling Schicht}
+\label{basic:cnn:pooling}
+In der \emph{Max-Pooling} Schicht wird ein grossteil der in der Feature-Map vorhandenen Informationen verworfen.
+\subsection{Ausgabeschicht}
+Innerhalb eines CNN wird die Kombination aus Convolutional und Max-Pooling Schicht mehrfach hintereinander gereiht.
 \section{Word Embeddings}
 \blindtext
 \section{Distant Supervision}
