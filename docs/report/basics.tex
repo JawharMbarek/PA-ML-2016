@@ -1,22 +1,92 @@
 \chapter{Grundlagen}
-Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}, im folgenden \gls{cnn} genannt. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Supervision} \cite{go2009twitter} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt.\\\\
+Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Supervision} \cite{go2009twitter} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt.\\\\
 Im zweiten Teil wird auf die Anforderungen sowie die Implementation der Software zum Durchführen der Experimente eingegangen.
 
 \section{Definitionen}
+
+\subsection{Domäne}
+Texte, welche die gleiche Struktur aufweisen werden zu einer Domäne zusammengefasst. Als Beispiele lassen sich hier Produktbewertungen, Tweets oder auch Nachrichtentexte erwähnen.
+
 \subsection{Sentiment}
-\blindtext
-\subsection{Domäne / Crossdomain}
-\blindtext
+Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches ein Text bei einem Leser auslöst. Im Rahmen dieser Arbeit werden  die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfniss lässt sich diese Skala natürlich noch weiter verfeinern, so z.B. mit \emph{eher negativ} oder \emph{eher positiv} als Sentiments.\\
+\begin{table}[h]
+	\centering
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Sentiment & Beispiel\\ \midrule
+		positiv & Die Akkulaufzeit dieser Digitalkamera ist aussergewöhnlich hoch.\\
+		&\\
+		neutral & Dieser Stein ist grau.\\
+		&\\
+		negativ & Die Auflösung dieser Digitalkamera ist aussergewöhnlich schlecht.\\
+		\bottomrule
+	\end{tabular}
+	\caption{Beispiele für verschiedene Sentiments von Texten}
+	\label{basics:sentiments_example_table}
+\end{table}
+\fixme{Bessere Beispiele!}
+
+Da der Sentiment eines Textes nach dem subjektiven Empfinden einer Person bestimmt wird ist dieser auch nicht eindeutig. Je nachdem wer einen Text beurteilt kann also ein anderes Ergebnis zur Folge haben. Ein Sentiment kann für einzelne Sätze, Abschnitte oder ganze Texte bestimmt werden. Im Rahmen dieser Arbeit ist mit Sentiment immer der Sentiment eines einzelnen Satzes gemeint.
+
+\subsection{Crossdomain}
+Mit \emph{Crossdomain} (dt. domänenübergreifend) \fixme{complete!}
 \section{Neuronale Netze}
-\blindtext
-\section{Deep Learning}
-\blindtext
+\label{basics:neural_network}
+Neuronale Netzwerke sind ein Modell des maschinellen Lernens, welches biologisch motiviert ist und sich lose am menschlichen Gehirn orientiert. Im folgenden wird auf die einzelnen Komponenten eines neuronal Netzwerkes eingegangen.
+\subsection{Neuron / Perceptron}
+Die Grundelemente eines neuronalen Netzwerks sind die sogenannten Neuronen, auch Perceptron genannt. Diese Neuronen stellen im Grundsatz nichts anderes als eine mathematische Funktion dar. Der erste wichtige Teil eines Neurons sind die $n + 1$ Eingänge und die mit diesen Eingängen verknüpfte Gewichte ${w_0, w_1, w_2, ..., w_{n+1}}$. Die Anzahl der Eingänge ist $n+1$ und nicht $n$, da jeweils noch ein Bias-Wert dazugerechnet wird. Dieser wird im Normalfall mit $1$ initialisiert. Der zweite wichtige Teil stellt die Aktivierungsfunktion dar. Diese ist dafür zuständig den Ausgabewert eines Neurons zu normalisieren, sprich in eine vordefinierte Spanne an Werten zu bringen. Diese Spanne ist dabei abhängig von der gewählten Aktivierungsfunktion. Als Beispiele von Aktivierungsfunktionen können $tanh$, $relu$ oder auch die $sigmoid$ Funktion aufgelistet werden.\\\\
+Der Ausgabewert $y$ eines Neurons lässt sich bei gegebener Aktivierungsfunktion $\gamma$, den Gewichten $w_n$ und den Eingabewerten $x_n$ wie folgt berechnen:\\\\
+
+\begin{equation}
+y = \gamma(\sum_{i=0}^{n+1} w_i*x_i)
+\end{equation}
+
+Das daraus sich ergebende Resultat wird auch die \emph{Aktivierung} des Neurons genannt. Dies ist der Wert, welcher das Neuron an die nächste Schicht weiterreicht (vgl. \ref{basic:neural_network:layer}).
+
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{img/neuron}
+	\caption{Schematische Darstellung eines Neurons}
+\end{figure}
+
+\subsection{Schicht}
+\label{basic:neural_network:layer}
+
+Um nun ein vollständiges neuronales Netzwerk zu erhalten werden die zuvor erwähnten Neuronen in sogenannten Schichten angeordnet. Dabei gibt es drei essentielle Schichten, welches jedes neuronale Netzwerk hat: Die Eingangsschicht, die Hiddenschicht und die Ausgabeschicht.\\\\
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{img/basic_neural_network}
+	\caption{Schematische Darstellung eines neuronalen Netzwerkes}
+\end{figure}
+
+Über die Eingabeschicht treten die Eingabedaten $x_1, x_2, ..., x_n$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht weitergereicht und diese berechnen damit jeweils ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Dieser Vorgang wird auch als Vorwärtspropagation bezeichnet.\\\\
+Die Anzahl der Neuronen und ihre Aktivierungen in der Ausgabeschicht hängt von der konkreten Problemstellung ab. Im Falle dieser Arbeit sind in der Ausgabeschicht drei Neuronen vorhanden, wobei jedes für einen bestimmten Sentiment steht.
+
+\subsection{Backpropagation}
+Wie bei fast allen Modelle des maschinellen Lernens, lernt das neuronale Netztwerk mittels dem optimieren einer Fehlerfunktion. Das Optimieren dieser Fehlerfunktion wird mittels dem \emph{Backpropagation}-Algorithmus erzielt. Als Fehlerfunktion kann jede Funktion dienen, mit welcher der Aussagefehler des Netzwerks quanitifiziert werden kann. Als Beispiele können hier der MSE, MAE oder auch Categorical Cross-Entropy aufgeführt werden. Der Algorithmus kann in den folgenden Schritten zusammegefasst werden:
+\begin{enumerate}
+	\item Die Eingabedaten in das Netzwerk einführen und die Vorwärtspropagierung durch-führen.
+	\item Die Ausgabedaten des Netzwerks werden mit dem erwarteten Resultat verglichen. Die Differenz des Ausgabewertes vom erwarteten Wert wird als Fehler des Netzwerkes bezeichnet.
+	\item Der Fehler wird nun durch das neuronale Netzwerk hindurch zurückpropagiert. Dabei werden die Gewichte der einzelnen Schichten abhängig von ihrem Einfluss auf den berechneten Fehler verändert.
+\end{enumerate}
+
+Die Berechnung des Einfluss eines einzelnen Gewichtes auf den Fehler wird mittels der partiellen Ableitung der Fehlerfunktion bezüglich dem entsprechenden Gewicht festgestellt. Danach wird das Gewicht neu berechnet indem man den Wert der partiellen Ableitung mal der Lernrate vom aktuellen Gewicht subtrahiert. Das neue Gewicht für das Neuron $i$ in der Schicht $k$ berechnet sich bei gegebener Lernrate $\eta$ und Fehlerfunktion $E$ also wie folgt:
+
+\begin{equation}
+w_{ik} = w_{ik} - \eta \frac{\delta E}{\delta w_{ik}}
+\end{equation}
+
+Dies wird nun für jedes Neuron der Hidden- und Ausgabeschicht berechnet und die Gewichte werden entsprechend angepasst. Die Lernrate $\eta$ beschreibt dabei, wie gross der Einfluss eines einzelnen Backpropagation-Durchlaufs auf die Gewichte des neuronalen Netzwerks hat.
+\subsubsection{AdaDelta}
+Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird. \emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}.
 \section{Convolutional Neural Network}
-\blindtext
+\emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen Neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}). 
 \section{Word Embeddings}
 \blindtext
-\section{Distant-Phase Learning}
-\blindtext
+\section{Distant Supervision}
+Wie bereits in \ref{basics:neural_network} erläutert benötigen NNs, vor allem CNNs, sehr viele annotierte Trainingsdaten \fixme{Referenz} um am Ende des Trainings ein zufriedenstellendes Modell zu erhalten. Ein grossteil der vorhandenen Datensätze umfassen allerdings nicht mehr als 10'000 Texte. Des Weiteren sind die Sentiments in diesen Datensätzen sehr oft nicht gleichverteilt. Das führt dazu, dass gewisse Sentiments unterrepräsentiert sind, während andere überdurchschnittlich oft vorhanden sind. Im Falle der in dieser Arbeit verwendeten Datensätze ist es so, dass der positive und negative Sentiment unterdurchschnittlich oft vorkommen, während es überdurchschnittlich viele Texte mit einem neutralen Sentiment gibt (vgl. \ref{data:supervised_data}). Dadurch lernt das CNN zwar sehr gut Texte mit neutralem Sentiment zu erkennen, allerdings tut es sich sehr schwer mit den anderen beiden Sentiments.
+
 \section{Technische Implementation}
 Im folgenden Abschnitt wird der technische Aufbau, welcher verwendet wurde, um die in \ref{experiments} beschriebenen Experimente durchzuführen.
 
@@ -32,7 +102,7 @@ Der Grundaufbau der verwendeten Software wurde von Jan Deriu mithilfe von Keras\
 
 \subsubsection{Anforderungen}
 \label{technical_setup:requirements}
-Ein System, welches die in \ref{experiments} beschriebenen Experimente durchzuführen, soll folgende Eigenschaften aufweisen:
+Ein System, welches die in \ref{experiments} beschriebenen Experimente durchführen kann, soll die folgenden Eigenschaften aufweisen:
 
 \begin{itemize}
 	\item \textbf{Parametrisierbarkeit}: Dadurch dass eine grosse Anzahl kleiner Experimente durchgeführt werden muss soll das System die Möglichkeit bitten Experimente parametrisiert durchzuführen.
@@ -41,20 +111,23 @@ Ein System, welches die in \ref{experiments} beschriebenen Experimente durchzuf�
 	\item \textbf{Auswertbarkeit}: Resultate sollen \fixme{Bessers Wort für Einfach?} einfach ausgewertet werden können.
 \end{itemize}
 
-Die in \ref{technichal_setup:prework} beschriebenen Vorarbeiten bitten eine Basis um damit ein System aufzubauen, welche die oben beschriebenen Eigenschaften aufweist.
+Die in \ref{technichal_setup:prework} beschriebenen Vorarbeiten bitten eine Basis um damit ein System aufzubauen, welches die oben beschriebenen Eigenschaften aufweist.
 \subsubsection{Funktionalität}
 \label{technical_setup:functionality}
 Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften aufweist, zu erhalten, wurden die folgenden Komponenten implementiert:
 
 \begin{itemize}
 	\item \textbf{Executor}: Der \emph{Executor} ist zuständig für das Training der CNNs mithilfe von Keras. Beim Start akzeptiert er die Konfiguration als Parameter. Das Experiment wird mit dem Laden der benötigten Daten und dem anschliessenden Trainings des CNN gestartet. Am Ende jeder Epoche wird das aktuelle CNN auf den Validierungsdaten getestet und die konfigurierten Metriken ausgewertet. Diese werden am Ende zusammen mit dem trainierten CNN (Gewichte im HDF5-Format\footnote{https://support.hdfgroup.org/HDF5/}, das CNN Model als JSON) in einen für das Experiment vorgesehenen Ordner gespeichert. Die Metriken werden ebenfalls in diesem dem dafür vorgesehenen Ordner abgespeichert.
-	\item \textbf{Config Management}: Experimente werden über Konfigurationen im JSON-Format\footnote{http://www.json.org/} parametrisiert. Über diese Konfiguration können viele wichtige Parameter für die Ausführung festgelegt werden, so zum Beispiel: Anzahl Epochen, Trainings- und Validierungsdaten, Parameter für k-fold Cross-Validation oder auch bereits Trainierte Modelle können geladen werden. Für eine vollständige Liste wird auf den Quellcode des Projektes verwiesen. Experimente können mitte§ls der group{\_}id gruppiert werden. Damit können die Experimente hierarchisch mittels zwei Ebenen gruppiert werden.
-	\item \textbf{DataLoader}: Mithilfe des \emph{DataLoader} können Trainings- und Validierungsdaten im TSV\footnote{https://reference.wolfram.com/language/ref/format/TSV.html} Dateiformat geladen werden. Die zu ladenden Daten können dabei aus einer oder mehreren TSV-Dateien stammen.
+	\item \textbf{Config Management}: Experimente werden über Konfigurationen im JSON-Format\footnote{http://www.json.org/} parametrisiert. Über diese Konfiguration können viele wichtige Parameter für die Ausführung festgelegt werden, so zum Beispiel: Anzahl Epochen, Trainings- und Validierungsdaten, Parameter für k-fold Cross-Validation oder auch bereits Trainierte Modelle können geladen werden. Für eine vollständige Liste wird auf den Quellcode des Projektes verwiesen. Experimente können mittels der group{\_}id gruppiert werden. Damit können die Experimente hierarchisch mittels zwei Ebenen gruppiert werden.
+	\item \textbf{DataLoader}: Mithilfe des \emph{DataLoader} können Trainings- und Validierungsdaten im TSV\footnote{https://reference.wolfram.com/language/ref/format/TSV.html} Dateiformat geladen werden. Die zu ladenden Daten können dabei aus einer oder mehreren TSV-Dateien stammen. Im Falle das mehrere TSV Dateien angegeben werden kann über die Konfiguration das Verhältnis angegeben werden, in welchem die Daten aus den einzelnen Dateien verschmischt werden sollen.
+	\item \textbf{Skripte}: Die Auswertung der einzelnen Experimente geschieht über dafür erstelle Skripte (vgl. \ref{technical_setup:scripts}).
+	\item \textbf{Weboberfläche}: Auf die Resultate der Experimente können über eine eigens dafür entwickelte Weboberfläche zugegriffen werden. Ausserdem besteht die Möglichkeit Plots über die Metriken welche während des Trainings- und Validierungsprozess gesammelt wurden auszuwerten (vgl. \ref{technical_setup:webgui}).
 \end{itemize}
 \fixme{Referenze auf Code, Code-Style bei group{\_}id}
-Die oben beschriebenen Komponenten erlauben es Experimente mittels JSON Konfigurationen zu starten und den gesamten Trainings- und Validierungsprozess mittels 
+Die oben beschriebenen Komponenten erlauben es Experimente mittels JSON Konfigurationen zu starten und den gesamten Trainings- und Validierungsprozess mittels der Metriken zu dokumentieren.
 
 \subsubsection{Skripte}
+\label{technical_setup:scripts}
 Für die Durchführung der Experimente wurden diverse Skripte erstellt um die Handhabung zu vereinfachen und Auswertungen zu ermöglichen. Die Liste der implementierten Script umfasst unter anderem die folgenden:
 
 \begin{itemize}[noitemsep]
@@ -67,6 +140,7 @@ Für die Durchführung der Experimente wurden diverse Skripte erstellt um die Ha
 \end{itemize}
 
 \subsubsection{Weboberfläche}
+\label{technical_setup:webgui}
 Um die dritte Anforderung nach Übersichtlichkeit und Auswertbarkeit (vgl. \ref{technical_setup:requirements}) zu erfüllen wurde eine Weboberfläche umgesetzt, mit welchem die Parameter und Resultate aller durchgeführten Experimente übersichtlich und an einem Ort zur Verfügung gestellt werden. Für die Implementation wurde das Python Framework flask\footnote{http://flask.pocoo.org/} verwendet.\fixme{Bilder der Weboberfläche, Schrift flask}\\
 Zur Auswertung der Experimente stehen drei Funktionen zur Verfügung:
 \begin{itemize}
