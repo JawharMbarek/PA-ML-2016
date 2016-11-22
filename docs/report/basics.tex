@@ -77,18 +77,36 @@ Die Berechnung des Einfluss eines einzelnen Gewichtes auf den Fehler wird mittel
 w_{ik} = w_{ik} - \eta \frac{\delta E}{\delta w_{ik}}
 \end{equation}
 
-Dies wird nun für jedes Neuron der Hidden- und Ausgabeschicht berechnet und die Gewichte werden entsprechend angepasst. Die Lernrate $\eta$ beschreibt dabei, wie gross der Einfluss eines einzelnen Backpropagation-Durchlaufs auf die Gewichte des neuronalen Netzwerks hat.
+Alle partiellen Ableitungen nach allen Gewichten der Fehlerfunktion wird auch Gradient genannt. Dies wird nun für jedes Neuron der Hidden- und Ausgabeschicht berechnet und die Gewichte werden entsprechend angepasst. Die Lernrate $\eta$ beschreibt dabei, wie gross der Einfluss eines einzelnen Backpropagation-Durchlaufs auf die Gewichte des neuronalen Netzwerks hat.
 \subsubsection{AdaDelta}
-Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird. \emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}.\fixme{More infomrations!}
+Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen oder der Werte der Fehlerfunktion divergiert sogar, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird. \emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}. Der grosse Vorteil von AdaDelta ist, dass keine Lernrate definiert werden muss. \fixme{More infomrations!}
 \section{Convolutional Neural Network}
 \emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}), sondern mittels Filter über lokale Konnektivität versucht wird Muster zu erkennen.
 \subsection{Filter}
-Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schicht verbunden sind, werden hier sogenannte Filter verwendet. Es handelt sich hierbei um eine $n\times m$-Matrix. Die Aktivierung eines Neurons wird dabei über eine \emph{Convolution} (dt. Faltung) berechnet. Dabei wird die Filter-Matrix über die Eingabedaten bewegt und es wird jeweils das innere Produkt der Filter-Matrix und dem Ausschnitt der Eingabedaten berechnet auf welchem der Filter aktuell positioniert ist. Das Bewegungsmuster des Filters wird auch \emph{Stride} (dt. durchschreiten) genannt. Je nach Eingabedaten bzw. Ausgabedaten der vorherigen Schicht lässt sich nur eine bestimmte Anzahl an "sinnvollen" Strides definieren.\\\\Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, an die nächste Schicht weitergereicht. Diese hat bei den gegebenen Eingabedimensionen $h\times w$, Dimension der Filter $a\times b$, Stride $s$ und Anzahl der Filter $n$ die Dimensionen $n\times (n-h+1)$\fixme{WRONG!}. Diese wird in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet.
+\label{basic:cnn:filter}
+Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schicht verbunden sind, werden hier sogenannte Filter verwendet. Es handelt sich hierbei um eine $n\times m$-Matrix. Die Aktivierung eines Neurons wird dabei über eine \emph{Convolution} (dt. Faltung) berechnet. Dabei wird die Filter-Matrix über die Eingabedaten bewegt und es wird jeweils das innere Produkt der Filter-Matrix und dem Ausschnitt der Eingabedaten berechnet auf welchem der Filter aktuell positioniert ist. Das Bewegungsmuster des Filters wird auch \emph{Stride} (dt. durchschreiten) genannt. Je nach Eingabedaten bzw. Ausgabedaten der vorherigen Schicht lässt sich nur eine bestimmte Anzahl an sinnvollen Strides definieren.\\\\Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, an die nächste Schicht weitergereicht. Diese hat bei den gegebenen Eingabedimensionen $h\times w$, Dimension der Filter $a\times b$, Stride $s$ und Anzahl der Filter $n$ die Dimensionen $n\times (n-h+1)$\fixme{WRONG!}.\\
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{img/filter_feature_map}
+	\caption{Schematische Darstellung Filter und Feature-Map}
+\end{figure}
+
+Diese wird in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet. Eine Schicht, welche diese Art von Berechnung verwendet wird auch Convolutional (dt. sich falltend) Schicht genannt.
+\subsection{Zero-Padding}
+\blindtext
 \subsection{Max-Pooling Schicht}
 \label{basic:cnn:pooling}
-In der \emph{Max-Pooling} Schicht wird ein grossteil der in der Feature-Map vorhandenen Informationen verworfen.
+In der \emph{Max-Pooling} Schicht wird ein grossteil der in der Feature-Map vorhandenen Informationen verworfen. Dabei wird ein Fenster über die resultierende Feature-Map der vorhergehenden Schicht bewegt und der jeweils maximale Wert des entsprechenden Ausschnitts der Feature-Map als Wert in die gepoolte Represäntation übernommen. Das Fenster, welches über die Feature-Map bewegt wird, ist definiert durch die Dimensionalität des Fensters (z.B. $2\times 2$) und dem Stride. Dieser steht für das Bewegunsmuster des Fenster analog zum Filter (vgl. \ref{basic:cnn:filter}). Die gepoolte Represäntation der Feature-Map dient dann als Eingabewert für die nächste Convolutional Schicht.\\\\
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{img/max_pooling}
+	\caption{Schematische Darstellung der Max-Pooling Schicht}
+\end{figure}
+
 \subsection{Ausgabeschicht}
-Innerhalb eines CNN wird die Kombination aus Convolutional und Max-Pooling Schicht mehrfach hintereinander gereiht.
+\blindtext
 \section{Word Embeddings}
 \blindtext
 \section{Distant Supervision}

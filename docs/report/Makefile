@@ -12,7 +12,7 @@ build: clean
 	@echo 'Created report and saved to pdf'
 
 clean:
-	@rm -f *blx.bib *.out *.toc *.log *.pdf *.xml *.lot \
+	@rm -f *blx.bib *.out *.toc *.log *.pdf *.xml *.lot *.glsdefs \
 				 *.aux *.ist *.lof *.synctex.gz *.bbl *.blg *.glo
 	@echo 'Removed generated files'
 
