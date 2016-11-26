@@ -3,7 +3,7 @@
   "set_class_weights": true,
   "test_data": {
     "testdata/JCR_Quotations.tsv": 1000,
-    "testdata/MPQ_News.tsv": 1000,
+    "testdata/TAC_Reviews.tsv": 1000,
     "testdata/SEM_Headlines.tsv": 1000,
     "testdata/MPQ_reviews_train.tsv": 1000,
     "testdata/SemEval_tweets_train.tsv": 1200
