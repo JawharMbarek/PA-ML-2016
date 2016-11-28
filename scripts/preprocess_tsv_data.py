@@ -13,7 +13,7 @@ from nltk import TweetTokenizer
 from keras.utils.np_utils import to_categorical
 
 # Hack to be able to import DataLoader / parse_utils
-dlp = path.realpath(path.join(path.dirname(__file__), '..', 'model'))
+dlp = path.realpath(path.join(path.dirname(__file__), '..', 'source'))
 sys.path.insert(0, dlp)
 
 import parse_utils
@@ -62,7 +62,7 @@ tmp_x = []
 tmp_y = []
 
 counter = 0
-store_size = 10000
+store_size = 1000000
 tknzr = TweetTokenizer(reduce_len=3)
 
 with open(tsv_path, 'r') as tsvf:
@@ -96,7 +96,7 @@ with open(tsv_path, 'r') as tsvf:
 
             if len(tmp_x) > 0 and len(tmp_y) > 0:
                 x_dataset[curr_idx:curr_idx+len(tmp_x)] = parse_utils.convert2indices(tmp_x, vocab, dummy_word_idx, max_sent_length=sent_length)
-                y_dataset[curr_idx:curr_idx+len(tmp_y)] = np.array(to_categorical(tmp_y), dtype=np.int32)
+                y_dataset[curr_idx:curr_idx+len(tmp_y)] = np.array(to_categorical(tmp_y, nb_classes=3), dtype=np.int32)
 
                 curr_idx += len(tmp_x)
 
