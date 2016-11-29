@@ -40,7 +40,8 @@ config_template = {
     'validate_while_training': False,
     'vocabulary_path': None,
     'model_json_path': None,
-    'model_weights_path': None
+    'model_weights_path': None,
+    'validation_split': 0.2
 }
 
 if not path.isdir(ablation_configs_path):

@@ -17,6 +17,7 @@
   },
   "validate_while_training": false,
   "validation_data_path": "testdata/TAC_Reviews.tsv",
+  "validation_split": 0.2,
   "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
   "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
 }
