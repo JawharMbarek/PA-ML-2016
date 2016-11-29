@@ -25,9 +25,8 @@ embeddings_name = argv[4]
 tsv_files = argv[5:]
 
 configs_path = path.abspath(path.join(path.dirname(__file__), '..', 'configs'))
-ablation_configs_path = path.join(configs_path, 'crossdomain_general_ablation')
-
 group_id = 'crossdomain_general_ablation_%s_embeddings' % embeddings_name
+ablation_configs_path = path.join(configs_path, group_id)
 
 config_template = {
     'group_id': group_id,
