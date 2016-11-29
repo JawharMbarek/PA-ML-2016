@@ -4,6 +4,7 @@
 import sys
 import os
 import json
+import copy
 
 from os import path
 
@@ -61,8 +62,8 @@ for tsv in tsv_sizes.keys():
         print('ERROR: The config %s already exists, exiting' % config_path)
         sys.exit(2)
 
-    curr_config = config_template.copy()
-    curr_config['validation_data'] = tsv
+    curr_config = copy.deepcopy(config_template)
+    curr_config['validation_data_path'] = tsv
     curr_config['vocabulary_embeddings'] = embeddings_path
     curr_config['vocabulary_path'] = vocabulary_path
     curr_config['model_json_path'] = model_json_path
@@ -70,7 +71,8 @@ for tsv in tsv_sizes.keys():
 
     with open(config_path, 'w+') as f:
         for other_tsv, size in tsv_sizes.items():
-            curr_config['test_data'][other_tsv] = size
+            if tsv != other_tsv:
+                curr_config['test_data'][other_tsv] = size
 
         f.write(json.dumps(curr_config, indent=2,
                            separators=(',', ': '), sort_keys=True))
