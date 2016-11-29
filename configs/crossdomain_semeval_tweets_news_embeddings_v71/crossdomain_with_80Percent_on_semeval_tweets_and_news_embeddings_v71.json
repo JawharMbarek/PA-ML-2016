@@ -3,7 +3,7 @@
   "set_class_weights": true,
   "test_data": {
     "testdata/SemEval_tweets_train.tsv": 4000,
-    "testdata/DAI_tweets_full.tsv": 3200
+    "testdata/DAI_tweets.tsv": 3200
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,
