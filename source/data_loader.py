@@ -85,12 +85,13 @@ class DataLoader(object):
             tmp_sentiments += sel_sentiments
             tmp_texts += sel_texts
 
+        idx_shuf = range(len(tmp_sentiments))
+        shuffle(idx_shuf)
+
         res_texts = []
         res_sentiments = []
-
-        rng_idx_list = list(range(0, len(tmp_sentiments)))
-
-        for idx in rng_idx_list:
+        
+        for idx in idx_shuf:
             res_texts.append(tmp_texts[idx])
             res_sentiments.append(tmp_sentiments[idx])
 
