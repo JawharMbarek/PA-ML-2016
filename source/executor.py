@@ -68,15 +68,26 @@ class Executor(object):
         self.batch_size = int(self.params['batch_size'])
         self.nb_kfold_cv = int(self.params['nb_kfold_cv'])
         self.validation_split = float(self.params['validation_split'])
-        self.monitor_metric = self.params['monitor_metric']
-        self.monitor_metric_mode = self.params['monitor_metric_mode']
-        self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
-        self.early_stopping_monitor_metric = self.params['early_stopping_monitor_metric']
         self.randomize_test_data = self.params['randomize_test_data']
         self.set_class_weights = self.params['set_class_weights']
         self.model_id = self.params['model_id']
         self.max_sent_length = self.params['max_sent_length']
         self.validate_while_training = self.params['validate_while_training']
+
+        self.monitor_metric = self.params['monitor_metric']
+        self.monitor_metric_mode = self.params['monitor_metric_mode']
+        self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
+        self.early_stopping_monitor_metric = self.params['early_stopping_monitor_metric']
+
+        if not self.validate_while_training and self.validation_split == 0.0:
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            print('! WARNING: Validation while training is disabled, cannot us validation F1 scores as metrics. !')
+            print('!          All "val_" in metrics names will be replaced before the training is started.      !')
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+
+            self.monitor_metric = self.monitor_metric.replace('val_', '')
+            self.model_checkpoint_monitor_metric = self.model_checkpoint_monitor_metric.replace('val_', '')
+            self.early_stopping_monitor_metric = self.early_stopping_monitor_metric.replace('val_', '')
 
         self.model_json_path = self.params['model_json_path']
         self.model_weights_path = self.params['model_weights_path']
