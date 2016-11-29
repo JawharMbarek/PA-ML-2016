@@ -31,10 +31,23 @@ class TsvDataLoader(object):
 
         with open(self.path, 'r') as f:
             for line in f:
+                yield self.convert_to_idxs(self.process_line(*line))
+                curr_count += 1
+
+                if curr_count % 100000 == 0:
+                    print('Processed %d training examples' % curr_count)
+
+        curr_count = 0
+
+    def load_lazy_raw(self):
+        curr_count = 0
+
+        with open(self.path, 'r') as f:
+            for line in f:
                 yield self.process_line(line)
                 curr_count += 1
 
-                if curr_count % 100000:
+                if curr_count % 100000 == 0:
                     print('Processed %d training examples' % curr_count)
 
         curr_count = 0
@@ -58,13 +71,17 @@ class TsvDataLoader(object):
         return (sentiments, texts, raw_data, nlabels)
 
     def process_line(self, line):
-        dummy_word_idx = self.vocabulary.get('DUMMY_WORD_IDX', 1)
         tknzr = self.get_tokenizer()
 
         line_data = line.replace('\n', '').split('\t')
         sentiment = self.SENTIMENT_MAP[line_data[-2]]
         text = parse_utils.preprocess_tweet(line_data[-1])
         text_tokens = tknzr.tokenize(text)
+
+        return (text_tokens, sentiment)
+
+    def convert_to_idxs(text, sentiment):
+        dummy_word_idx = self.vocabulary.get('DUMMY_WORD_IDX', 1)
         text_idxs = parse_utils.convert2indices(
             text_tokens, self.vocabulary, dummy_word_idx,
             max_sent_length=self.max_sent_length
