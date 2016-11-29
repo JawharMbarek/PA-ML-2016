@@ -29,6 +29,9 @@ with open(out_file % int(time.time()), 'w+') as f:
     f.write(header)
 
     for results_dir in argv:
+        if 'old' in results_dir:
+            continue
+
         metrics_file = path.join(results_dir, 'validation_metrics.json')
         params_file = path.join(results_dir, 'params.json') 
 
