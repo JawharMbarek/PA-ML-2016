@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 import sys
@@ -10,7 +11,7 @@ argv = sys.argv[1:]
 
 if len(argv) < 6:
     print('ERROR: missing mandatory arguments')
-    print('       python scripts/generate_albation_experiments.py <embeddings> <vocabulary>')
+    print('       python scripts/generate_ablation_experiments.py <embeddings> <vocabulary>')
     print('                                                       <model-json> <model-weights>')
     print('                                                       <embedings-name> <tsv1,tsv2, ...>')
     sys.exit(2)
@@ -23,9 +24,9 @@ embeddings_name = argv[4]
 tsv_files = argv[5:]
 
 configs_path = path.abspath(path.join(path.dirname(__file__), '..', 'configs'))
-albation_configs_path = path.join(configs_path, 'crossdomain_general_albation')
+ablation_configs_path = path.join(configs_path, 'crossdomain_general_ablation')
 
-group_id = 'crossdomain_general_albation_%s_embeddings' % embeddings_name
+group_id = 'crossdomain_general_ablation_%s_embeddings' % embeddings_name
 
 config_template = {
     'group_id': group_id,
@@ -41,9 +42,9 @@ config_template = {
     'model_weights_path': None
 }
 
-if not path.isdir(albation_configs_path):
-    print('Creating configs directory %s because it is missing' % albation_configs_path)
-    os.mkdir(albation_configs_path)
+if not path.isdir(ablation_configs_path):
+    print('Creating configs directory %s because it is missing' % ablation_configs_path)
+    os.mkdir(ablation_configs_path)
 
 tsv_sizes = {}
 
@@ -54,7 +55,7 @@ for tsv_file in tsv_files:
 for tsv in tsv_sizes.keys():
     tsv_name = tsv.split('/')[-1].replace('.tsv', '').lower()
     config_name = '%s_%s' % (group_id, tsv_name)
-    config_path = '%s.json' % path.join(albation_configs_path, config_name)
+    config_path = '%s.json' % path.join(ablation_configs_path, config_name)
 
     if path.isfile(config_path):
         print('ERROR: The config %s already exists, exiting' % config_path)
@@ -74,4 +75,4 @@ for tsv in tsv_sizes.keys():
         f.write(json.dumps(curr_config, indent=2,
                            separators=(',', ': '), sort_keys=True))
 
-print('Created albation experiment configs for all supplied TSV files')
+print('Created ablation experiment configs for all supplied TSV files')
