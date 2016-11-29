@@ -46,7 +46,8 @@ class Executor(object):
         'max_sent_length': 140,
         'preprocessed_data': None,
         'model_json_path': None,
-        'model_weights_path': None
+        'model_weights_path': None,
+        'validate_while_training': True
     }
 
     def __init__(self, name, params):
@@ -75,6 +76,7 @@ class Executor(object):
         self.set_class_weights = self.params['set_class_weights']
         self.model_id = self.params['model_id']
         self.max_sent_length = self.params['max_sent_length']
+        self.validate_while_training = self.params['validate_while_training']
 
         self.model_json_path = self.params['model_json_path']
         self.model_weights_path = self.params['model_weights_path']
@@ -291,7 +293,7 @@ class Executor(object):
 
         if self.set_class_weights:
             class_weights = compute_class_weights(Y_train)
-        if len(X_test) > 0 and len(Y_test) > 0:
+        if len(X_test) > 0 and len(Y_test) > 0 and self.validate_while_training:
             validation_data = (X_test, to_categorical(Y_test))
         elif self.validation_split > 0.0:
             validation_split = self.validation_split
