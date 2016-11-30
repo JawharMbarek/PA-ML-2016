@@ -1,0 +1,27 @@
+{
+  "data": {
+    "../corpuses/amazon/amazon_distant_train_with_dups_142M.tsv": {
+      "avg": {
+        "words_missing_in_vocab": 1.0266468335732657,
+        "words_present_in_vocab": 87.00069809996333,
+        "character_count": 347.6004394464041,
+        "word_count": 88.0273449335366,
+        "sentiment_neu_percentage": 0.08564994338102713,
+        "sentiment_pos_percentage": 0.790027002356195,
+        "sentiment_neg_percentage": 0.12432305426277784
+      },
+      "total": {
+        "sentiment_neg": 17757308,
+        "words_missing_in_vocab": 146638000,
+        "words_missing_in_vocab_percentage": 0.01166281721149736,
+        "words_precent_in_vocab_percentage": 0.9883371827885027,
+        "word_count": 12573119971,
+        "sentiment_neu": 12233551,
+        "words_present_in_vocab": 12426481971,
+        "sentiment_pos": 112841121,
+        "sentence_count": 142831980,
+        "character_count": 49648459015
+      }
+    }
+  }
+}
