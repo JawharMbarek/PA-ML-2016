@@ -1,11 +1,11 @@
-\chapter{Grundlagen}
+ \chapter{Grundlagen}
 Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Supervision} \cite{go2009twitter} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt.\\\\
 Im zweiten Teil wird auf die Anforderungen sowie die Implementation der Software zum Durchführen der Experimente eingegangen.
 
 \section{Definitionen}
 
 \subsection{Domäne}
-Texte, welche die gleiche Struktur aufweisen werden zu einer Domäne zusammengefasst. Als Beispiele lassen sich hier Produktbewertungen, Tweets oder auch Nachrichtentexte erwähnen.
+Texte, welche die gleiche Struktur aufweisen werden zu einer Domäne zusammengefasst. Als Beispiele lassen sich hier Produktbewertungen, Tweets oder auch Nachrichtentexte erwähnen.\fixme{Stimmt so nicht, nur Volltext und Kurznachricht}
 
 \subsection{Sentiment}
 Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches ein Text bei einem Leser auslöst. Im Rahmen dieser Arbeit werden  die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfniss lässt sich diese Skala natürlich noch weiter verfeinern, so z.B. mit \emph{eher negativ} oder \emph{eher positiv} als Sentiments.\\
@@ -34,8 +34,9 @@ Mit \emph{Crossdomain} (dt. domänenübergreifend) \fixme{complete!}
 \label{basics:neural_network}
 Neuronale Netzwerke sind ein Modell des maschinellen Lernens, welches biologisch motiviert ist und sich lose am menschlichen Gehirn orientiert. Im folgenden wird auf die einzelnen Komponenten eines neuronal Netzwerkes eingegangen.
 \subsection{Neuron / Perceptron}
+\label{basic:neural_network:neuron}
 Die Grundelemente eines neuronalen Netzwerks sind die sogenannten Neuronen, auch Perceptron genannt. Diese Neuronen stellen im Grundsatz nichts anderes als eine mathematische Funktion dar. Der erste wichtige Teil eines Neurons sind die $n + 1$ Eingänge und die mit diesen Eingängen verknüpfte Gewichte ${w_0, w_1, w_2, ..., w_{n+1}}$. Die Anzahl der Eingänge ist $n+1$ und nicht $n$, da jeweils noch ein Bias-Wert dazugerechnet wird. Dieser wird im Normalfall mit $1$ initialisiert. Der zweite wichtige Teil stellt die Aktivierungsfunktion dar. Diese ist dafür zuständig den Ausgabewert eines Neurons zu normalisieren, sprich in eine vordefinierte Spanne an Werten zu bringen. Diese Spanne ist dabei abhängig von der gewählten Aktivierungsfunktion. Als Beispiele von Aktivierungsfunktionen können $tanh$, $relu$ oder auch die $sigmoid$ Funktion aufgelistet werden.\\\\
-Der Ausgabewert $y$ eines Neurons lässt sich bei gegebener Aktivierungsfunktion $\gamma$, den Gewichten $w_n$ und den Eingabewerten $x_n$ wie folgt berechnen:\\\\
+Der Ausgabewert $y$ eines Neurons lässt sich bei gegebener Aktivierungsfunktion $\gamma$, den Gewichten $w_n$ und den Eingabewerten $x_n$ wie folgt berechnen:
 
 \begin{equation}
 y = \gamma(\sum_{i=0}^{n+1} w_i*x_i)
@@ -60,7 +61,7 @@ Um nun ein vollständiges neuronales Netzwerk zu erhalten werden die zuvor erwä
 	\caption{Schematische Darstellung eines neuronalen Netzwerkes}
 \end{figure}
 
-Über die Eingabeschicht treten die Eingabedaten $x_1, x_2, ..., x_n$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht weitergereicht und diese berechnen damit jeweils ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Dieser Vorgang wird auch als Vorwärtspropagierung bezeichnet. Bei einem neuronalen Netzwerk mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}.\\\\
+Über die Eingabeschicht treten die Eingabedaten $x_1, x_2, ..., x_n$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht vorwärtspropagiert und diese berechnen damit jeweils ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Dieser Vorgang des "Vorwärtsrechnens" wird auch als Vorwärtspropagierung bezeichnet. Bei einem neuronalen Netzwerk mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}.\\\\
 Die Anzahl der Neuronen und ihre Aktivierungen in der Ausgabeschicht hängt von der konkreten Problemstellung ab. Im Falle dieser Arbeit sind in der Ausgabeschicht drei Neuronen vorhanden, wobei jedes für einen bestimmten Sentiment steht.
 
 \subsection{Backpropagation}
@@ -77,14 +78,23 @@ Die Berechnung des Einfluss eines einzelnen Gewichtes auf den Fehler wird mittel
 w_{ik} = w_{ik} - \eta \frac{\delta E}{\delta w_{ik}}
 \end{equation}
 
-Alle partiellen Ableitungen nach allen Gewichten der Fehlerfunktion wird auch Gradient genannt. Dies wird nun für jedes Neuron der Hidden- und Ausgabeschicht berechnet und die Gewichte werden entsprechend angepasst. Die Lernrate $\eta$ beschreibt dabei, wie gross der Einfluss eines einzelnen Backpropagation-Durchlaufs auf die Gewichte des neuronalen Netzwerks hat.
+Alle partiellen Ableitungen nach allen Gewichten der Fehlerfunktion wird auch Gradient genannt. Dies wird nun für jedes Neuron der Hidden- und Ausgabeschicht berechnet und die Gewichte werden entsprechend angepasst. Die Lernrate $\eta$ beschreibt dabei, wie gross der Einfluss eines einzelnen Backpropagation-Durchlaufs auf die Gewichte des neuronalen Netzwerks hat. Dabei wird der errechnete Gradient mit der Lernrate multipliziert. Entsprechend führt eine Lernrate $\eta > 1.0$ dazu dass der Gradient vergrössert bzw. mit $\eta < 1.0$ verkleinert wird.
 \subsubsection{AdaDelta}
-Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen oder der Werte der Fehlerfunktion divergiert sogar, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird. \emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}. Der grosse Vorteil von AdaDelta ist, dass keine Lernrate definiert werden muss. \fixme{More infomrations!}
+Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen oder der Werte der Fehlerfunktion divergiert sogar, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird.\\
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=6cm]{img/learning_rates_comparison}
+	\caption{Beispielhafte gegenüberstellung verschiedener Lernraten\protect\footnote{http://cs231n.github.io/assets/nn3/learningrates.jpeg}}
+\end{figure}
+
+\emph{AdaDelta} \cite{zeiler2012adadelta} ist eine verfeinerte Version der Grundform des Backpropagation-Algorithmus und eine weiterentwicklung von \emph{AdaGrad}. Der grosse Vorteil von AdaDelta ist, dass keine Lernrate definiert werden muss. \fixme{More infomrations!}
 \section{Convolutional Neural Network}
 \emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}), sondern mittels Filter über lokale Konnektivität versucht wird Muster zu erkennen.
 \subsection{Filter}
 \label{basic:cnn:filter}
-Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schicht verbunden sind, werden hier sogenannte Filter verwendet. Es handelt sich hierbei um eine $n\times m$-Matrix. Die Aktivierung eines Neurons wird dabei über eine \emph{Convolution} (dt. Faltung) berechnet. Dabei wird die Filter-Matrix über die Eingabedaten bewegt und es wird jeweils das innere Produkt der Filter-Matrix und dem Ausschnitt der Eingabedaten berechnet auf welchem der Filter aktuell positioniert ist. Das Bewegungsmuster des Filters wird auch \emph{Stride} (dt. durchschreiten) genannt. Je nach Eingabedaten bzw. Ausgabedaten der vorherigen Schicht lässt sich nur eine bestimmte Anzahl an sinnvollen Strides definieren.\\\\Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, an die nächste Schicht weitergereicht. Diese hat bei den gegebenen Eingabedimensionen $h\times w$, Dimension der Filter $a\times b$, Stride $s$ und Anzahl der Filter $n$ die Dimensionen $n\times (n-h+1)$\fixme{WRONG!}.\\
+Anstatt Neuronen wie im klassischen Neuronalen Netzwerk (vgl. \ref{neural_network:basics:neuron}) lernt eine CNN über die sogenannten Filter. Dabei handelt es sich um $n\times m$-Matrizen, welche Gewichte enthalten, analog zu den Gewichten der eingehenden Verbindungen bei Neuronen. Dabei werden die Filter-Matrizen über die Eingabedaten bewegt und es wird jeweils das innere Produkt der aktuellen Filter-Matrix und dem aktuellen Ausschnitt der Eingabedaten berechnet auf welchem der Filter positioniert ist. Das Bewegungsmuster des Filters wird \emph{Stride} (dt. durchschreiten) genannt. Im Rahmen dieser Arbeit wird nur ein eindimensionaler Stride entlang der Satz-Matrix (vgl. \ref{missing!}) verwendet.\\\\
+Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, zwischengespeichert. Diese stellen also das Äquivalent zur Aktivierung einer Schicht im klassischen Neuronalen Netzwerk (vgl. \ref{basic:neural_network:layer}) dar. Dabei werden alle resultierenden Feature-Maps einfach hintereinandergereiht und dienen als Eingabewerte für die nächste Schicht. 
 
 \begin{figure}[h]
 	\centering
@@ -92,12 +102,11 @@ Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schich
 	\caption{Schematische Darstellung Filter und Feature-Map}
 \end{figure}
 
-Diese wird in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet. Eine Schicht, welche diese Art von Berechnung verwendet wird auch Convolutional (dt. sich falltend) Schicht genannt.
-\subsection{Zero-Padding}
-\blindtext
+Diese werden in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet. Eine Schicht, welche auf diese Art die Aktivierungen berechnet wird Convolutional (dt.  falltend) Schicht genannt.
+
 \subsection{Max-Pooling Schicht}
 \label{basic:cnn:pooling}
-In der \emph{Max-Pooling} Schicht wird ein grossteil der in der Feature-Map vorhandenen Informationen verworfen. Dabei wird ein Fenster über die resultierende Feature-Map der vorhergehenden Schicht bewegt und der jeweils maximale Wert des entsprechenden Ausschnitts der Feature-Map als Wert in die gepoolte Represäntation übernommen. Das Fenster, welches über die Feature-Map bewegt wird, ist definiert durch die Dimensionalität des Fensters (z.B. $2\times 2$) und dem Stride. Dieser steht für das Bewegunsmuster des Fenster analog zum Filter (vgl. \ref{basic:cnn:filter}). Die gepoolte Represäntation der Feature-Map dient dann als Eingabewert für die nächste Convolutional Schicht.\\\\
+In der \emph{Max-Pooling} Schicht wird ein grossteil der in den Feature-Maps vorhandenen Informationen verworfen. Dabei wird ein Fenster über die resultierenden Feature-Maps der vorhergehenden Schicht bewegt und der jeweils maximale Wert des entsprechenden Ausschnitts der aktuellen Feature-Map als Wert in die gepoolte Represäntation übernommen. Das Fenster, welches über die Feature-Map bewegt wird, ist definiert durch die Dimensionalität des Fensters und dem Stride. Dieser steht für das Bewegunsmuster des Fenster analog zum Filter (vgl. \ref{basic:cnn:filter}). Die gepoolte Represäntationen der Feature-Maps dienen dann als Eingabewerte für die nächste Convolutional Schicht.\\\\
 
 \begin{figure}[h]
 	\centering
@@ -105,12 +114,44 @@ In der \emph{Max-Pooling} Schicht wird ein grossteil der in der Feature-Map vorh
 	\caption{Schematische Darstellung der Max-Pooling Schicht}
 \end{figure}
 
+Der Vorgang in der Max-Pooling Schicht wird auch als \emph{sub-sampling} bezeichnet.
+
+\subsection{Convolutional+Max-Pooling Schicht}
+Die Convolutional und Max-Pooling Schicht bilden die Grundbausteine eines CNN. Diese werden nun mehrfach hintereinander gereiht. Das im Rahmen dieser Arbeit vewendete CNN hat als Beispiel zwei solcher aufeinanderfolgenden Convolutional+Max-Pooling Schichten.\\
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{img/semeval_cnn_structure}
+	\caption{Schematische Darstellung des in dieser Arbeit verwendeten CNN \protect\cite{deriu2016swisscheese}}
+\end{figure}
+
 \subsection{Ausgabeschicht}
-\blindtext
+Am Ende des CNN wird eine fully-connected Schicht angehängt. Diese funktioniert genau gleich wie bereits beim Neuronalen Netzwerk beschrieben wurde (vgl. \ref{basic:neural_network:layer}). Dabei stehen die einzelnen Neuronen der Ausgabeschicht für die einzelnen Klassen, welche detektiert werden sollen. Im Falle des in dieser Arbeit verwendeten CNN gibt es in der Ausgabeschicht drei Neuronen wobei jeder für einen der entsprechenden Sentiments steht..
 \section{Word Embeddings}
-\blindtext
+
 \section{Distant Supervision}
 Wie bereits in \ref{basics:neural_network} erläutert benötigen NNs, vor allem CNNs, sehr viele annotierte Trainingsdaten \fixme{Referenz} um am Ende des Trainings ein zufriedenstellendes Modell zu erhalten. Ein grossteil der vorhandenen Datensätze umfassen allerdings nicht mehr als 10'000 Texte. Des Weiteren sind die Sentiments in diesen Datensätzen sehr oft nicht gleichverteilt. Das führt dazu, dass gewisse Sentiments unterrepräsentiert sind, während andere überdurchschnittlich oft vorhanden sind. Im Falle der in dieser Arbeit verwendeten Datensätze ist es so, dass der positive und negative Sentiment unterdurchschnittlich oft vorkommen, während es überdurchschnittlich viele Texte mit einem neutralen Sentiment gibt (vgl. \ref{data:supervised_data}). Dadurch lernt das CNN zwar sehr gut Texte mit neutralem Sentiment zu erkennen, allerdings tut es sich sehr schwer mit den anderen beiden Sentiments.
+\fixme{mehr informationen!}
+\section{Metriken}
+Um einen Klassifizierer zu bewerten werden die folgend beschriebenen Metriken verwendet.
+\subsection{Präzision {\&} Ausbeute}
+\label{basics:metrics:precision_recall}
+
+\subsection{F1-Score}
+Die in \ref{basics:metrics:precision_recall} beschriebenen Metriken Präzision und Ausbeute haben ein fundamentales Problem: Wenn die Klassen ungleich verteilt sind kann eine hohe Präzision bzw. Ausbeute erreicht werden indem einfach immer die am stärksten vertretene als Resultat zurückgegeben wird.\\\\Am Beispiel der Testdaten aus den JCR{\_}quotations (vgl. \ref{data:supervised_data}) ist einfach ersichtlich wo das Problem liegt. Der neutrale Sentiment ist hier überdurchschnittlich hoch vertreten mit $66.9\%$. Wenn der Klassifizierer also immer also Resultat den neutralen Sentiment zurückgibt führt das automatisch zu einer Ausbeute von $100\%$ und einer Präzision von $66.9\%$. Dies entspricht zwar der Realität ist aber irreführend.\\\\
+Um dieses Problem zu umgehen wird im Rahmen dieser Arbeit der F1-Score verwendet. Diese wird als Kombination der Präzision und der Ausbeute mithilfe der Gleichung \ref{basic:metrics:f1_eq} berechnet.
+
+\begin{equation}
+\label{basic:metrics:f1_eq}
+F1 = \frac{2*precision*recall}{precision + recall}
+\end{equation}
+
+Der zusammengefasste F1-Score über die zwei Klassen $x$ und $y$ wird mithilfe der Gleichung \ref{basic:metrics:f1_comb_eq} berechnet.
+
+\begin{equation}
+\label{basic:metrics:f1_comb_eq}
+F1_{x|y} = \frac{F1_x + F1_y}{2}
+\end{equation}
 
 \section{Technische Implementation}
 Im folgenden Abschnitt wird der technische Aufbau, welcher verwendet wurde, um die in \ref{experiments} beschriebenen Experimente durchzuführen.
