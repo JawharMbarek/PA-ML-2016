@@ -14,7 +14,7 @@ sys.path.insert(0, dlp)
 
 import parse_utils
 
-from data_loader import DataLoader
+from tsv_data_loader import TsvDataLoader
 from nltk import TweetTokenizer
 
 argv = sys.argv[1:]
@@ -39,7 +39,7 @@ with open(vocabulary_path, 'rb') as f:
 
 for file_path in data_paths:
     if file_path.endswith('.tsv'):
-        sentiments, _, data, _ = DataLoader.load(file_path, vocabulary)
+        loader = TsvDataLoader(file_path, vocabulary)
 
         print('Starting to process file %s' % file_path)
 
@@ -50,28 +50,27 @@ for file_path in data_paths:
         words_missing_in_vocab = 0
         words_present_in_vocab = 0
 
-        sentiment_pos_count = sum([x == 2 for x in sentiments])
-        sentiment_neu_count = sum([x == 1 for x in sentiments])
-        sentiment_neg_count = sum([x == 0 for x in sentiments])
+        sentiment_pos_count = 0 #sum([x == 2 for x in sentiments])
+        sentiment_neu_count = 0 #sum([x == 1 for x in sentiments])
+        sentiment_neg_count = 0 #sum([x == 0 for x in sentiments])
 
-        for t in map(lambda x: x[-1], data):
-            words = tokenizer.tokenize(parse_utils.preprocess_tweet(t))
+        for text, sentiment in loader.load_lazy_raw():
+            if sentiment == 0:
+                sentiment_neg_count += 1
+            elif sentiment == 1:
+                sentiment_neu_count += 1
+            else:
+                sentiment_pos_count += 1
 
-            for w in words:
-                if vocabulary.get(w) is None:
-                    words_missing_in_vocab += 1
-                else:
+            for t in text:
+                if t in vocabulary:
                     words_present_in_vocab += 1
-
-                if w not in stats_vocab:
-                    stats_vocab[w] = 1
                 else:
-                    stats_vocab[w] += 1
+                    words_missing_in_vocab += 1
 
             sentence_count += 1
-
-            sentence_word_len += len(words)
-            sentence_char_len += sum([len(w) for w in words])
+            sentence_word_len += len(text)
+            sentence_char_len += sum([len(w) for w in text])
 
             if sentence_count % 1000 == 0:
                 print('Processed %d sentences' % sentence_count)
@@ -106,8 +105,6 @@ for file_path in data_paths:
         print('Finished analyzing the file %s' % file_path)
     else:
         print('Cannot analyse non-TSV file %s' % file_path)
-
-stats['vocabulary'] = stats_vocab
 
 with open(stats_file, 'w+') as f:
     f.write(json.dumps(stats))
