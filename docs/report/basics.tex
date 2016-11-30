@@ -1,5 +1,5 @@
 \chapter{Grundlagen}
-Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Supervision} \cite{go2009twitter} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt.\\\\
+Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Supervision} \cite{go2009twitter} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt. Die Einführung beschränkt sich darauf die Theorie für die Anwendung in Klassifizierungaufgaben zu erläutern.\\\\
 Im zweiten Teil wird auf die Anforderungen sowie die Implementation der Software zum Durchführen der Experimente eingegangen.
 
 \section{Definitionen}
@@ -14,11 +14,11 @@ Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches ein Text bei e
 	\begin{tabular}{@{}ll@{}}
 		\toprule
 		Sentiment & Beispiel\\ \midrule
-		positiv & Die Akkulaufzeit dieser Digitalkamera ist aussergewöhnlich hoch.\\
+		positiv & Ich liebe Donuts!\\
 		&\\
 		neutral & Dieser Stein ist grau.\\
 		&\\
-		negativ & Die Auflösung dieser Digitalkamera ist aussergewöhnlich schlecht.\\
+		negativ & Die Auflösung dieser Handy-Kamera ist sehr schlecht.\\
 		\bottomrule
 	\end{tabular}
 	\caption{Beispiele für verschiedene Sentiments von Texten}
@@ -83,7 +83,6 @@ Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von d
 \section{Convolutional Neural Network}
 \emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}), sondern mittels Filter über lokale Konnektivität versucht wird Muster zu erkennen.
 \subsection{Filter}
-<<<<<<< Updated upstream
 \label{basic:cnn:filter}
 Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schicht verbunden sind, werden hier sogenannte Filter verwendet. Es handelt sich hierbei um eine $n\times m$-Matrix. Die Aktivierung eines Neurons wird dabei über eine \emph{Convolution} (dt. Faltung) berechnet. Dabei wird die Filter-Matrix über die Eingabedaten bewegt und es wird jeweils das innere Produkt der Filter-Matrix und dem Ausschnitt der Eingabedaten berechnet auf welchem der Filter aktuell positioniert ist. Das Bewegungsmuster des Filters wird auch \emph{Stride} (dt. durchschreiten) genannt. Je nach Eingabedaten bzw. Ausgabedaten der vorherigen Schicht lässt sich nur eine bestimmte Anzahl an sinnvollen Strides definieren.\\\\Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, an die nächste Schicht weitergereicht. Diese hat bei den gegebenen Eingabedimensionen $h\times w$, Dimension der Filter $a\times b$, Stride $s$ und Anzahl der Filter $n$ die Dimensionen $n\times (n-h+1)$\fixme{WRONG!}.\\
 
@@ -96,32 +95,40 @@ Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schich
 Diese wird in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet. Eine Schicht, welche diese Art von Berechnung verwendet wird auch Convolutional (dt. sich falltend) Schicht genannt.
 \subsection{Zero-Padding}
 \blindtext
-=======
-Anstatt das alle Neuronen einer Schicht mit allen Neuronen der vorherigen Schicht verbunden sind, werden bei einem CNN sogenannte Filter verwendet. Diese stellen die Neuronen des CNN Es handelt sich hierbei um eine $n\times m$-Matrix. Die Aktivierung eines Neurons wird dabei über eine \emph{Convolution} (dt. Faltung) berechnet. Dabei wird die Filter-Matrix über die Eingabedaten bewegt und es wird jeweils das innere Produkt der Filter-Matrix und dem Ausschnitt der Eingabedaten berechnet auf welchem der Filter aktuell positioniert ist. Das Bewegungsmuster des Filters wird auch \emph{Stride} (dt. durchschreiten) genannt. Je nach Eingabedaten bzw. Ausgabedaten der vorherigen Schicht lässt sich nur eine bestimmte Anzahl an "sinnvollen" Strides definieren.\\\\Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, an die nächste Schicht weitergereicht. Diese hat bei den gegebenen Eingabedimensionen $h\times w$, Dimension der Filter $a\times b$, Stride $s$ und Anzahl der Filter $n$ die Dimensionen $n\times (n-h+1)$\fixme{WRONG!}. Diese wird in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet.
->>>>>>> Stashed changes
 \subsection{Max-Pooling Schicht}
 \label{basic:cnn:pooling}
-In der \emph{Max-Pooling} Schicht wird ein grossteil der in der Feature-Map vorhandenen Informationen verworfen. Dabei wird ein Fenster über die resultierende Feature-Map der vorhergehenden Schicht bewegt und der jeweils maximale Wert des entsprechenden Ausschnitts der Feature-Map als Wert in die gepoolte Represäntation übernommen. Das Fenster, welches über die Feature-Map bewegt wird, ist definiert durch die Dimensionalität des Fensters (z.B. $2\times 2$) und dem Stride. Dieser steht für das Bewegunsmuster des Fenster analog zum Filter (vgl. \ref{basic:cnn:filter}). Die gepoolte Represäntation der Feature-Map dient dann als Eingabewert für die nächste Convolutional Schicht.\\\\
-
-\begin{figure}[h]
+In der \emph{Max-Pooling} Schicht wird ein grossteil der in der Feature-Map vorhandenen Informationen verworfen. Dabei wird ein Fenster über die resultierende Feature-Map der vorhergehenden Schicht bewegt und der jeweils maximale Wert des entsprechenden Ausschnitts der Feature-Map als Wert in die gepoolte Represäntation übernommen. Das Fenster, welches über die Feature-Map bewegt wird, ist definiert durch die Dimensionalität des Fensters (z.B. $2\times 2$) und dem Stride. Dieser steht für das Bewegunsmuster des Fenster analog zum Filter (vgl. \ref{basic:cnn:filter}). Die gepoolte Represäntation der Feature-Map dient dann als Eingabewert für die nächste Convolutional oder Ausgabeschicht (vgl. \ref{basic:cnn:output_layer}).
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=10cm]{img/max_pooling}
-	\caption{Schematische Darstellung der Max-Pooling Schicht}
+	\caption{Schematische Funktionsweise der Max-Pooling Schicht}
 \end{figure}
+Die Max-Pooling Schicht erfüllt zwei Aufgaben: Einerseits reduziert sie die Dimensionalität der zu verarbeitenden Daten, andererseits verwirft sie \quotes{unwichtige} Informationen indem sie nur die maximalen Werte der zuletzt berechneten Aktivierungen behält.\fixme{more infos?}
 
 \subsection{Ausgabeschicht}
-\blindtext
+\label{basic:cnn:output_layer}
+Die Ausgabeschicht eines CNN ist gleich aufgebaut wie die eines \quotes{traditionellen} Neuronalen Netzwerkts (vgl. \ref{basics:neural_network:layer}). Dabei wird eine fully-connected Schicht verwendet bei welcher alle Neuronen als Eingabewerte alle Aktivierungen der letzten Max-Pooling Schicht verknüpft sind. Die Anzahl Neuronen entspricht dabei der Anzahl zu unterscheidenden Klassen (vgl. \ref{basic:neural_network:layer}).
 \section{Word Embeddings}
-\blindtext
-\section{Distant Supervision}
-Wie bereits in \ref{basics:neural_network} erläutert benötigen NNs, vor allem CNNs, sehr viele annotierte Trainingsdaten \fixme{Referenz} um am Ende des Trainings ein zufriedenstellendes Modell zu erhalten. Ein grossteil der vorhandenen Datensätze umfassen allerdings nicht mehr als 10'000 Texte. Des Weiteren sind die Sentiments in diesen Datensätzen sehr oft nicht gleichverteilt. Das führt dazu, dass gewisse Sentiments unterrepräsentiert sind, während andere überdurchschnittlich oft vorhanden sind. Im Falle der in dieser Arbeit verwendeten Datensätze ist es so, dass der positive und negative Sentiment unterdurchschnittlich oft vorkommen, während es überdurchschnittlich viele Texte mit einem neutralen Sentiment gibt (vgl. \ref{data:supervised_data}). Dadurch lernt das CNN zwar sehr gut Texte mit neutralem Sentiment zu erkennen, allerdings tut es sich sehr schwer mit den anderen beiden Sentiments.
+Um die Sätze eines Textes in eine Form zu bringen, welche für ein CNN verarbeitbar ist, können sogenannte Word Embeddings verwendet werden. Dabei werden die gegebenen Wörter eines Vokabulars $v$ so in einen $d$-dimensionalen, reelen Vektorraum abgebildet, dass die semantischen Beziehungen innerhalb der Wörter erhalten bleiben. Dies wird am Beispiel in Abbildung \ref{basic:word_embeddings:king_queen_example} ersichtlich: Die Wortvektoren für \quotes{Man} and \quotes{Woman} stehen in gleicher Weise zueinander wie die Wortvektoren \quotes{Uncle} zu \quotes{Aunt} bzw. \quotes{King} zu \quotes{Queen}. Als Konsequenz können also auch semantische Berechnungen vorgenommen werden: Wenn wir beim beim Wortvektor für das Wort \quotes{Kings} starten, den Wortvektor für \quotes{King} subtrahieren und den Wortvektor für \quotes{Queen} hinzuaddieren landen wir sehr nahe beim Wortvektor für \quotes{Queens}.\\
 
+\begin{figure}[H]
+	\label{basic:word_embeddings:king_queen_example}
+	\centering
+	\includegraphics[width=10cm]{img/king_queen_example_word_embeddings}
+	\caption{Beispiel Word-Embeddings King-Queen}
+\end{figure}
+
+Mithilfe dieser Word-Embeddings kann nun ein Satz als Konkatiation der einzelnen Wort-Vektoren zu einer Satz-Matrix aufgefasst werden. Es gibt mehrere Möglichkeiten solche Word-Embeddings zu generieren. Die beiden bekanntesten sind die Implementationen word2vec von Google \cite{mikolov2013distributed} und GloVe von der Universität Stanford \cite{pennington2014glove}.
+
+\section{Distant Supervision}
+Wie bereits in \ref{basics:neural_network} erläutert benötigen NNs, vor allem CNNs, sehr viele annotierte Trainingsdaten \fixme{Referenz} um am Ende des Trainings ein zufriedenstellendes Modell zu erhalten. Ein grossteil der vorhandenen Datensätze umfassen allerdings nicht mehr als 10'000 Texte. Des Weiteren sind die Sentiments in diesen Datensätzen sehr oft nicht gleichverteilt. Das führt dazu, dass gewisse Sentiments unterrepräsentiert sind, während andere überdurchschnittlich oft vorhanden sind. Im Falle der in dieser Arbeit verwendeten Datensätze ist es so, dass der positive und negative Sentiment unterdurchschnittlich oft vorkommen, während es überdurchschnittlich viele Texte mit einem neutralen Sentiment gibt (vgl. \ref{data:supervised_data}). Dadurch lernt das CNN zwar sehr gut Texte mit neutralem Sentiment zu erkennen, allerdings tut es sich sehr schwer mit den anderen beiden Sentiments.\\\\
+Um dieses Problem zu beheben kann das Training mit sogenannter \emph{Distant Supervision} \cite{} durchgeführt werden. Die Grundidee dabei ist einen grossen, unsupervised Corpus an Trainingsdaten zu verwenden bei welchem sich der Sentiment eines einzelnen Datensatzes aus einer Eigenschaft des Datensatzes ableiten lässt. Beispiele für Eigenschaften aus welchen sich der Sentiment ableiten lässt sind zum Beispiel Emoticons in Tweets oder die Anzahl der vergebenen Sterne bei einer Produktbewertung auf Amazon aufführen. Bei den Emoticons in Tweets lässt sich so zum Beispiel aus dem lachenden Emoticon \quotes{:-)} ein positiver bzw. aus dem traurigen Emoticon \quotes{:-(} ein negativer Sentiment ableiten. Erläuterungen wie die Distant Supervision im Rahmen dieser Arbeit verwendet wurde wird im Kapitel Methodik genauer erläutert (vgl. \ref{methods:distant_supervision}).
 \section{Technische Implementation}
 Im folgenden Abschnitt wird der technische Aufbau, welcher verwendet wurde, um die in \ref{experiments} beschriebenen Experimente durchzuführen.
 
-\subsubsection{Vorarbeiten}
+\subsection{Vorarbeiten}
 \label{technichal_setup:prework}
-Der Grundaufbau der verwendeten Software wurde von Jan Deriu mithilfe von Keras\footnote{https://keras.io/} implementiert und zur Durchführung dieser Arbeit zur Verfügung gestellt. Im Rahmen dieses Grundaufbaus wurde die folgende Funktionalität bereits implementiert:
+Der Grundaufbau der verwendeten Software wurde vom InIT mithilfe von Keras\footnote{https://keras.io/} implementiert und zur Durchführung dieser Arbeit zur Verfügung gestellt. Im Rahmen dieses Grundaufbaus wurde die folgende Funktionalität bereits implementiert:
 
 \begin{itemize}[noitemsep]
 	\item Implementation des CNN in Keras und verwendung von Theano \cite{theanoCitShort} als Backend für die GPUs (vgl. Abschnitt \ref{technichal_setup:hardware}).
@@ -129,7 +136,7 @@ Der Grundaufbau der verwendeten Software wurde von Jan Deriu mithilfe von Keras\
 	\item Skripte mit den folgenden Funktionalitäten: Trainieren des CNN, Laden von TSV Dateien, Vorverarbeiten von Word-Embeddings
 \end{itemize}
 
-\subsubsection{Anforderungen}
+\subsection{Anforderungen}
 \label{technical_setup:requirements}
 Ein System, welches die in \ref{experiments} beschriebenen Experimente durchführen kann, soll die folgenden Eigenschaften aufweisen:
 
@@ -141,7 +148,7 @@ Ein System, welches die in \ref{experiments} beschriebenen Experimente durchfüh
 \end{itemize}
 
 Die in \ref{technichal_setup:prework} beschriebenen Vorarbeiten bitten eine Basis um damit ein System aufzubauen, welches die oben beschriebenen Eigenschaften aufweist.
-\subsubsection{Funktionalität}
+\subsection{Funktionalität}
 \label{technical_setup:functionality}
 Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften aufweist, zu erhalten, wurden die folgenden Komponenten implementiert:
 
@@ -155,7 +162,7 @@ Um ein System, welches die im vorhergehenden Kapitel beschriebenen Eigenschaften
 \fixme{Referenze auf Code, Code-Style bei group{\_}id}
 Die oben beschriebenen Komponenten erlauben es Experimente mittels JSON Konfigurationen zu starten und den gesamten Trainings- und Validierungsprozess mittels der Metriken zu dokumentieren.
 
-\subsubsection{Skripte}
+\subsection{Skripte}
 \label{technical_setup:scripts}
 Für die Durchführung der Experimente wurden diverse Skripte erstellt um die Handhabung zu vereinfachen und Auswertungen zu ermöglichen. Die Liste der implementierten Script umfasst unter anderem die folgenden:
 
@@ -164,11 +171,11 @@ Für die Durchführung der Experimente wurden diverse Skripte erstellt um die Ha
 	\item Erstellen von Word-Embeddings über einen Textcorpus
 	\item Erstellen von Statistiken zu Trainings- und Validierungsdaten
 	\item Vorverarbeitung von Trainingsdaten für die Distant-Phase
-	\item Erstellen von Visualisierungen von Word-Embeddings mittels t-SNE \cite{maaten2008visualizing}.
+	\item Erstellen von Visualisierungen von Word-Embeddings mittels t-SNE \cite{maaten2008visualizing}
 	\item Diverse Wartungsscripkte zur Generierung und Verwaltung von Experimenten
 \end{itemize}
 
-\subsubsection{Weboberfläche}
+\subsection{Weboberfläche}
 \label{technical_setup:webgui}
 Um die dritte Anforderung nach Übersichtlichkeit und Auswertbarkeit (vgl. \ref{technical_setup:requirements}) zu erfüllen wurde eine Weboberfläche umgesetzt, mit welchem die Parameter und Resultate aller durchgeführten Experimente übersichtlich und an einem Ort zur Verfügung gestellt werden. Für die Implementation wurde das Python Framework flask\footnote{http://flask.pocoo.org/} verwendet.\fixme{Bilder der Weboberfläche, Schrift flask}\\
 Zur Auswertung der Experimente stehen drei Funktionen zur Verfügung:
@@ -183,7 +190,7 @@ Zur Auswertung der Experimente stehen drei Funktionen zur Verfügung:
 	\caption{Ansicht Experiment über Weboberfläche}
 	\label{fig:web_gui}
 \end{figure}
-\subsubsection{Betriebssystem \& Softwarepakete}
+\subsection{Betriebssystem \& Softwarepakete}
 \label{technical_setup:software}
 Alle Experimente wurden mit der unten beschriebenen Implementation durchgeführt. Auf beiden verwendeten Computer-Systemen (vgl. \ref{technichal_setup:prework}) wurde als Betriebssystem Ubuntu 16.04 installiert. Dazu wurden Python 3.5.2\footnote{https://www.python.org/}, Nvidia GPU Treiber und cuda8\footnote{https://developer.nvidia.com/cuda-toolkit} als Abhängigkeiten von Theano und Keras installiert.
 

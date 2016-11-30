@@ -38,7 +38,23 @@ In der Klasse der Supervised Datensätze befinden sich alle, welche bereits Anno
 Alle oben aufgeführten Datensätze sind in Englisch verfasst.
 
 \subsubsection{Unsupervised}
-Für die Distant-Phase wurde ein Corpus von 82 Mio. Amazon Reviews verwendet, welche im Rahmen der Veröffentlichung von \cite{zhang2015character} öffentlich bereitgestellt wurden. Aus den zur Verfügung stehenden Bewertungen wurden nur die Texte und die numerische Beurteilung (1-5 Sterne) verwendet. Details zur Verwendung während der Distant-Phase befinden sich im Kapitel \ref{methods}.
+Für die Distant-Phase wurde ein Corpus von 82 Mio. Amazon Reviews verwendet, welche im Rahmen der Veröffentlichung von \cite{zhang2015character} öffentlich bereitgestellt wurden. Aus den zur Verfügung stehenden Bewertungen wurden nur die Texte und die numerische Beurteilung (1-5 Sterne) verwendet. Details zur Verwendung während der Distant-Phase befinden sich im Kapitel \ref{methods}.\\\\
+
+\begin{table}[h]
+	\ra{1.3}
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{tabular}{@{}cccccc@{}}
+			\toprule
+			& & & \multicolumn{3}{c}{Verteilung Bewertungen}\\
+			\cmidrule(r){4-6}
+			Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & $x >= 4$ & $x = 3$ & $x < 3$\\ \midrule
+			$142831980$ & $347.60$ & $88.02$ & $12.44\%$ & $8.56\%$ & $79.00\%$\\
+			\bottomrule
+		\end{tabular}
+	\end{adjustbox}
+	\caption{Statistiken zu Unsupervised Amazon Datensatz}
+\end{table}
+\fixme{Update with dedup statistics!}
 
 \subsection{Text Corpora}
 Um die Word-Embeddings für die durchgeführten Experimente zu generieren wurden die unten beschriebenen Text Corpora verwendet.
