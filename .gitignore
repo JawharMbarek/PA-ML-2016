@@ -126,7 +126,7 @@ docs/report/*.bbg
 docs/report/*.blg
 docs/report/*blx.bib
 docs/report/main.glsdefs
-!docs/report/img/*
+!docs/report/img/**/*
 
 # Ignore models content
 models/*
