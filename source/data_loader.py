@@ -2,7 +2,6 @@ import numpy as np
 
 from data_utils import tsv_sentiment_loader
 from nltk import TweetTokenizer
-from random import shuffle
 
 class DataLoader(object):
     '''This class can be used to load multiple TSV files
@@ -41,7 +40,7 @@ class DataLoader(object):
         tmp_sentiments = []
 
         curr_nlabels = -1
-        tmp_raw_data = []
+        raw_data = []
 
         # load all data and count how much records there are
         for path, count in obj.items():
@@ -81,22 +80,18 @@ class DataLoader(object):
                 sel_texts.append(texts[curr_idx])
                 sel_idx.append(curr_idx)
 
-                tmp_raw_data.append(raw_txts[curr_idx])
+                raw_data.append(raw_txts[curr_idx])
 
             tmp_sentiments += sel_sentiments
             tmp_texts += sel_texts
 
-        idx_shuf = list(range(len(tmp_sentiments)))
-        shuffle(idx_shuf)
-
         res_texts = []
         res_sentiments = []
-        raw_data = []
-        
-        for idx in idx_shuf:
+
+        rng_idx_list = list(range(0, len(tmp_sentiments)))
+
+        for idx in rng_idx_list:
             res_texts.append(tmp_texts[idx])
             res_sentiments.append(tmp_sentiments[idx])
-            raw_data.append(tmp_raw_data[idx])
 
         return np.asarray(res_sentiments), np.asarray(res_texts), raw_data, curr_nlabels
-
