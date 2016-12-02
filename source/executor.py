@@ -29,24 +29,82 @@ class Executor(object):
     path.join(path.dirname(__file__), '../results'))
 
     DEFAULT_PARAMS = {
+        # Batch size used while training the model
         'batch_size': 500,
+
+        # Number of epochs to train the model at max
         'nb_epoch': 100,
+
+        # Number folds to use when using k-fold cross validation
         'nb_kfold_cv': 1,
+
+        # Percentage of the test data which should be used as validation
+        # data. This configuration is ignored inn case 'validation_data_path'
+        # is set.
         'validation_split': 0.0,
+
+        # Metric to choose the best fold from when using k-fold cv
         'monitor_metric': 'val_f1_score_pos_neg',
-        'model_checkpoint_monitor_metric': 'val_f1_score_pos_neg',
-        'early_stopping_monitor_metric': 'val_f1_score_pos_neg',
+
+        # Can be 'max' or 'min' and decides wether the maximum
+        # or minimum value is considered 'best' when monitoring
+        # the metrics for each fold.
         'monitor_metric_mode': 'max',
+
+        # Metric to choose the best model from. It stores the best
+        # model as a json with the associated weights as h5 file
+        # in the results directory.
+        'model_checkpoint_monitor_metric': 'val_f1_score_pos_neg',
+
+        # Metric which is used in the EarlyStopping callback. It
+        # monitors the given metric and stops the training after
+        # 50 consecutive epochs without an improvement.
+        'early_stopping_monitor_metric': 'val_f1_score_pos_neg',
+
+        # Decides wether the loaded train data is shuffled before
+        # it is returned by the Dataloader.
         'randomize_test_data': True,
+
+        # Decides wether class weights should be set while training
+        # to compensate if train data with skewed classes is used.
         'set_class_weights': False,
+
+        # Decides which model is loaded by the Executor. See the
+        # function build() in the Model class for more details.
         'model_id': 1,
-        'samples_per_epoch': 100000,
+
+        # The training can also be done by using and HDF5 file as
+        # the training data. In this case there's no reason for the
+        # preprocessing and hence speeds up the training process. The
+        # HDF5 should provide the two datasets 'x' and 'y' where the
+        # first contains the input values and the latter the solutions.
         'use_preprocessed_data': False,
-        'validation_data_path': None,
-        'max_sent_length': 140,
+
+        # Path to the HDF5 file to use as preprocessed data.        
         'preprocessed_data': None,
+
+        # If preprocessed data is used, we need to set the samples per
+        # epoch via the configuration to the number of training examples.
+        # This is the case because a generator is used and keras needs to
+        # know the number of examples it should pull from the iterator.
+        'samples_per_epoch': 100000,
+
+        # Data to use for validation.
+        'validation_data_path': None,
+
+        # The maximum length of the input 'sentences'.
+        'max_sent_length': 140,
+
+        # If set, the model will be loaded from this JSON file instead
+        # of the build() function in the Model class.
         'model_json_path': None,
+
+        # If set, the model will be initialized with the weights stored
+        # in the HDF5 file located at the given path.
         'model_weights_path': None,
+
+        # If set to false, no validation will be done while training but
+        # instead only at the end after the training has finished.
         'validate_while_training': True
     }
 
