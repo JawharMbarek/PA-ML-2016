@@ -2,7 +2,7 @@
   "group_id": "tweets_distant_model",
   "use_preprocessed_data": true,
   "preprocessed_data": "preprocessed/tweets_distant_train_preprocessed_wiki.hdf5",
-  "samples_per_epoch": 82400000,
+  "samples_per_epoch": 100000000,
   "test_data": "testdata/amazon_distant_train.tsv",
   "name": "tweets_distant_model_wiki_embeddings",
   "nb_epoch": 1,
