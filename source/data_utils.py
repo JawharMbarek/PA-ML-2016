@@ -33,10 +33,13 @@ def tsv_sentiment_loader(fname, alphabet, tokenizer, delimiter='\t'):
     dummy_word_idx = alphabet.get('DUMMY_WORD_IDX', 1)
 
     data_raw = open(fname, 'rb').readlines()
-    data_raw = list(map(
+    data_raw = filter(lambda x: len(x.split()) > 0, data_raw)
+    data_raw = map(
         lambda x: x.decode('utf-8').replace('\n', '').split(delimiter),
-        data_raw)
+        data_raw
     )
+
+    data_raw = list(data_raw)
 
     # TODO: What to do with broken tids?
     # tids = np.fromiter(map(lambda x: x[0], data_raw), dtype=np.int)
