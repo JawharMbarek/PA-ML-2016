@@ -40,9 +40,9 @@ with open(in_tsv, 'r') as in_f:
         with open(out_validation_tsv, 'w+') as out_validation_f:
             for i, line in enumerate(in_entries):
                 if i in selected_validation_idxs:
-                    out_validation_f.write(line)
+                    out_validation_f.write('%s\n' % line)
                 else:
-                    out_train_f.write(line)
+                    out_train_f.write('%s\n' % line)
 
 print('Splitted the TSV file %s into %s and %s by the ratio %.1f%% / %.1f%%' % (
     in_tsv, out_train_tsv, out_validation_tsv, (1.0 - perc_validation) * 100.0, perc_validation * 100.0
