@@ -21,10 +21,12 @@ class Model(object):
     hidden_dims = nb_filter
     nb_labels = 3
 
-    def __init__(self, name, vocab_emb, input_maxlen=140, verbose=False):
+    def __init__(self, name, vocab_emb, input_maxlen=140,
+                 random_embeddings=False, verbose=False):
         '''Constructor for the model class.'''
         self.vocabulary_embeddings = vocab_emb
         self.max_features = vocab_emb.shape[0]
+        self.random_embeddings = random_embeddings
         self.verbose = verbose
         self.input_maxlen = input_maxlen
 
@@ -40,13 +42,7 @@ class Model(object):
 
     def build1(self):
         '''Builds the version 1 of the model.'''
-        embeddings = Embedding(
-            self.max_features,
-            self.nb_embedding_dims,
-            input_length=self.input_maxlen,
-            weights=[self.vocabulary_embeddings],
-            dropout=0.2,
-        )
+        embeddings = self._get_embeddings_layer()
 
         zeropadding = ZeroPadding1D(self.filter_length - 1)
 
@@ -94,13 +90,7 @@ class Model(object):
     def build2(self):
         '''Returns the version 2 of the model. This one uses
            three conv layers instead of just two.'''
-        embeddings = Embedding(
-            self.max_features,
-            self.nb_embedding_dims,
-            input_length=self.input_maxlen,
-            weights=[self.vocabulary_embeddings],
-            dropout=0.2,
-        )
+        embeddings = self._get_embeddings_layer()
 
         zeropadding = ZeroPadding1D(self.filter_length - 1)
 
@@ -158,13 +148,7 @@ class Model(object):
     def build3(self):
         '''Returns the version 3 of the model. This one uses
            four conv layers instead of just two.'''
-        embeddings = Embedding(
-            self.max_features,
-            self.nb_embedding_dims,
-            input_length=self.input_maxlen,
-            weights=[self.vocabulary_embeddings],
-            dropout=0.2,
-        )
+        embeddings = self._get_embeddings_layer()
 
         zeropadding = ZeroPadding1D(self.filter_length - 1)
 
@@ -241,3 +225,18 @@ class Model(object):
                       ev.f1_score_pos_neg, ev.f1_score_neu])
 
         return model
+
+    def _get_embeddings_layer(self):
+        '''Returns the embedding layer for the model. It returns
+           the embedding layer initialized with the given word
+           embeddings, otherwise it is randomly and uniformly initialized.'''
+        weights = None
+
+        if not self.random_embeddings:
+            weights = [self.vocabulary_embeddings]
+        else:
+            print('INFO: Using random word embeddings')
+
+        return Embedding(self.max_features, self.nb_embedding_dims,
+                         input_length=self.input_maxlen, dropout=0.2,
+                         weights=weights)

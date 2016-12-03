@@ -105,7 +105,12 @@ class Executor(object):
 
         # If set to false, no validation will be done while training but
         # instead only at the end after the training has finished.
-        'validate_while_training': True
+        'validate_while_training': True,
+
+        # If set to true, the embeddings layer will be initialized with
+        # random embeddings instead of using the precalculated word2vec
+        # embeddings
+        'use_random_embeddings': False
     }
 
     def __init__(self, name, params):
@@ -166,6 +171,8 @@ class Executor(object):
         self.train_metrics_opt_path = path.join(self.results_path,
                                                 'train_metrics_opt.json')
 
+        self.use_random_embeddings = self.params['use_random_embeddings']
+
         self.create_results_directories()
 
     def run(self):
@@ -188,8 +195,7 @@ class Executor(object):
         if self.use_preprocessed_data:
             self.log('Loading model')
 
-            curr_model = Model(self.name, vocab_emb,
-                               input_maxlen=self.max_sent_length).build(self.model_id)
+            curr_model = self.get_model(vocab_emb)
 
             self.store_model(curr_model)
             self.log('Using preprocessed data: %s' % self.preprocessed_data)
@@ -288,7 +294,7 @@ class Executor(object):
 
                     curr_model = Model.compile(curr_model)
                 else:
-                    curr_model = Model(self.name, vocab_emb).build(self.model_id)
+                    curr_model = self.get_model(vocab_emb)
 
                 # store the model only on the first iteration
                 if not model_stored:
@@ -374,6 +380,9 @@ class Executor(object):
                      batch_size=self.batch_size,
                      callbacks=self.get_callbacks(count))
 
+    def get_model(self, embeddings):
+        return Model(self.name, embeddings, input_maxlen=self.max_sent_length,
+                     random_embeddings=self.use_random_embeddings).build(self.model_id)
 
     def get_callbacks(self, counter):
         '''Creates the necessary callbacks for the keras model
