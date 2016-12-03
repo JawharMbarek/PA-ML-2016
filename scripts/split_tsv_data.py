@@ -38,7 +38,7 @@ with open(in_tsv, 'r') as in_f:
 
     with open(out_train_tsv, 'w+') as out_train_f:
         with open(out_validation_tsv, 'w+') as out_validation_f:
-            for i, line in enumerate(in_f):
+            for i, line in enumerate(in_entries):
                 if i in selected_validation_idxs:
                     out_validation_f.write(line)
                 else:
