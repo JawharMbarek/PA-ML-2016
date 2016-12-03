@@ -7,7 +7,6 @@ import numpy as np
 import time
 
 from os import path
-from executor import Executor
 from utils import generate_test_id
 from subprocess import Popen, PIPE
 
@@ -87,6 +86,8 @@ for i, arg in enumerate(argv):
             print('Using unix timestamp as seed: %s' % np_rand_seed)
 
         np.random.seed(np_rand_seed)
+
+        from executor import Executor
 
         #
         # Execute the run!

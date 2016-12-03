@@ -1,0 +1,12 @@
+{
+  "group_id": "crossdomain_we_ds_sem",
+  "set_class_weights": true,
+  "test_data": {
+    "testdata/SEM_headlines_train.tsv": 1000
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+  "validation_data_path": "testdata/SEM_headlines_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
+}
