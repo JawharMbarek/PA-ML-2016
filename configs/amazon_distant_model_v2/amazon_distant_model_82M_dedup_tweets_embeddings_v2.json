@@ -4,7 +4,7 @@
   "preprocessed_data": "preprocessed/amazon_distant_train_preprocessed_tweets.hdf5",
   "samples_per_epoch": 82400000,
   "test_data": "testdata/amazon_distant_train.tsv",
-  "name": "amazon_distant_model_82M_dedup_v2",
+  "name": "amazon_distant_model_82M_dedup_tweets_embeddings_v2",
   "nb_epoch": 1,
   "max_sent_length": 140,
   "batch_size": 1000,

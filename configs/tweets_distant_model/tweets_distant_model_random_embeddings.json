@@ -1,0 +1,14 @@
+{
+  "group_id": "tweets_distant_model",
+  "use_preprocessed_data": true,
+  "preprocessed_data": "preprocessed/tweets_distant_train_preprocessed_news.hdf5",
+  "samples_per_epoch": 100000000,
+  "test_data": "testdata/amazon_distant_train.tsv",
+  "name": "tweets_distant_model_random_embeddings",
+  "nb_epoch": 1,
+  "max_sent_length": 140,
+  "batch_size": 1000,
+  "use_random_embeddings": true,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
+}

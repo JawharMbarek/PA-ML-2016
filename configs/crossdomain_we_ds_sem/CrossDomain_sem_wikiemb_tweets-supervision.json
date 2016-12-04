@@ -9,6 +9,6 @@
   "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_wiki_emb.npy",
   "validation_data_path": "testdata/SEM_headlines_test.tsv",
   "vocabulary_path": "vocabularies/vocab_wiki_emb.pickle",
-  "model_json_path": "models/amazon_distant_tweets_140_tokens/model.json",
-  "model_weights_path": "models/amazon_distant_tweets_140_tokens/weights_80M.h5"
+  "model_json_path": "models/tweets_distant_model_wiki_embeddings/model.json",
+  "model_weights_path": "models/tweets_distant_model_wiki_embeddings/weights_80M.h5"
 }

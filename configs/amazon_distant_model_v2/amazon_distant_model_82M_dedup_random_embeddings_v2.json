@@ -1,0 +1,14 @@
+{
+  "group_id": "amazon_distant_model",
+  "use_preprocessed_data": true,
+  "preprocessed_data": "preprocessed/amazon_distant_train_preprocessed.hdf5",
+  "samples_per_epoch": 82400000,
+  "test_data": "testdata/amazon_distant_train.tsv",
+  "name": "amazon_distant_model_82M_dedup_random_embeddings_v2",
+  "nb_epoch": 1,
+  "max_sent_length": 140,
+  "batch_size": 1000,
+  "use_random_embeddings": true,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
+}
