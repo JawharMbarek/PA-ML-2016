@@ -6,9 +6,9 @@
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,
-  "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
   "validation_data_path": "testdata/HUL_reviews_test.tsv",
-  "vocabulary_path": "vocabularies/vocab_en300M_reduced.pickle",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle",
   "model_json_path": "models/tweets_distant_model_random_embeddings/model.json",
   "model_weights_path": "models/tweets_distant_model_random_embeddings/weights_80M.h5",
   "use_random_embeddings": true
