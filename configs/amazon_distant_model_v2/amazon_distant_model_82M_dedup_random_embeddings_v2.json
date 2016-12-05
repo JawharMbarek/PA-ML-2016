@@ -1,7 +1,7 @@
 {
   "group_id": "amazon_distant_model",
   "use_preprocessed_data": true,
-  "preprocessed_data": "preprocessed/amazon_distant_train_preprocessed.hdf5",
+  "preprocessed_data": "preprocessed/amazon_distant_train_preprocessed_news.hdf5",
   "samples_per_epoch": 82400000,
   "test_data": "testdata/amazon_distant_train.tsv",
   "name": "amazon_distant_model_82M_dedup_random_embeddings_v2",
