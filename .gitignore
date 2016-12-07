@@ -133,5 +133,5 @@ models/*
 !models/.gitkeep
 
 # Ignore nohup output
-nohup.out
+*.out
 
