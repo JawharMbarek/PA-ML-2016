@@ -61,6 +61,12 @@ class Executor(object):
         # 50 consecutive epochs without an improvement.
         'early_stopping_monitor_metric': 'val_f1_score_pos_neg',
 
+        # Set the patience parameter in the EarlyStopping callback.
+        # Basically, the model is trained until there's been no
+        # improvement in the early_stopping_monitor_metric for
+        # early_stopping_patience consecutive epochs.
+        'early_stopping_patience': 75,
+
         # Decides wether the loaded train data is shuffled before
         # it is returned by the Dataloader.
         'randomize_test_data': True,
@@ -141,6 +147,7 @@ class Executor(object):
         self.monitor_metric_mode = self.params['monitor_metric_mode']
         self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
         self.early_stopping_monitor_metric = self.params['early_stopping_monitor_metric']
+        self.early_stopping_patience = self.params['early_stopping_patience']
 
         if not self.validate_while_training and self.validation_split == 0.0:
             print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -397,8 +404,8 @@ class Executor(object):
 
     def create_early_stopping(self):
         '''Creates the early stopping callback for the model.'''
-        return EarlyStopping(patience=50, verbose=1, mode='max',
-                             monitor=self.early_stopping_monitor_metric)
+        return EarlyStopping(patience=self.early_stopping_patience, verbose=1,
+                             mode='max', monitor=self.early_stopping_monitor_metric)
 
     def load_vocabulary(self, path):
         '''Loads the vocabulary stored as a pickle file.'''
