@@ -27,6 +27,10 @@ class DataLoader(object):
     def load_from_path(path, vocabulary, randomize=False):
         '''Loads the TSV file at the given path.''' 
         tokenizer = TweetTokenizer(reduce_len=True)
+
+        if path is None:
+            return ([], [], [], [])
+
         tids, sentiments, texts, raw_data, nlabels = tsv_sentiment_loader(path, vocabulary, tokenizer)
         return (sentiments, texts, raw_data, nlabels)
 
@@ -35,6 +39,9 @@ class DataLoader(object):
         '''Loads different datasets with given ratios to create a new
            dataset which contains as much records from the each file
            as specified.'''
+
+        if obj is None:
+            return ([], [], [], [])
 
         tmp_texts = []
         tmp_sentiments = []

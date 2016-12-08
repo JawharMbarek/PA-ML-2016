@@ -188,8 +188,8 @@ class Executor(object):
         self.store_params()
 
         curr_model = None
-        test_data = self.params['test_data']
-        validation_data_path = self.params['validation_data_path']
+        test_data = self.params.get('test_data', None)
+        validation_data_path = self.params.get('validation_data_path', None)
         vocabulary_path = self.params['vocabulary_path']
         vocab_emb_path = self.params['vocabulary_embeddings']
         vocab_emb = np.load(vocab_emb_path)
@@ -269,8 +269,11 @@ class Executor(object):
                 randomize=self.params['randomize_test_data']
             )
 
-            self.store_tsv_data(raw_data, 'train')
-            self.store_tsv_data(raw_data_val, 'validation')
+            if raw_data_val:
+                self.store_tsv_data(raw_data_val, 'validation')
+
+            if raw_data:
+                self.store_tsv_data(raw_data, 'train')
 
             self.log('Test data loaded')
 
@@ -310,10 +313,14 @@ class Executor(object):
 
                 self.log('Model loaded (round #%d)' % count)
 
-                X_train = txts[train]
-                X_test = txts_val
+                X_train = []
+                Y_train = []
 
-                Y_train = sents[train]
+                if train:
+                    X_train = txts[train]
+                    Y_train = sents[train]
+
+                X_test = txts_val
                 Y_test = sents_val
 
                 self.log('Start training (round #%d)' % count)
