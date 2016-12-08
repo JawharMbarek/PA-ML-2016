@@ -1,0 +1,10 @@
+{
+    "group_id": "crossdomain_sp_semeval",
+    "model_json_path": "models/best_model_crossdomain_we_ds_semeval/model.json",
+    "model_weights_path": "models/best_model_crossdomain_we_ds_semeval/weights_1.h5",
+    "nb_epoch": 1000,
+    "set_class_weights": true,
+    "validation_data_path": "testdata/TAC_reviews_test.tsv",
+    "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
+    "vocabulary_path": "vocabularies/vocab_en300M_reduced.pickle"
+}
