@@ -31,6 +31,9 @@ class TsvDataLoader(object):
 
         with open(self.path, 'r') as f:
             for line in f:
+                if line == '\n':
+                    continue
+
                 yield self.convert_to_idxs(self.process_line(*line))
                 curr_count += 1
 
@@ -44,6 +47,9 @@ class TsvDataLoader(object):
 
         with open(self.path, 'r') as f:
             for line in f:
+                if line == '\n':
+                    continue
+
                 yield self.process_line(line)
                 curr_count += 1
 
