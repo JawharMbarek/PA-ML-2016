@@ -1,0 +1,21 @@
+{
+  "group_id": "augmentation_a_hul",
+  "set_class_weights": true,
+  "test_data": {
+    "testdata/DAI_tweets_train.tsv": 225,
+    "testdata/DIL_reviews_train.tsv": 225,
+    "testdata/HUL_reviews_train.tsv": 3156,
+    "testdata/JCR_quotations_train.tsv": 225,
+    "testdata/MPQ_reviews_train.tsv": 225,
+    "testdata/SemEval_tweets_train.tsv": 225,
+    "testdata/SEM_headlines_train.tsv": 225,
+    "testdata/TAC_reviews_train.tsv": 225
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_wiki_emb.npy",
+  "validation_data_path": "testdata/HUL_reviews_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_wiki_emb.pickle",
+  "model_json_path": "models/amazon_distant_wiki_140_tokens/model.json",
+  "model_weights_path": "models/amazon_distant_wiki_140_tokens/weights_80M.h5"
+}
