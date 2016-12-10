@@ -6,7 +6,7 @@
     "testdata/DIL_reviews_train.tsv": 143,
     "testdata/HUL_reviews_train.tsv": 143,
     "testdata/JCR_quotations_train.tsv": 143,
-    "testdata/MPQ_reviews_train.tsv": 143,143
+    "testdata/MPQ_reviews_train.tsv": 143,
     "testdata/SemEval_tweets_train.tsv": 143,
     "testdata/SEM_headlines_train.tsv": 1000,
     "testdata/TAC_reviews_train.tsv": 143
