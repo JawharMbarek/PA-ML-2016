@@ -1,0 +1,11 @@
+{
+    "group_id": "crossdomain_sp_allbut_mpq",
+    "model_json_path": "models/crossdomain_sp_allbut_mpq_model/model.json",
+    "model_weights_path": "models/crossdomain_sp_allbut_mpq_model/weights_1.h5",
+    "nb_epoch": 1000,
+    "nb_kfold_cv": 1,
+    "set_class_weights": true,
+    "validation_data_path": "testdata/union_without_mpq_test.tsv",
+    "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+    "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
+}
