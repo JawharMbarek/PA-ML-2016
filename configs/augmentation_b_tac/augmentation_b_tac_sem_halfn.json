@@ -3,7 +3,7 @@
   "set_class_weights": true,
   "test_data": {
     "testdata/TAC_reviews_train.tsv": 500,
-    "testdata/SEM_headlines_tran.tsv": 250
+    "testdata/SEM_headlines_train.tsv": 250
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,

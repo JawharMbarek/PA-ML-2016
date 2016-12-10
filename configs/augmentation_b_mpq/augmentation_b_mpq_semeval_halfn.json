@@ -3,7 +3,7 @@
   "set_class_weights": true,
   "test_data": {
     "testdata/MPQ_reviews_train.tsv": 4000,
-    "testdata/JCR_quotations_train.tsv": 2000
+    "testdata/SemEval_tweets_train.tsv": 2000
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,

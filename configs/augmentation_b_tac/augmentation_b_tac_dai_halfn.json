@@ -2,8 +2,8 @@
   "group_id": "augmentation_b_tac_dai",
   "set_class_weights": true,
   "test_data": {
-    "testdata/TAC_reviews_test.tsv": 1637,
-    "testdata/DAI_tweets_test.tsv": 818
+    "testdata/TAC_reviews_train.tsv": 1637,
+    "testdata/DAI_tweets_train.tsv": 818
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,
