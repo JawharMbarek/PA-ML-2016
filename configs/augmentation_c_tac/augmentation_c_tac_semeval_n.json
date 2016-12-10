@@ -1,0 +1,15 @@
+{
+  "group_id": "augmentation_c_tac_semeval",
+  "set_class_weights": true,
+  "test_data": {
+    "testdata/SemEval_tweets_train.tsv": 1076,
+    "testdata/TAC_reviews_train.tsv": 1076
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+  "validation_data_path": "testdata/TAC_reviews_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle",
+  "model_json_path": "models/tweets_distant_model_news_embeddings/model.json",
+  "model_weights_path": "models/tweets_distant_model_news_embeddings/weights_80M.h5"
+}
