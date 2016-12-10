@@ -1,15 +1,9 @@
 {
-  "group_id": "augmentation_a_tac",
+  "group_id": "augmentation_b_tac_dil",
   "set_class_weights": true,
   "test_data": {
-    "testdata/TAC_reviews_test.tsv": 2152,
-    "testdata/DAI_tweets_test.tsv": 0,
-    "testdata/DIL_reviews_test.tsv": 0,
-    "testdata/HUL_reviews_test.tsv": 0,
-    "testdata/JCR_quotations_test.tsv": 0,
-    "testdata/MPQ_reviews_test.tsv": 0,
-    "testdata/SemEval_tweets_test.tsv": 0,
-    "testdata/SEM_headlines_test.tsv": 0
+    "testdata/TAC_reviews_train.tsv": 1710,
+    "testdata/DIL_reviews_train.tsv": 855
   },
   "nb_epoch": 1000,
   "nb_kfold_cv": 1,
