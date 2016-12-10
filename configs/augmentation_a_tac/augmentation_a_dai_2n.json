@@ -1,5 +1,5 @@
 {
-  "group_id": "crossdomain_we_ds_dai",
+  "group_id": "augmentation_a_dai",
   "set_class_weights": true,
   "test_data": {
     "testdata/DAI_tweets_test.tsv": 3274,
