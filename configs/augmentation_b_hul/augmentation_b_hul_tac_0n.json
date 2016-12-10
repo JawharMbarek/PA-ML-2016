@@ -1,0 +1,15 @@
+{
+  "group_id": "augmentation_b_hul_tac",
+  "set_class_weights": true,
+  "test_data": {
+    "testdata/HUL_reviews_train.tsv": 1076,
+    "testdata/TAC_reviews_train.tsv": 0 
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_wiki_emb.npy",
+  "validation_data_path": "testdata/HUL_reviews_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_wiki_emb.pickle",
+  "model_json_path": "models/amazon_distant_wiki_140_tokens/model.json",
+  "model_weights_path": "models/amazon_distant_wiki_140_tokens/weights_80M.h5"
+}

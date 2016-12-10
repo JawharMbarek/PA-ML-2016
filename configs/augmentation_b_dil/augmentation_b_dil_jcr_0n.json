@@ -1,0 +1,15 @@
+{
+  "group_id": "augmentation_b_dil_jcr",
+  "set_class_weights": true,
+  "test_data": {
+    "testdata/DIL_reviews_train.tsv": 516,
+    "testdata/JCR_quotations_train.tsv": 0
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
+  "validation_data_path": "testdata/DIL_reviews_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_en300M_reduced.pickle",
+  "model_json_path": "models/amazon_distant_tweets_140_tokens/model.json",
+  "model_weights_path": "models/amazon_distant_tweets_140_tokens/weights_80M.h5"
+}
