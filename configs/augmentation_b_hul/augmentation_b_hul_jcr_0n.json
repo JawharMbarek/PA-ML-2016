@@ -1,5 +1,5 @@
 {
-  "group_id": "augmentation_b_hul_dil",
+  "group_id": "augmentation_b_hul_jcr",
   "set_class_weights": true,
   "test_data": {
     "testdata/HUL_reviews_train.tsv": 516,
