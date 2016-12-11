@@ -57,5 +57,6 @@ if len(failed_config_paths) > 0:
     print('The following JSON configurations could not be loaded due to syntax errors:')
     print('')
     print('\n'.join(err_configs))
+    sys.exit(2)
 else:
     print('Success! No invalid JSON configurations were found.')
