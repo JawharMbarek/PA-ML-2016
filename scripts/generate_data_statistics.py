@@ -5,6 +5,7 @@ import time
 import json
 import getopt
 import pickle
+import math
 
 from os import path
 
@@ -46,6 +47,8 @@ for file_path in data_paths:
         sentence_count = 0
         sentence_word_len = 0
         sentence_char_len = 0
+        sentence_max_word_len = -1
+        sentence_min_word_len = math.inf
 
         words_missing_in_vocab = 0
         words_present_in_vocab = 0
@@ -68,9 +71,17 @@ for file_path in data_paths:
                 else:
                     words_missing_in_vocab += 1
 
+            len_sentence = len(text)
+
             sentence_count += 1
-            sentence_word_len += len(text)
+            sentence_word_len += len_sentence
             sentence_char_len += sum([len(w) for w in text])
+
+            if len_sentence > sentence_max_word_len:
+                sentence_max_word_len = len_sentence
+
+            if len_sentence < sentence_min_word_len:
+                sentence_min_word_len = len_sentence
 
             if sentence_count % 1000 == 0:
                 print('Processed %d sentences' % sentence_count)
@@ -80,6 +91,8 @@ for file_path in data_paths:
 
         stats['data'].setdefault(file_path, {
             'total': {
+                'max_word_count': int(sentence_max_word_len),
+                'min_word_count': int(sentence_min_word_len),
                 'word_count': int(sentence_word_len),
                 'sentence_count': int(sentence_count),
                 'character_count': int(sentence_char_len),
@@ -107,6 +120,7 @@ for file_path in data_paths:
         print('Cannot analyse non-TSV file %s' % file_path)
 
 with open(stats_file, 'w+') as f:
-    f.write(json.dumps(stats))
+    f.write(json.dumps(stats, sort_keys=True,
+                       indent=4, separators=(',', ': ')))
 
 print('Successfully saved text statistics to %s' % stats_file)

@@ -131,3 +131,7 @@ docs/report/main.glsdefs
 # Ignore models content
 models/*
 !models/.gitkeep
+
+# Ignore nohup output
+*.out
+

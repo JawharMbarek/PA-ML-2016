@@ -61,6 +61,12 @@ class Executor(object):
         # 50 consecutive epochs without an improvement.
         'early_stopping_monitor_metric': 'val_f1_score_pos_neg',
 
+        # Set the patience parameter in the EarlyStopping callback.
+        # Basically, the model is trained until there's been no
+        # improvement in the early_stopping_monitor_metric for
+        # early_stopping_patience consecutive epochs.
+        'early_stopping_patience': 75,
+
         # Decides wether the loaded train data is shuffled before
         # it is returned by the Dataloader.
         'randomize_test_data': True,
@@ -141,6 +147,7 @@ class Executor(object):
         self.monitor_metric_mode = self.params['monitor_metric_mode']
         self.model_checkpoint_monitor_metric = self.params['model_checkpoint_monitor_metric']
         self.early_stopping_monitor_metric = self.params['early_stopping_monitor_metric']
+        self.early_stopping_patience = self.params['early_stopping_patience']
 
         if not self.validate_while_training and self.validation_split == 0.0:
             print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -181,8 +188,8 @@ class Executor(object):
         self.store_params()
 
         curr_model = None
-        test_data = self.params['test_data']
-        validation_data_path = self.params['validation_data_path']
+        test_data = self.params.get('test_data', None)
+        validation_data_path = self.params.get('validation_data_path', None)
         vocabulary_path = self.params['vocabulary_path']
         vocab_emb_path = self.params['vocabulary_embeddings']
         vocab_emb = np.load(vocab_emb_path)
@@ -262,8 +269,11 @@ class Executor(object):
                 randomize=self.params['randomize_test_data']
             )
 
-            self.store_tsv_data(raw_data, 'train')
-            self.store_tsv_data(raw_data_val, 'validation')
+            if raw_data_val:
+                self.store_tsv_data(raw_data_val, 'validation')
+
+            if raw_data:
+                self.store_tsv_data(raw_data, 'train')
 
             self.log('Test data loaded')
 
@@ -303,10 +313,14 @@ class Executor(object):
 
                 self.log('Model loaded (round #%d)' % count)
 
-                X_train = txts[train]
-                X_test = txts_val
+                X_train = []
+                Y_train = []
 
-                Y_train = sents[train]
+                if train:
+                    X_train = txts[train]
+                    Y_train = sents[train]
+
+                X_test = txts_val
                 Y_test = sents_val
 
                 self.log('Start training (round #%d)' % count)
@@ -397,8 +411,8 @@ class Executor(object):
 
     def create_early_stopping(self):
         '''Creates the early stopping callback for the model.'''
-        return EarlyStopping(patience=50, verbose=1, mode='max',
-                             monitor=self.early_stopping_monitor_metric)
+        return EarlyStopping(patience=self.early_stopping_patience, verbose=1,
+                             mode='max', monitor=self.early_stopping_monitor_metric)
 
     def load_vocabulary(self, path):
         '''Loads the vocabulary stored as a pickle file.'''

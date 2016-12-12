@@ -1,0 +1,10 @@
+{
+    "group_id": "crossdomain_sp_tac",
+    "model_json_path": "models/best_model_crossdomain_we_ds_tac/model.json",
+    "model_weights_path": "models/best_model_crossdomain_we_ds_tac/weights_1.h5",
+    "nb_epoch": 1000,
+    "set_class_weights": true,
+    "validation_data_path": "testdata/TAC_reviews_test.tsv",
+    "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+    "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
+}
