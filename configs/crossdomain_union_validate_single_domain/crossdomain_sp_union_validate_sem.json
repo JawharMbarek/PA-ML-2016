@@ -1,0 +1,14 @@
+{
+  "group_id": "crossdomain_sp_union_validate_singledomain",
+  "set_class_weights": true,
+  "test_data": {
+    "testdata/CrossDomain_train.tsv": 21103
+  },
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
+  "validation_data_path": "testdata/SEM_headlines_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_en300M_reduced.pickle",
+  "model_json_path": "models/tweets_distant_model_tweet_embeddings/model.json",
+  "model_weights_path": "models/tweets_distant_model_tweet_embeddings/weights_80M.h5"
+}
