@@ -56,8 +56,8 @@ Mit dem Experiment V6 wurde die Kernfrage untersucht, ob die Performanz eines CN
 In einem ersten Schritt wurde das CNN mit domänenfremden Daten trainiert. Anschliessend wird das CNN in 21 Einzelschritten mit jeweils zusätzlich 400 Daten von der Zieldomäne weiter trainiert. Die genaue Aufteilung auf die verschiedenen Domänen ist im Bild \ref{fig:Method_CrossDomain} ersichtlich.
 \begin{figure}[H]
 	\centering
-	\subfigure[Zieldomäne MPQ\_news]{\includegraphics[width=0.49\textwidth]{img/methods/config_CrossDomain_MPQ_news.PNG}}
-	\subfigure[Zieldomäne SemEval\_tweets]{\includegraphics[width=0.49\textwidth]{img/methods/config_CrossDomain_SemEval_tweets.PNG}}
+	\subfigure[Zieldomäne MPQ\_news]{\includegraphics[width=0.49\textwidth]{img/methods/config_crossdomain_mpq_reviews.png}}
+	\subfigure[Zieldomäne SemEval\_tweets]{\includegraphics[width=0.49\textwidth]{img/methods/config_crossdomain_semeval_tweets.png}}
 	\caption{Versuchsaufbau CrossDomain}
 	\label{fig:Method_CrossDomain}
 \end{figure}
@@ -69,8 +69,8 @@ Domänenähnlich wird folgendermassen definiert, es gibt zwei verschiedene Kateg
 Der konkrete Versuchsaufbau für die beiden Zieldomänen MPQ\_news und SemEval\_tweets ist in der Abbildung \ref{fig:Method_SimilarDomain} ersichtlich.
 \begin{figure}[H]
 	\centering
-	\subfigure[Zieldomäne MPQ\_news]{\includegraphics[width=0.49\textwidth]{img/methods/config_SimilarDomain_MPQ_news.PNG}}
-	\subfigure[Zieldomäne SemEval\_tweets]{\includegraphics[width=0.49\textwidth]{img/methods/config_SimilarDomain_SemEval_tweets.PNG}}
+	\subfigure[Zieldomäne MPQ\_news]{\includegraphics[width=0.49\textwidth]{img/methods/config_similardomain_mpq_reviews.png}}
+	\subfigure[Zieldomäne SemEval\_tweets]{\includegraphics[width=0.49\textwidth]{img/methods/config_similardomain_semeval_tweets.png}}
 	\caption{Versuchsaufbau SimilarDomain}
 	\label{fig:Method_SimilarDomain}
 \end{figure}
@@ -81,8 +81,8 @@ Das Experiment BaseDomain dient als Baseline und somit Referenzwert für die Exp
 Bei diesem Experiment wird nur mit den Daten der Zieldomäne trainiert und validiert \ref{fig:Method_BaseDomain}. Es dient als Anhaltspunkt, ob die Idee CrossDomain die Perfomanz des CNN effektiv erhöht.
 \begin{figure}[H]
 	\centering
-	\subfigure[Zieldomäne MPQ\_news]{\includegraphics[width=0.49\textwidth]{img/methods/config_BaseDomain_MPQ_news.PNG}}
-	\subfigure[Zieldomäne SemEval\_tweets]{\includegraphics[width=0.49\textwidth]{img/methods/config_BaseDomain_SemEval_tweets.PNG}}
+	\subfigure[Zieldomäne MPQ\_news]{\includegraphics[width=0.49\textwidth]{img/methods/config_basedomain_mpq_reviews.png}}
+	\subfigure[Zieldomäne SemEval\_tweets]{\includegraphics[width=0.49\textwidth]{img/methods/config_basedomain_semeval_tweets.png}}
 	\caption{Versuchsaufbau BaseDomain}
 	\label{fig:Method_BaseDomain}
 \end{figure}
