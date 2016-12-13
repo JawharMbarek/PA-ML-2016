@@ -1,5 +1,5 @@
 \chapter{Grundlagen}
-Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Supervision} \cite{go2009twitter} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt. Die Einführung beschränkt sich darauf die Theorie für die Anwendung in Klassifizierungaufgaben zu erläutern.\\\\
+Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Als erstes erfolgt eine kurze Einführung in maschinelles Lernen mit Neuronalen Netzen und Deep Learning. Danach wird eine spezielle Form dieser Netzwerke vorgestellt, das sogenannte \emph{Convolutional Neural Network}. Zuletzt wird noch kurz auf das sogenannte \emph{Distant Supervision} \cite{go2009twitter} eingegangen und dieses in Kontext mit der gegebenen Fragestellung (vgl. \ref{introduction}) gesetzt. Die Einführung beschränkt sich darauf die Theorie für die Anwendung in Klassifizierungaufgaben zu erläutern.
 
 \section{Definitionen}
 
@@ -7,21 +7,21 @@ Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in de
 Texte, welche die gleiche Struktur aufweisen werden zu einer Domäne zusammengefasst. Als Beispiele lassen sich hier Produktbewertungen, Tweets oder auch Nachrichtentexte erwähnen.\fixme{Stimmt so nicht, nur Volltext und Kurznachricht}
 
 \subsection{Sentiment}
-Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches ein Text bei einem Leser auslöst. Im Rahmen dieser Arbeit werden  die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfniss lässt sich diese Skala natürlich noch weiter verfeinern, so z.B. mit \emph{eher negativ} oder \emph{eher positiv} als Sentiments.\\
+Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches ein Text bei einem Leser auslöst. Im Rahmen dieser Arbeit werden  die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfniss lässt sich diese Skala natürlich noch weiter verfeinern, so z.B. mit \emph{eher negativ} oder \emph{eher positiv} als Sentiments.
+
 \begin{table}[h]
-	\centering
-	\begin{tabular}{@{}ll@{}}
-		\toprule
-		Sentiment & Beispiel\\ \midrule
-		positiv & Ich liebe Donuts!\\
-		&\\
-		neutral & Dieser Stein ist grau.\\
-		&\\
-		negativ & Die Auflösung dieser Handy-Kamera ist sehr schlecht.\\
-		\bottomrule
-	\end{tabular}
-	\caption{Beispiele für verschiedene Sentiments von Texten}
-	\label{basics:sentiments_example_table}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Sentiment & Beispiel\\
+    \midrule
+    positiv & Ich liebe Donuts!\\
+    neutral & Dieser Stein ist grau.\\
+    negativ & Die Auflösung dieser Handy-Kamera ist sehr schlecht.\\
+    \bottomrule
+  \end{tabular}
+  \caption{Beispiele für verschiedene Sentiments von Texten}
+  \label{basics:sentiments_example_table}
 \end{table}
 \fixme{Bessere Beispiele!}
 
@@ -32,16 +32,21 @@ Mit \emph{Crossdomain} (dt. domänenübergreifend) \fixme{complete!}
 \section{Neuronale Netze}
 \label{basics:neural_network}
 Neuronale Netzwerke sind ein Modell des maschinellen Lernens, welches biologisch motiviert ist und sich lose am menschlichen Gehirn orientiert. Im folgenden wird auf die einzelnen Komponenten eines neuronal Netzwerkes eingegangen.
+
 \subsection{Neuron / Perceptron}
 \label{basic:neural_network:neuron}
-Die Grundelemente eines neuronalen Netzwerks sind die sogenannten Neuronen, auch Perceptron genannt. Diese Neuronen stellen im Grundsatz nichts anderes als eine mathematische Funktion dar. Der erste wichtige Teil eines Neurons sind die $n + 1$ Eingänge und die mit diesen Eingängen verknüpfte Gewichte ${w_0, w_1, w_2, ..., w_{n+1}}$. Die Anzahl der Eingänge ist $n+1$ und nicht $n$, da jeweils noch ein Bias-Wert dazugerechnet wird. Dieser wird im Normalfall mit $1$ initialisiert. Der zweite wichtige Teil stellt die Aktivierungsfunktion dar. Diese ist dafür zuständig den Ausgabewert eines Neurons zu normalisieren, sprich in eine vordefinierte Spanne an Werten zu bringen. Diese Spanne ist dabei abhängig von der gewählten Aktivierungsfunktion. Als Beispiele von Aktivierungsfunktionen können $tanh$, $relu$ oder auch die $sigmoid$ Funktion aufgelistet werden.\\\\
-Der Ausgabewert $y$ eines Neurons lässt sich bei gegebener Aktivierungsfunktion $\gamma$, den Gewichten $w_n$ und den Eingabewerten $x_n$ wie folgt berechnen:
+
+Ein neuronales Netz besteht aus \emph{Neuronen}, auch Perceptrons genannt. Neuronen nehmen \emph{Eingänge} $\mathbf{x} = (x_1, \dots, x_n)$ entgegen und berechnen mit diesen einen \emph{Ausgang} $o$.  Den Eingängen sind \emph{Gewichte} $\mathbf{w} = (w_1, \dots, w_n)$ zugeordnet; ausserdem gibt es noch einen als \emph{bias} bezeichneten Parameter $b$. Dieser Bias wird manchmal als $w_0$ mit zu $\mathbf{w}$ hinzugenommen; dann wird $\mathbf{x}$ um $x_0 = 1$ erweitert. 
+
+Die Berechnung von $o$ geschieht mit Hilfe der \emph{Aktivierungsfunktion} $\varphi$.  Aktivierungsfunktionen sind reelle Funktionen, die meist endliche Grenzwerte für $x\to\infty$ und $x\to-\infty$ besitzen; man kann also sagen, die Aktivierungsfunktion  ist dafür zuständig, den Ausgabewert eines Neurons zu normalisieren oder einzuhegen. Die Funktionen $\tanh(x) = (e^x - e^{-x})/(e^x + e^{-x})$, $\operatorname{relu}(x) = \max\{0,x\}$ oder auch die sigmoid-Funktion $S(x) = 1/(1 + e^{-x})$ sind Beispiele häufig verwendeter Aktivierungsfunktionen.
+
+Der Ausgang $o$ eines Neurons wird für eine gegebene Aktivierungsfunktion $\varphi$, die Gewichte $\mathbf{w}$ und die Eingabewerte $\mathbf{x}$ wie folgt berechnet:
 
 \begin{equation}
-y = \gamma(\sum_{i=0}^{n+1} w_i*x_i)
+o = \varphi(\mathbf{w} \cdot \mathbf{x}) = \varphi\bigg(\sum_{i=0}^{n} w_i x_i\bigg) = \varphi\bigg(b + \sum_{i = 1}^n w_i x_i\bigg).
 \end{equation}
 
-Das daraus sich ergebende Resultat wird auch die \emph{Aktivierung} des Neurons genannt. Dies ist der Wert, welcher das Neuron an die nächste Schicht weiterreicht (vgl. \ref{basic:neural_network:layer}).
+Der Bias $b$ dient also dazu, das Argument von $\varphi$ zu verschieben (\emph{bias}, engl.\ "`Verschiebung"'). Der Ausgang heisst auch die \emph{Aktivierung} des Neurons. 
 
 \begin{figure}
 	\centering
@@ -52,15 +57,18 @@ Das daraus sich ergebende Resultat wird auch die \emph{Aktivierung} des Neurons 
 \subsection{Schicht}
 \label{basic:neural_network:layer}
 
-Um nun ein vollständiges neuronales Netzwerk zu erhalten werden die zuvor erwähnten Neuronen in sogenannten Schichten angeordnet. Dabei gibt es drei essentielle Schichten, welches jedes neuronale Netzwerk hat: Die Eingangsschicht, die Hiddenschicht und die Ausgabeschicht.\\\\
+Um nun ein vollständiges neuronales Netzwerk zu erhalten werden Neuronen (vgl.\ Abschnitt~\ref{basic:neural_network:neuron}) in \emph{Schichten} angeordnet. Dabei gibt es drei Schichten, welches jedes neuronale Netzwerk hat: Eine \emph{Eingabeschicht}, eine oder mehrere \emph{Hiddenschichten} oder \emph{verborgene Schichten} und eine \emph{Ausgabeschicht}; vgl.\ Abbildung~\ref{fig:schichten}.
+
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=10cm]{img/basic_neural_network}
-	\caption{Schematische Darstellung eines neuronalen Netzwerkes}
+	\caption{Schematische Darstellung eines neuronalen Netzwerkes. Links die Eingabeschicht, in der Mitte eine Hiddenschicht, rechts die Ausgabeschicht.}
+        \label{fig:schichten}
 \end{figure}
 
-Über die Eingabeschicht treten die Eingabedaten $x_1, x_2, ..., x_n$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht vorwärtspropagiert und diese berechnen damit jeweils ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Dieser Vorgang des "Vorwärtsrechnens" wird auch als Vorwärtspropagierung bezeichnet. Bei einem neuronalen Netzwerk mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}.\\\\
+Über die Eingabeschicht treten die Eingabedaten $x_1, x_2, ..., x_n$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht vorwärtspropagiert und diese berechnen damit jeweils ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Dieser Vorgang des "Vorwärtsrechnens" wird auch als Vorwärtspropagierung bezeichnet. Bei einem neuronalen Netzwerk mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}.
+
 Die Anzahl der Neuronen und ihre Aktivierungen in der Ausgabeschicht hängt von der konkreten Problemstellung ab. Im Falle dieser Arbeit sind in der Ausgabeschicht drei Neuronen vorhanden, wobei jedes für einen bestimmten Sentiment steht.
 
 \subsection{Backpropagation}
@@ -92,7 +100,8 @@ Backpropagation besitzt das Problem, dass der Erfolg des Algorithmus stark von d
 \emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der in \ref{basics:neural_network} beschriebenen neuronalen Netzen. Der Unterschiede der beiden Arten liegt darin, dass bei einem CNN die einzelnen Schichten nicht vollkommen miteinander verbunden sind (nicht \emph{fully-connected}), sondern mittels Filter über lokale Konnektivität versucht wird Muster zu erkennen.
 \subsection{Filter}
 \label{basic:cnn:filter}
-Anstatt Neuronen wie im klassischen Neuronalen Netzwerk (vgl. \ref{neural_network:basics:neuron}) lernt eine CNN über die sogenannten Filter. Dabei handelt es sich um $n\times m$-Matrizen, welche Gewichte enthalten, analog zu den Gewichten der eingehenden Verbindungen bei Neuronen. Dabei werden die Filter-Matrizen über die Eingabedaten bewegt und es wird jeweils das innere Produkt der aktuellen Filter-Matrix und dem aktuellen Ausschnitt der Eingabedaten berechnet auf welchem der Filter positioniert ist. Das Bewegungsmuster des Filters wird \emph{Stride} (dt. durchschreiten) genannt. Im Rahmen dieser Arbeit wird nur ein eindimensionaler Stride entlang der Satz-Matrix (vgl. \ref{missing!}) verwendet.\\\\
+Anstatt Neuronen wie im klassischen Neuronalen Netzwerk (vgl. \ref{neural_network:basics:neuron}) lernt eine CNN über die sogenannten Filter. Dabei handelt es sich um $n\times m$-Matrizen, welche Gewichte enthalten, analog zu den Gewichten der eingehenden Verbindungen bei Neuronen. Dabei werden die Filter-Matrizen über die Eingabedaten bewegt und es wird jeweils das innere Produkt der aktuellen Filter-Matrix und dem aktuellen Ausschnitt der Eingabedaten berechnet auf welchem der Filter positioniert ist. Das Bewegungsmuster des Filters wird \emph{Stride} (dt. durchschreiten) genannt. Im Rahmen dieser Arbeit wird nur ein eindimensionaler Stride entlang der Satz-Matrix (vgl. \ref{missing!}) verwendet.
+
 Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-Matrix, der sogenannten \emph{Feature Map}, zwischengespeichert. Diese stellen also das Äquivalent zur Aktivierung einer Schicht im klassischen Neuronalen Netzwerk (vgl. \ref{basic:neural_network:layer}) dar. Dabei werden alle resultierenden Feature-Maps einfach hintereinandergereiht und dienen als Eingabewerte für die nächste Schicht. 
 
 \begin{figure}[h]
@@ -104,7 +113,7 @@ Die durch diese Convolutions resultierende Werte werden der Form einer Resultat-
 Diese wird in der Pooling-Schicht (vgl. \ref{basic:cnn:pooling}) weiterverarbeitet. Eine Schicht, welche diese Art von Berechnung verwendet wird auch Convolutional (dt. Fallten) Schicht genannt.
 \subsection{Zero-Padding}
 \blindtext
-<<<<<<< HEAD
+
 \subsection{Max-Pooling Schicht}
 \label{basic:cnn:pooling}
 In der \emph{Max-Pooling} Schicht wird ein grossteil der in den Feature-Maps vorhandenen Informationen verworfen. Dabei wird ein Fenster über die resultierenden Feature-Maps der vorhergehenden Schicht bewegt und der jeweils maximale Wert des entsprechenden Ausschnitts der aktuellen Feature-Map als Wert in die gepoolte Represäntation übernommen. Das Fenster, welches über die Feature-Map bewegt wird, ist definiert durch die Dimensionalität des Fensters und dem Stride. Dieser steht für das Bewegunsmuster des Fenster analog zum Filter (vgl. \ref{basic:cnn:filter}). Die gepoolten Represäntationen der Feature-Maps dienen dann als Eingabewerte für die nächste Convolutional oder Ausgabeschicht. (vgl. \ref{basic:cnn:output_layer}).
@@ -145,14 +154,19 @@ Um die Sätze eines Textes in eine Form zu bringen, welche für ein CNN verarbei
 Mithilfe dieser Word-Embeddings kann nun ein Satz als Konkatiation der einzelnen Wort-Vektoren zu einer Satz-Matrix aufgefasst werden. Es gibt mehrere Möglichkeiten solche Word-Embeddings zu generieren. Die beiden bekanntesten sind die Implementationen word2vec von Google \cite{mikolov2013distributed} und GloVe von der Universität Stanford \cite{pennington2014glove}.
 
 \section{Distant Supervision}
-Wie bereits in \ref{basics:neural_network} erläutert benötigen NNs, vor allem CNNs, sehr viele annotierte Trainingsdaten \fixme{Referenz} um am Ende des Trainings ein zufriedenstellendes Modell zu erhalten. Ein grossteil der vorhandenen Datensätze umfassen allerdings nicht mehr als 10'000 Texte. Des Weiteren sind die Sentiments in diesen Datensätzen sehr oft nicht gleichverteilt. Das führt dazu, dass gewisse Sentiments unterrepräsentiert sind, während andere überdurchschnittlich oft vorhanden sind. Im Falle der in dieser Arbeit verwendeten Datensätze ist es so, dass der positive und negative Sentiment unterdurchschnittlich oft vorkommen, während es überdurchschnittlich viele Texte mit einem neutralen Sentiment gibt (vgl. \ref{data:supervised_data}). Dadurch lernt das CNN zwar sehr gut Texte mit neutralem Sentiment zu erkennen, allerdings tut es sich sehr schwer mit den anderen beiden Sentiments.\\\\
+Wie bereits in \ref{basics:neural_network} erläutert benötigen NNs, vor allem CNNs, sehr viele annotierte Trainingsdaten \fixme{Referenz} um am Ende des Trainings ein zufriedenstellendes Modell zu erhalten. Ein grossteil der vorhandenen Datensätze umfassen allerdings nicht mehr als 10'000 Texte. Des Weiteren sind die Sentiments in diesen Datensätzen sehr oft nicht gleichverteilt. Das führt dazu, dass gewisse Sentiments unterrepräsentiert sind, während andere überdurchschnittlich oft vorhanden sind. Im Falle der in dieser Arbeit verwendeten Datensätze ist es so, dass der positive und negative Sentiment unterdurchschnittlich oft vorkommen, während es überdurchschnittlich viele Texte mit einem neutralen Sentiment gibt (vgl. \ref{data:supervised_data}). Dadurch lernt das CNN zwar sehr gut Texte mit neutralem Sentiment zu erkennen, allerdings tut es sich sehr schwer mit den anderen beiden Sentiments.
+
 Um dieses Problem zu beheben kann das Training mit sogenannter \emph{Distant Supervision} \cite{} durchgeführt werden. Die Grundidee dabei ist einen grossen, unsupervised Corpus an Trainingsdaten zu verwenden bei welchem sich der Sentiment eines einzelnen Datensatzes aus einer Eigenschaft des Datensatzes ableiten lässt. Beispiele für Eigenschaften aus welchen sich der Sentiment ableiten lässt sind zum Beispiel Emoticons in Tweets oder die Anzahl der vergebenen Sterne bei einer Produktbewertung auf Amazon aufführen. Bei den Emoticons in Tweets lässt sich so zum Beispiel aus dem lachenden Emoticon \quotes{:-)} ein positiver bzw. aus dem traurigen Emoticon \quotes{:-(} ein negativer Sentiment ableiten. Erläuterungen wie die Distant Supervision im Rahmen dieser Arbeit verwendet wurde wird im Kapitel Methodik genauer erläutert (vgl. \ref{methods:distant_supervision}).
 Um einen Klassifizierer zu bewerten werden die folgend beschriebenen Metriken verwendet.
+
 \subsection{Präzision {\&} Ausbeute}
 \label{basics:metrics:precision_recall}
 
 \subsection{F1-Score}
-Die in \ref{basics:metrics:precision_recall} beschriebenen Metriken Präzision und Ausbeute haben ein fundamentales Problem: Wenn die Klassen ungleich verteilt sind kann eine hohe Präzision bzw. Ausbeute erreicht werden indem einfach immer die am stärksten vertretene als Resultat zurückgegeben wird.\\\\Am Beispiel der Testdaten aus den JCR{\_}quotations (vgl. \ref{data:supervised_data}) ist einfach ersichtlich wo das Problem liegt. Der neutrale Sentiment ist hier überdurchschnittlich hoch vertreten mit $66.9\%$. Wenn der Klassifizierer also immer also Resultat den neutralen Sentiment zurückgibt führt das automatisch zu einer Ausbeute von $100\%$ und einer Präzision von $66.9\%$. Dies entspricht zwar der Realität ist aber irreführend.\\\\
+Die in \ref{basics:metrics:precision_recall} beschriebenen Metriken Präzision und Ausbeute haben ein fundamentales Problem: Wenn die Klassen ungleich verteilt sind kann eine hohe Präzision bzw. Ausbeute erreicht werden indem einfach immer die am stärksten vertretene als Resultat zurückgegeben wird.
+
+Am Beispiel der Testdaten aus den JCR{\_}quotations (vgl. \ref{data:supervised_data}) ist einfach ersichtlich wo das Problem liegt. Der neutrale Sentiment ist hier überdurchschnittlich hoch vertreten mit $66.9\%$. Wenn der Klassifizierer also immer also Resultat den neutralen Sentiment zurückgibt führt das automatisch zu einer Ausbeute von $100\%$ und einer Präzision von $66.9\%$. Dies entspricht zwar der Realität ist aber irreführend.
+
 Um dieses Problem zu umgehen wird im Rahmen dieser Arbeit der F1-Score verwendet. Diese wird als Kombination der Präzision und der Ausbeute mithilfe der Gleichung \ref{basic:metrics:f1_eq} berechnet.
 
 \begin{equation}
@@ -221,7 +235,8 @@ Für die Durchführung der Experimente wurden diverse Skripte erstellt um die Ha
 
 \subsection{Weboberfläche}
 \label{technical_setup:webgui}
-Um die dritte Anforderung nach Übersichtlichkeit und Auswertbarkeit (vgl. \ref{technical_setup:requirements}) zu erfüllen wurde eine Weboberfläche umgesetzt, mit welchem die Parameter und Resultate aller durchgeführten Experimente übersichtlich und an einem Ort zur Verfügung gestellt werden. Für die Implementation wurde das Python Framework flask\footnote{http://flask.pocoo.org/} verwendet.\fixme{Bilder der Weboberfläche, Schrift flask}\\
+Um die dritte Anforderung nach Übersichtlichkeit und Auswertbarkeit (vgl. \ref{technical_setup:requirements}) zu erfüllen wurde eine Weboberfläche umgesetzt, mit welchem die Parameter und Resultate aller durchgeführten Experimente übersichtlich und an einem Ort zur Verfügung gestellt werden. Für die Implementation wurde das Python Framework flask\footnote{http://flask.pocoo.org/} verwendet.\fixme{Bilder der Weboberfläche, Schrift flask}
+
 Zur Auswertung der Experimente stehen drei Funktionen zur Verfügung:
 \begin{itemize}
 	\item Die Oberfläche gewährt Zugriff auf alle JSON Konfigurationen, welche zu einem Experiment gehören. Dazu zählen die Konfiguration selbst, die gespeicherten Trainings- und Validierungsmetriken und das CNN Model (vgl. \ref{technical_setup:functionality}).
