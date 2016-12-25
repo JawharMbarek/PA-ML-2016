@@ -15,7 +15,7 @@ import keras.backend as K
 import time
 
 from keras.models import Sequential
-from keras.layers import Merge, Dense, Activation
+from keras.layers import Merge, Dense, Activation, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils.np_utils import to_categorical
 from data_utils import compute_class_weights
@@ -40,7 +40,7 @@ val_data_path = argv[1]
 def get_domain_model_dir(d):
     return path.join(MODELS_PATH, 'best_model_crossdomain_we_ds_%s' % d)
 
-domains = ['dai', 'dil', 'hul', 'mpq', 'semeval', 'tac', 'sem']
+domains = ['dai', 'dil', 'hul', 'mpq', 'semeval', 'tac']
 vocabs  = ['vocab_en300M_reduced.pickle', 'vocab_news_emb.pickle', 'vocab_wiki_emb.pickle']
 
 models = {}
@@ -133,7 +133,6 @@ print('Starting to assemble and optimize the meta-classifier...')
 
 expert_net = Sequential()
 expert_net.add(Merge(trained_models, mode='concat'))
-expert_net.add(Flatten())
 expert_net.add(Dense(256))
 expert_net.add(Activation('relu'))
 expert_net.add(Dense(3, activation='softmax'))
@@ -153,6 +152,7 @@ expert_net.fit(combined_x, to_categorical(y_true),
 with open(model_json_path, 'w+') as f:
     f.write(expert_net.to_json())
 
+expert_net.load_weights(model_checkpoint_path)
 y_pred = expert_net.predict(combined_val_x)
 
 y_true = K.variable(value=to_categorical(y_val_true, 3))
@@ -161,5 +161,4 @@ y_pred = K.variable(value=y_pred)
 res_pos_neg = K.eval(f1_score_pos_neg(y_true, y_pred))
 
 print('Finished assembling and optimizing the meta-classifier!')
-print('The final weights are: %s' % str(weights_per_domain))
 print('The achieved f1_score_pos_neg is: %f' % res_pos_neg)
