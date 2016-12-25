@@ -392,6 +392,7 @@ class Executor(object):
                      nb_epoch=self.nb_epoch,
                      validation_split=validation_split,
                      batch_size=self.batch_size,
+                     class_weight=class_weights,
                      callbacks=self.get_callbacks(count))
 
     def get_model(self, embeddings):
