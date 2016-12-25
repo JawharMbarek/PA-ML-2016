@@ -14,7 +14,7 @@ import numpy as np
 import keras.backend as K
 
 from keras.models import Sequential
-from keras.layers import Merge, Dense
+from keras.layers import Merge, Dense, Activation
 from keras.utils.np_utils import to_categorical
 from data_loader import DataLoader
 from evaluation_metrics import f1_score_pos_neg
@@ -84,50 +84,55 @@ for vocab in vocabs:
             y_true = sents
 
 print('Loaded vocabularies and data!')
-print('Starting to assemble and optimize the meta-classifier...')
+print('Starting to preprocess the data for the combined network...')
 
-def transform_data_per_domain():
-    pass
+trained_models = []
+data_shape = list(data_per_vocab.values())[0].shape
 
-keras_models = list(models.values())
-expert_net = Sequential()
-expert_net.add(Merge(keras_models, mode='concat'))
-expert_net.add(Dense(3))
-
-import pdb
-pdb.set_trace()
+combined_x = []
+combined_val_x = []
 
 for domain, model in models.items():
-    weights_per_domain[domain] = 1.0 / len(models)
+    trained_models.append(model)
+
     vocab_len = model.layers[0].input_dim - 1
     vocab_per_domain[domain] = vocab_per_length[vocab_len]
     data_per_domain[domain] = data_per_vocab[vocab_len]
 
-data_length = len(list(data_per_domain.values())[0])
-pred_per_domain = {}
-y_pred = np.zeros((data_length, 3))
+    for i in range(data_shape[0]):
+        curr_x = []
+        curr_val_x = []
 
-loss_per_epoch = []
-weights_per_epoch = []
+        domain_data_x = np.array(data_per_domain[domain][i])
+        domain_val_data_x = np.array(data_per_domain[domain][i])
 
-for domain in models.keys():
-    x = data_per_domain[domain]
-    pred_per_domain[domain] = model.predict(x)
+        if i < len(combined_x):
+            curr_x = combined_x[i]
+            curr_val_x = combined_val_x[i]
+        else:
+            combined_x.append([])
+            combined_val_x.append([])
 
-    domain_pred = pred_per_domain[domain]
+        curr_x.append(domain_data_x.reshape(1, 140))
+        curr_val_x.append(domain_val_data_x.reshape(1, 140))
 
-    import pdb
-    pdb.set_trace()
+        combined_x[i] = curr_x
+        combined_val_x[i] = curr_val_x
 
-    error = domain_pred - to_categorical(y_true, 3)
-    loss = np.sum(error ** 2)
-    gradient = x.T.dot(error) / x.shape[0]
+print('Finished preprocessing the data for the combined network!')
+print('Starting to assemble and optimize the meta-classifier...')
 
-    weights_per_domain[domain] = -0.01 * gradient
+keras_models = list(models.values())
 
-    loss_per_epoch.append(loss)
+expert_net = Sequential()
+expert_net.add(Merge(trained_models, mode='concat'))
+expert_net.add(Dense(24))
+expert_net.add(Activation('relu'))
+expert_net.add(Dense(3, activation='softmax'))
+expert_net = Model.compile(expert_net)
 
-    y_pred[:,:] += weights_per_domain[domain] * pred_per_domain[domain]
+import pdb
+pdb.set_trace()
 
 y_true = K.variable(value=to_categorical(y_true, 3))
 y_pred = K.variable(value=y_pred)
