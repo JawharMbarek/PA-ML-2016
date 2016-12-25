@@ -80,7 +80,7 @@ print('Loaded vocabularies and data!')
 print('Starting to assemble and optimize the meta-classifier...')
 
 for domain, model in models.items():
-    coeff_per_domain[domain] = 1.0
+    coeff_per_domain[domain] = 1.0 / len(models)
     vocab_len = model.layers[0].input_dim - 1
     vocab_per_domain[domain] = vocab_per_length[vocab_len]
     data_per_domain[domain] = data_per_vocab[vocab_len]
