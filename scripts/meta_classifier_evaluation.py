@@ -39,7 +39,7 @@ vocabs  = ['vocab_en300M_reduced.pickle', 'vocab_news_emb.pickle', 'vocab_wiki_e
 models = {}
 vocab_per_length = {}
 vocab_per_domain = {}
-coeff_per_domain = {}
+weights_per_domain = {}
 data_per_vocab = {}
 data_per_domain = {}
 y_true = None
@@ -80,7 +80,7 @@ print('Loaded vocabularies and data!')
 print('Starting to assemble and optimize the meta-classifier...')
 
 for domain, model in models.items():
-    coeff_per_domain[domain] = 1.0 / len(models)
+    weights_per_domain[domain] = 1.0 / len(models)
     vocab_len = model.layers[0].input_dim - 1
     vocab_per_domain[domain] = vocab_per_length[vocab_len]
     data_per_domain[domain] = data_per_vocab[vocab_len]
@@ -89,13 +89,30 @@ data_length = len(list(data_per_domain.values())[0])
 pred_per_domain = {}
 y_pred = np.zeros((data_length, 3))
 
+loss_per_epoch = []
+weights_per_epoch = []
+
 for domain, model in models.items():
     x = data_per_domain[domain]
     pred_per_domain[domain] = model.predict(x)
 
+    import pdb
+    pdb.set_trace()
+
+
 for domain in models.keys():
-    for idx in range(data_length):
-        y_pred[idx,:] += coeff_per_domain[domain] * pred_per_domain[domain][idx]
+    domain_data = data_per_domain[domain]
+    domain_pred = pred_per_domain[domain]
+
+    error = domain_pred - y_true
+    loss = np.sum(error ** 2)
+    gradient = domain_data.T.dot(error) / domain_data.shape[0]
+
+    weights_per_domain[domain] = -0.01 * gradient
+
+    loss_per_epoch.append(loss)
+
+    y_pred[:,:] += weights_per_domain[domain] * pred_per_domain[domain]
 
 y_true = K.variable(value=to_categorical(y_true, 3))
 y_pred = K.variable(value=y_pred)
@@ -103,5 +120,5 @@ y_pred = K.variable(value=y_pred)
 res_pos_neg = K.eval(f1_score_pos_neg(y_true, y_pred))
 
 print('Finished assembling and optimizing the meta-classifier!')
-print('The final weights are: %s' % str(coeff_per_domain))
+print('The final weights are: %s' % str(weights_per_domain))
 print('The achieved f1_score_pos_neg is: %f' % res_pos_neg)
