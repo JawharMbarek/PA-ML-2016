@@ -12,10 +12,13 @@ import keras
 import pickle
 import numpy as np
 import keras.backend as K
+import time
 
 from keras.models import Sequential
 from keras.layers import Merge, Dense, Activation
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils.np_utils import to_categorical
+from data_utils import compute_class_weights
 from data_loader import DataLoader
 from evaluation_metrics import f1_score_pos_neg
 from model import Model
@@ -27,6 +30,7 @@ if len(argv) < 2:
     print('       python scripts/meta_classifier_evaluation.py <opt-tsv> <test-tsv>')
     sys.exit(2)
 
+SENTENCE_LENGTH = 140
 MODELS_PATH = path.abspath(path.join(path.dirname(__file__), '..', 'models'))
 VOCABS_PATH = path.abspath(path.join(path.dirname(__file__), '..', 'vocabularies'))
 
@@ -36,21 +40,35 @@ val_data_path = argv[1]
 def get_domain_model_dir(d):
     return path.join(MODELS_PATH, 'best_model_crossdomain_we_ds_%s' % d)
 
-domains = ['dai', 'dil', 'hul', 'jcr', 'mpq', 'sem', 'semeval', 'tac']
+domains = ['dai', 'dil', 'hul', 'mpq', 'semeval', 'tac', 'sem']
 vocabs  = ['vocab_en300M_reduced.pickle', 'vocab_news_emb.pickle', 'vocab_wiki_emb.pickle']
 
 models = {}
 vocab_per_length = {}
 vocab_per_domain = {}
-weights_per_domain = {}
+
 val_data_per_vocab = {}
 data_per_vocab = {}
+
+val_data_per_domain = {}
 data_per_domain = {}
+
 y_true = None
+y_val_true = None
+
+timestamp = int(time.time())
+model_checkpoint_path = 'expert_net_weights_%d.h5' % timestamp
+model_json_path = 'experts_net_models_%d.json' % timestamp
+
+if path.isfile(model_checkpoint_path):
+    os.remove(model_checkpoint_path)
+
+if path.isfile(model_json_path):
+    os.remove(model_json_path)
 
 print('Loading models...')
 
-for domain in domains:
+for i, domain in enumerate(domains):
     model_dir = get_domain_model_dir(domain)
     model_json_file = path.join(model_dir, 'model.json')
     model_weights_file = path.join(model_dir, 'weights_1.h5')
@@ -59,6 +77,11 @@ for domain in domains:
         models[domain] = keras.models.model_from_json(f.read())
 
     models[domain].load_weights(model_weights_file)
+
+    # rename layers to mitigate the unique name problem
+    # see https://github.com/fchollet/keras/issues/3974
+    for j in range(len(models[domain].layers)):
+        models[domain].layers[j].name += '_%s_model' % domain
 
 print('Models loaded!')
 print('Loading vocabularies and data...')
@@ -82,6 +105,7 @@ for vocab in vocabs:
 
         if y_true is None:
             y_true = sents
+            y_val_true = val_sents
 
 print('Loaded vocabularies and data!')
 print('Starting to preprocess the data for the combined network...')
@@ -92,49 +116,46 @@ data_shape = list(data_per_vocab.values())[0].shape
 combined_x = []
 combined_val_x = []
 
-for domain, model in models.items():
+for j, (domain, model) in enumerate(models.items()):
     trained_models.append(model)
 
     vocab_len = model.layers[0].input_dim - 1
     vocab_per_domain[domain] = vocab_per_length[vocab_len]
+
     data_per_domain[domain] = data_per_vocab[vocab_len]
+    val_data_per_domain[domain] = val_data_per_vocab[vocab_len]
 
-    for i in range(data_shape[0]):
-        curr_x = []
-        curr_val_x = []
-
-        domain_data_x = np.array(data_per_domain[domain][i])
-        domain_val_data_x = np.array(data_per_domain[domain][i])
-
-        if i < len(combined_x):
-            curr_x = combined_x[i]
-            curr_val_x = combined_val_x[i]
-        else:
-            combined_x.append([])
-            combined_val_x.append([])
-
-        curr_x.append(domain_data_x.reshape(1, 140))
-        curr_val_x.append(domain_val_data_x.reshape(1, 140))
-
-        combined_x[i] = curr_x
-        combined_val_x[i] = curr_val_x
+    combined_x.append(data_per_domain[domain])
+    combined_val_x.append(val_data_per_domain[domain])
 
 print('Finished preprocessing the data for the combined network!')
 print('Starting to assemble and optimize the meta-classifier...')
 
-keras_models = list(models.values())
-
 expert_net = Sequential()
 expert_net.add(Merge(trained_models, mode='concat'))
-expert_net.add(Dense(24))
+expert_net.add(Flatten())
+expert_net.add(Dense(256))
 expert_net.add(Activation('relu'))
 expert_net.add(Dense(3, activation='softmax'))
 expert_net = Model.compile(expert_net)
 
-import pdb
-pdb.set_trace()
+class_weights = compute_class_weights(y_true)
+validation_data = (combined_val_x, to_categorical(y_val_true, 3))
+early_stopping = EarlyStopping(patience=50, verbose=1, mode='max', monitor='val_f1_score_pos_neg')
+model_checkpoint = ModelCheckpoint(filepath=model_checkpoint_path, mode='max', save_best_only=True,
+                                   monitor='val_f1_score_pos_neg')
 
-y_true = K.variable(value=to_categorical(y_true, 3))
+expert_net.fit(combined_x, to_categorical(y_true),
+               validation_data=validation_data,
+               nb_epoch=1000, batch_size=500,
+               callbacks=[early_stopping, model_checkpoint])
+
+with open(model_json_path, 'w+') as f:
+    f.write(expert_net.to_json())
+
+y_pred = expert_net.predict(combined_val_x)
+
+y_true = K.variable(value=to_categorical(y_val_true, 3))
 y_pred = K.variable(value=y_pred)
 
 res_pos_neg = K.eval(f1_score_pos_neg(y_true, y_pred))
