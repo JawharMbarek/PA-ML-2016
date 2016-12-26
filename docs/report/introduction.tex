@@ -11,3 +11,33 @@ In dieser Arbeit sollen die folgenden Forschungsfragen analysiert werden:\\
 	\item Lässt sich ein bereits auf eine Zieldomäne trainiertes Neuronales Netz durch Hinzuziehen von weiteren Daten aus anderen Domänen, welche eine ähnliche Struktur aufweisen, verbessern?
 	\item Inwiefern beeinflussen verschiedene Word Embeddings und die Distant-Phase \cite{deriu2016sentiment} die Performanz des Systems?
 \end{itemize}
+
+Anmerkungen von Stephan Neuhaus:
+
+\begin{itemize}
+
+\item die haesslichen \verb+\\\\+ am Ende jedes Absatzes koennen Sie sich sparen, einfach eine Leerzeile einfuegen und es entsteht ein Absatz.
+
+\item Sie sollten unbedingt lernen, wie man in \LaTeX{} Mathematik formatiert. Beispielsweise nimmt man nicht `\verb+*+', um Multiplikationen zu kennzeichnen, sondern laesst das Zeichen in der Regel einfach weg. Also nicht $a*b$, sondern einfach $ab$. Wenn man doch eins braucht, nimmt man einen Punkt, wie zb. $\mathbf{w} \cdot \mathbf{x}$ oder ein liegendes Kreuz, wie z.B. in $6.023\times10^{23}$. Der Stern ist reserviert z.B. fuer Konvolution: $(f*g)(x) = \int_a^x f(\xi)g(b-\xi) d\xi$.
+
+\item Im Mathematikmodus funktioniert der Satz anders als im normalen Italic-Modus. Beispiel: \textit{flasche} (Italics) und $flasche$ (Mathematik). Wenn man Bezeichner im Mathe-Modus braucht, die mehr als einen Buchstaben lang sind, schliesst man die in \verb+\textit{...}+ ein: $\sin^2(2\textit{flasche} + 1)$. Die beiden letzte Punkte sollten Sie beruecksichtigen, wenn Sie Gl.~(\ref{basic:metrics:f1_eq}) neu setzen.
+
+\item Ellipsen schreibt man nicht `\verb+...+', sondern `\verb+\dots+'. Hier der Unterschied: Mit Punkten ..., mit \verb+\dots+ \dots
+
+\item Also an der Kommasetzung muessen Sie noch arbeiten.
+
+\item Ich habe Abschnitt~\ref{basic:neural_network:neuron} mal umgeschrieben. Sie sollten sich abgewoehnen, Fuellwoerter wie "`essentiell"' oder "`im Grunde"' zu verwenden. Wenn etwas "`im Grunde"' so und so ist, dann ist es so und so, da braucht man "`im Grunde"' nicht. Sie sollten den umformulierten Abschnitt aber bloss als Anregung betrachten. Vielleicht halten Sie den alten und den neuen Abschnitt mal nebeneinander und schauen, was Ihnen besser gefaellt.
+
+\item Einige der Umbenennungen in Abschnitt~\ref{basic:neural_network:neuron} habe ich vorgenommen, damit der Text besser auf das Bild passt; z.B. haben Sie von der Funktion $\gamma$ geschrieben, im Bild zu sehen war aber $\varphi$. Da muessen Sie aber noch den Schwellwert $\theta$ mit hineinbringen, damit es ganz passt.
+
+\item Weil der rechte Rand so schmal ist, klappt das mit den Markierungen mit \verb+\fixme+ nicht so recht. Vielleicht sollten Sie bis zum endgueltigen Formatierungslauf breitere Raender in Betracht ziehen.
+
+\item In Tabelle~\ref{basics:sentiments_example_table} habe ich die Defaults bei der Formatierung wiederhergestellt. Dazu gehoert, im \verb+tabular+-Environment auf die redundanten \verb+@{}+ zu verzichten und die Leerzeilen zu entfernen. Solche Defaults sind in der Regel sorgfaeltig ausgesucht und man veraendert diese auf eigene Gefahr.
+
+\item Ich fand im Abschnitt ``Zero-Padding'' noch ein \verb+<<<<<<< HEAD+. Das habe ich mal entfernt :-)
+
+\item Versuchen Sie, die Bildlegenden wo moeglich so zu gestalten, dass jemand, der nur die Bilder liest, zumindest eine Ahnung bekommt, was im Text vor sich geht. Ich habe das mal beispielhaft an Abbildung~\ref{fig:schichten} gemacht.
+
+\item Mit Ihrer Abbildung~\ref{fig:schichten} scheint etwas nicht zu stimmen. Wenn ``HB'' fuer den \emph{H}idden \emph{B}ias stehen soll, zeigt der Bias auf das falsche Neuron; gleiches gilt fuer VB. (Wieso ueberhaupt ``V'' fuer die Eingabeschicht? Ich verstehe ``H'' fuer ``Hidden'', aber nicht ``V''.) Ausserdem ist mir nicht klar, wieso alle Neuronen einer Schicht dasselbe Bias haben sollten.
+
+\end{itemize}
