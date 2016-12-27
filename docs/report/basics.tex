@@ -139,18 +139,19 @@ Mithilfe der Word-Embeddings kann ein gegebener Satz nun als Konkatenation der V
 \section{Evaluierungsmetrik}
 Im folgenden wird die verwendete Evaluierungsmetrik, der \emph{F1-Score}, erläutert.
 
-\paragraph{Precision {\&} Recall} \emph{Precision} (dt. Präzision) und \emph{Recall} (dt. Ausbeute) sind Metriken, mit welchen die Performanz eines Systems evaluiert werden kann. Dabei ist die Precision das Verhältnis von richtig klassifizierten ($tp$) zu allen klassifizierten Samples ($tp + fp$):
+\paragraph{Precision {\&} Recall} \emph{Precision} (dt. Präzision) und \emph{Recall} (dt. Ausbeute) sind Metriken, mit welchen die Performanz eines Systems evaluiert werden kann. Dabei ist die Precision das Verhältnis von richtig klassifizierten ($\textit{tp}$) zu allen klassifizierten Samples ($\textit{tp} + \textit{fp}$):
 \begin{equation}
-precision = \frac{tp}{tp + fp}
+\textit{precision} = \frac{\textit{tp}}{\textit{tp} + \textit{fp}}
 \end{equation}
-Die Ausbeute ist das Verhältnis von richtig klassifizierten zur Anzahl aller vorhandenen Samples ($tp + fp$).
+Die Ausbeute ist das Verhältnis von richtig klassifizierten zur Anzahl aller vorhandenen Samples ($\textit{tp} + \textit{fn}$):
 \begin{equation}
-recall = \frac{tp}{tp + fp}
+recall = \frac{\textit{tp}}{\textit{tp} + \textit{fn}}
 \end{equation}
+Mit diesen beiden Metriken kann die Performanz eines Systems bewertet werden, allerdings haben diese zwei Nachteile: Einerseits sind es zwei einzelne Werte anstatt eines einzelnenen Wertes. Dies macht die Beurteilung über die Performanz des Systems komplizierter. Ausserdem kann mittels \quotes{schummeln} eine sehr hohe Ausbeute erreicht werden, indem nämlich immer nur eine bestimmte Klasse zurückgegeben wird.
 \paragraph{F1-Score} Um da oben beschriebene Problem zu lösen wird der F1-Score verwendet. Dieser ist das harmonische Mittel von Präzision und Ausbeute:
 \begin{equation}
 \label{basic:metrics:f1_eq}
-F1 = \frac{2 \times precision \times recall}{precision + recall}
+F1 = \frac{2 \times \textit{precision} \times recall}{\textit{precision} + \textit{recall}}
 \end{equation}
 Durch diese Metrik kann die Performanz eines Systems mittels eines Wertes quantifiziert werden. Ausserdem löst diese das Problem, dass eine hohe Präzision bzw. Ausbeute erzielt werden kann, wenn das System \quotes{schummelt} indem dieses immer die am stärksten vertretene Klasse als Antwort liefert.
 \paragraph{F1-Score über mehrere Klassen} Der F1-Score selbst kann nur jeweils für eine einzelne Klasse bestimmt werden. Um nun aber eine einzige Metrik für die Messung der Performanz des Systems über mehrere Klassen hinweg zu erhalten, werden die F1-Scores der einzelnen Klassen summiert und durch die Anzahl der Klassen dividiert. Durch diese Vorgehen erhält man folgende Gleichung, wobei $k_i$ für eine einzelnen Klasse und $n$ für die Anzahl der beachteten Klassen:
