@@ -1,0 +1,105 @@
+\chapter{Verwendung des Software-Systems}
+Im folgenden Kapitel wird erläutert, wie das im Rahmen dieser Arbeit implementierte Software-System verwendet werden kann.
+
+\section{Download}
+Der Code des Software-Systems kann mittels \texttt{git}\footnote{https://git-scm.com/} heruntergeladen werden. Das Repository ist über den GitHub-Server der ZHAW verfügbar\footnote{https://github.engineering.zhaw.ch/vongrdir/PA-ML-2016}.
+
+\section{Voraussetzungen}
+Um die Software zu verwenden, müssen die folgenden Software-Pakete installiert sein:
+
+\begin{itemize}[noitemsep]
+  \item \texttt{python} in der Version 3.5.2\footnote{https://www.python.org/}
+  \item \texttt{anaconda} Toolkit in der Version 4.2.0\footnote{https://www.continuum.io/downloads}
+  \item Sofern eine Nvidia GPU verwendet werden möchte:
+    \begin{itemize}[noitemsep]
+      \item Nvidia GPU Treiber\footnote{http://www.nvidia.de/Download/index.aspx} für installierte GPU
+      \item Nvidia \texttt{cuda} 8 Toolkit\footnote{https://developer.nvidia.com/cuda-toolkit}
+    \end{itemize}
+\end{itemize}
+
+Die Experimente und Scripts können auch ohne GPU durchgeführt werden. Die Berechnungen finden dann auf der CPU des jeweiligen Systems startt. Allerdings führt das bei vielen Teilen des Systems zu deutlich höheren Laufzeiten (z.B. Training von CNN, Generieren von Word-Embeddings, \dots), vor allem beim Durchführen von Experimenten.
+
+Zusätzlich zu den oben aufgeführten Software-Paketen müssen die folgenden Python-Bibliotheken in der richtigen Version installiert sein:
+
+\begin{itemize}[noitemsep]
+  \item \texttt{numpy} Version 1.11.1
+  \item \texttt{theano} Version 0.8.2
+  \item \texttt{keras} Version 1.1.0
+  \item \texttt{nltk} Version 3.2.1
+  \item \texttt{scikit{\_}learn} Version 0.18
+  \item \texttt{matplotlib} Version 1.5.3
+  \item \texttt{gensim} Version 0.12.4
+  \item \texttt{h5py} Version 2.6.0
+  \item \texttt{flask} Version 0.11.1
+\end{itemize}
+
+Um Kompatibilitätsprobleme zu vermeiden wird empfohlen exakt die aufgeführte Version der jeweiligen Bibliothek zu installieren. Es kann allerdings gut sein, dass das Software-System auch mit älteren oder neueren Versionen funktioniert.
+
+\section{Aufbau des Repository}
+Im Folgenden wird erläutert wie die Struktur des Repositories aufgebaut ist. Dabei wird auf die Bedeutungen der einzelnen Ordner und deren Inhalt eingegangen.
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{|l|X|}
+    \toprule
+    Name des Ordner & Inhalt\\ \midrule
+    \texttt{configs/} & Im Ordner \texttt{configs/} werden alle JSON Konfigurationen aller Experimente abgelegt. Diese sind nach \texttt{group{\_}id} (vgl. Kapitel XYZ) in einzelnen Unterordner gruppiert.\\\\
+    \texttt{docs/} & Ist der Ordner, in welchem alle Dokumente, welche für das Erstellen des Berichts benötigt, liegen.\\\\
+    \texttt{embeddings/} & Ist standardmässig leer, sollte verwendet werden um die Word-Embeddings, welche für die Experimente benötigt werden, darin abzuspeichern.\\\\
+    \texttt{preprocessed/} & In diesem Ordner werden die vorverarbeiteten Trainingsdaten für die Distant-Supervised Phase abgelegt. Diese werden mittels des \texttt{BULLSHIT}-Skripts erstellt.\\\\
+    \texttt{results/} & Hier werden die Resultate aller durchgeführt Experimente abgespeichert. Wie bereits bei den Konfigurationen werden die Resultat hier nach \texttt{group{\_}id} gruppiert. Jedes Experiment erhält einen Ordner in welchem das finale Modell, die Evaluierungs-Metriken während und am Ende des Trainings, sowie die Konfiguration des Modells abgespeichert.\\\\
+    \texttt{scripts/} & Im Ordner \texttt{scripts/} liegen alle Skripts, welche im Kapitel XYZ erläutert werden.\\\\
+    \texttt{source/} & Hier liegt der eigentliche Source-Code des Systems. Darin befinden sich alle Teile, welche im Kapitel XYZ erläutert wurden. Ausserdem befinden sich dort diverse Python Module (z.B. \texttt{data{\_}utils}), welche ebenfalls im Rahmen der Skripts benötigt werden.\\\\
+    \texttt{testdata/} & Alle Trainings-/Validierungs-Daten, welche für die Experimente benötigt werden, liegen in diesem Ordner.\\\\
+    \texttt{vocabularies/} & Die zu den Word-Embeddings im Ordner \texttt{embeddings/} gehörenden Vokabulare.\\\\
+    \texttt{web/} & Im Ordner \texttt{web/} liegt der Source-Code der Weboberfläche (vgl. Kapitel XYZ).\\
+    \bottomrule
+  \end{tabularx}
+  \caption{Erklärungen zum Aufbau des Repositories}
+\end{table}
+
+% \begin{table}[h]
+%   \ra{1.3}
+%   \begin{adjustbox}{max width=\textwidth}
+%     \begin{tabular}{@{}lllcccccccl@{}}
+%       \toprule
+%       & Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Referenz &\\ \midrule
+%       & JCR{\_}quotations & Zitate aus Reden & $1'290$ & $147.4$ & $33.4$ & $15.0\%$ & $66.9\%$ & $18.1\%$ & \cite{cieliebak2013potential}\\
+%       & MPQ{\_}news & Nachrichtentexte & $11'111$ & $123.5$ & $27.3$ & $14.4\%$ & $55.4\%$ & $30.2\%$ & \cite{cieliebak2013potential}\\
+%       & SEM{\_}headlines & Nachrichtenüberschriften & $1'250$ & $34.1$ & $7.1$ & $13.9\%$ & $61.1\%$ & $24.9\&$ & \cite{cieliebak2013potential}\\
+%       & DIL{\_}reveiws & Produktbewertungen & $4'275$ & $74.3$ & $19.1$ & $31.3\%$ & $51.0\%$ & $17.7\%$ & \cite{cieliebak2013potential}\\
+%       & SemEval{\_}tweets & Tweets & $12'039$ & $89.3$ & $22.5$ & $38.5\%$ & $45.5\%$ & $15.0\%$ & \cite{SemEval:2016:task4}\\
+%       \bottomrule
+%     \end{tabular}
+%   \end{adjustbox}
+%   \caption{Statistiken zu Supervised Datensätzen}
+% \end{table}
+
+\section{Verwendung der Skripte}
+Im Folgenden wird erläutert, welche Skripte mit welchen Funktionalitäten vom System angeboten werden. Die Skript selber liegen im Ordner \texttt{scripts/} des Repositories.
+
+% \begin{table}[h]
+%   \ra{1.3}
+%   \begin{adjustbox}{max width=\textwidth}
+%     \begin{tabular}{@{}lllcccccccl@{}}
+%       \toprule
+%       & Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Referenz &\\ \midrule
+%       & JCR{\_}quotations & Zitate aus Reden & $1'290$ & $147.4$ & $33.4$ & $15.0\%$ & $66.9\%$ & $18.1\%$ & \cite{cieliebak2013potential}\\
+%       & MPQ{\_}news & Nachrichtentexte & $11'111$ & $123.5$ & $27.3$ & $14.4\%$ & $55.4\%$ & $30.2\%$ & \cite{cieliebak2013potential}\\
+%       & SEM{\_}headlines & Nachrichtenüberschriften & $1'250$ & $34.1$ & $7.1$ & $13.9\%$ & $61.1\%$ & $24.9\&$ & \cite{cieliebak2013potential}\\
+%       & DIL{\_}reveiws & Produktbewertungen & $4'275$ & $74.3$ & $19.1$ & $31.3\%$ & $51.0\%$ & $17.7\%$ & \cite{cieliebak2013potential}\\
+%       & SemEval{\_}tweets & Tweets & $12'039$ & $89.3$ & $22.5$ & $38.5\%$ & $45.5\%$ & $15.0\%$ & \cite{SemEval:2016:task4}\\
+%       \bottomrule
+%     \end{tabular}
+%   \end{adjustbox}
+%   \caption{Statistiken zu Supervised Datensätzen}
+% \end{table}
+
+\section{Benötigte Daten}
+\blindtext
+
+\section{Durchführung von Experimenten}
+\blindtext
+
+\section{Weboberfläche}
+\blindtext
