@@ -21,6 +21,7 @@
 \usepackage{enumerate}
 \usepackage{enumitem}
 \usepackage{adjustbox}
+\usepackage[toc,page]{appendix}
 \usepackage{subfigure}
 \usepackage[left=3.00cm, right=2.00cm, top=1cm, bottom=1.5cm,includeheadfoot]{geometry}
 \usepackage{scrpage2}
@@ -40,6 +41,8 @@
 \usepackage{courier}
 
 \renewcaptionname{ngerman}{\bibname}{Referenzen}
+\renewcommand\appendixtocname{Appendix}
+\renewcommand\appendixpagename{Appendix}
 \setcounter{secnumdepth}{3}
 
 \newcommand{\mytitle}{PA HS16: Domänenübergreifende Sentiment-Analyse mit Deep Convolutional Neural Networks}
@@ -87,12 +90,11 @@
 \begin{document}
 \include{title_page}
 
-\include{abstract}
-
-\newgeometry{top=0.75cm,bottom=1cm}
+% \newgeometry{top=0.75cm,bottom=1cm}
 \tableofcontents
 \restoregeometry
 
+\include{abstract}
 \include{introduction}
 \include{basics}
 \include{data}
