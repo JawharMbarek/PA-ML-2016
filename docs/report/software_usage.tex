@@ -18,7 +18,7 @@ Um die Software zu verwenden, müssen die folgenden Software-Pakete installiert 
     \end{itemize}
 \end{itemize}
 
-Die Experimente und Scripts können auch ohne GPU durchgeführt werden. Die Berechnungen finden dann auf der CPU des jeweiligen Systems startt. Allerdings führt das bei vielen Teilen des Systems zu deutlich höheren Laufzeiten (z.B. Training von CNN, Generieren von Word-Embeddings, \dots), vor allem beim Durchführen von Experimenten.
+Die Experimente und Scripts können auch ohne GPU durchgeführt werden. Die Berechnungen finden dann auf der CPU des jeweiligen Systems statt. Allerdings führt das bei vielen Teilen des Systems zu deutlich höheren Laufzeiten (z.B. Training von CNN, Generieren von Word-Embeddings, \dots).
 
 Zusätzlich zu den oben aufgeführten Software-Paketen müssen die folgenden Python-Bibliotheken in der richtigen Version installiert sein:
 
@@ -33,6 +33,8 @@ Zusätzlich zu den oben aufgeführten Software-Paketen müssen die folgenden Pyt
   \item \texttt{h5py} Version 2.6.0
   \item \texttt{flask} Version 0.11.1
 \end{itemize}
+
+Diese Bibliotheken können über das \texttt{conda}\footnote{http://conda.pydata.org/docs/using/pkgs.html} Tool von \texttt{anaconda} oder den Python Biblitheksmanager \texttt{pip}\footnote{https://packaging.python.org/installing/} installiert werden.
 
 Um Kompatibilitätsprobleme zu vermeiden wird empfohlen exakt die aufgeführte Version der jeweiligen Bibliothek zu installieren. Es kann allerdings gut sein, dass das Software-System auch mit älteren oder neueren Versionen funktioniert.
 
@@ -59,49 +61,139 @@ Im Folgenden wird erläutert wie die Struktur des Repositories aufgebaut ist. Da
   \caption{Erklärungen zum Aufbau des Repositories}
 \end{table}
 
-% \begin{table}[h]
-%   \ra{1.3}
-%   \begin{adjustbox}{max width=\textwidth}
-%     \begin{tabular}{@{}lllcccccccl@{}}
-%       \toprule
-%       & Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Referenz &\\ \midrule
-%       & JCR{\_}quotations & Zitate aus Reden & $1'290$ & $147.4$ & $33.4$ & $15.0\%$ & $66.9\%$ & $18.1\%$ & \cite{cieliebak2013potential}\\
-%       & MPQ{\_}news & Nachrichtentexte & $11'111$ & $123.5$ & $27.3$ & $14.4\%$ & $55.4\%$ & $30.2\%$ & \cite{cieliebak2013potential}\\
-%       & SEM{\_}headlines & Nachrichtenüberschriften & $1'250$ & $34.1$ & $7.1$ & $13.9\%$ & $61.1\%$ & $24.9\&$ & \cite{cieliebak2013potential}\\
-%       & DIL{\_}reveiws & Produktbewertungen & $4'275$ & $74.3$ & $19.1$ & $31.3\%$ & $51.0\%$ & $17.7\%$ & \cite{cieliebak2013potential}\\
-%       & SemEval{\_}tweets & Tweets & $12'039$ & $89.3$ & $22.5$ & $38.5\%$ & $45.5\%$ & $15.0\%$ & \cite{SemEval:2016:task4}\\
-%       \bottomrule
-%     \end{tabular}
-%   \end{adjustbox}
-%   \caption{Statistiken zu Supervised Datensätzen}
-% \end{table}
-
 \section{Verwendung der Skripte}
 Im Folgenden wird erläutert, welche Skripte mit welchen Funktionalitäten vom System angeboten werden. Die Skript selber liegen im Ordner \texttt{scripts/} des Repositories.
 
-% \begin{table}[h]
-%   \ra{1.3}
-%   \begin{adjustbox}{max width=\textwidth}
-%     \begin{tabular}{@{}lllcccccccl@{}}
-%       \toprule
-%       & Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Referenz &\\ \midrule
-%       & JCR{\_}quotations & Zitate aus Reden & $1'290$ & $147.4$ & $33.4$ & $15.0\%$ & $66.9\%$ & $18.1\%$ & \cite{cieliebak2013potential}\\
-%       & MPQ{\_}news & Nachrichtentexte & $11'111$ & $123.5$ & $27.3$ & $14.4\%$ & $55.4\%$ & $30.2\%$ & \cite{cieliebak2013potential}\\
-%       & SEM{\_}headlines & Nachrichtenüberschriften & $1'250$ & $34.1$ & $7.1$ & $13.9\%$ & $61.1\%$ & $24.9\&$ & \cite{cieliebak2013potential}\\
-%       & DIL{\_}reveiws & Produktbewertungen & $4'275$ & $74.3$ & $19.1$ & $31.3\%$ & $51.0\%$ & $17.7\%$ & \cite{cieliebak2013potential}\\
-%       & SemEval{\_}tweets & Tweets & $12'039$ & $89.3$ & $22.5$ & $38.5\%$ & $45.5\%$ & $15.0\%$ & \cite{SemEval:2016:task4}\\
-%       \bottomrule
-%     \end{tabular}
-%   \end{adjustbox}
-%   \caption{Statistiken zu Supervised Datensätzen}
-% \end{table}
+\begin{table}[H]
+  \centering
+  \ra{1.3}
+  \begin{adjustbox}{max width=\textwidth}
+    \begin{tabularx}{\textwidth}{|l|l|X|}
+      \toprule
+      Name des Skripts & Beispielaufruf & Beschreibung\\ \midrule
+      \texttt{aggregate{\_}results{\_}metrics.py} & python scripts/aggregate{\_}results{\_}metrics.py results/my-experiment-group/my-experiment & Mithilfe dieses Skripts können die Resultate eines oder mehrerer Experimente aggregiert werden. Diese werden dann in eine CSV Datei im aktuellen Arbeitsverzeichnis abgelegt.\\
+      \texttt{copy{\_}experiment{\_}group.py} & python scripts/copy{\_}experiment{\_}group.py results/my-experiment-group results/my-new-experiment-group 1 2 & Hiermit kann eine bereits existierende Experimenten-Gruppe kopiert werden.\\
+      \texttt{extract{\_}embeddings.py} & python scripts/extract{\_}embeddings.py -e embeddings/my-embeddings -v vocabularies/vocabulary.pickle -o embeddings/my-extracted-embeddings & Word-Embeddings, welche mit \texttt{word2vec} erstellt wurden, müssen ausgepackt werden bevor diese in Experimenten verwendet werden können. Dieses Skript ist dafür zuständig.\\
+      \texttt{extract{\_}embeddings{\_}glove.py} & python scripts/extract{\_}embeddings{\_}glove.py -e embeddings/my-glove-embeddings -v vocabularies/vocabulary.pickle -o embeddings/my-extracted-embeddings & Word-Embeddings, welche mit \texttt{glove} erstellt wurden, müssen ausgepackt werden bevor diese in Experimenten verwendet werden können. Dieses Skript ist dafür zuständig.\\
+      \texttt{extract{\_}embeddings{\_}vocabulary.py} & python scripts/extract{\_}embeddings{\_}vocabulary.py.py -e embeddings/my-glove-embeddings -v vocabularies/vocabulary.pickle -o embeddings/my-extracted-embeddings & Das Vokabular von Word-Embeddings können mithilfe dieses Skripts extrahiert werden.\\
+      \texttt{generate{\_}boxplot{\_}per{\_}percentage.py} & python scripts/generate{\_}boxplot{\_}per{\_}percentage.py -r results/my-experiment-group/my-experiment -m val{\_}f1{\_}score{\_}pos{\_}neg -i img{\_}out.png & Mithilfe dieses Skripts kann ein Boxplot über die Metriken mehrerer Experimente erstellt werden.\\
+      \texttt{generate{\_}boxplot{\_}per{\_}percentage.py} & python scripts/generate{\_}boxplot{\_}per{\_}percentage.py -r results/my-experiment-group/my-experiment -m val{\_}f1{\_}score{\_}pos{\_}neg -i img{\_}out.png & Mithilfe dieses Skripts kann ein Boxplot über die Metriken mehrerer Experimente erstellt werden.\\
+      \texttt{generate{\_}data{\_}statistics.py} & python scripts/generate{\_}data{\_}statistics.py testdata/my-data.tsv & Mithilfe dieses Skripts können Statistiken zu ein oder mehreren TSV Dateien erstellt werden. Dabei werden die darin enthaltenen Texte und Sentiments analysiert.\\
+      % \texttt{configs/} & Im Ordner \texttt{configs/} werden alle JSON Konfigurationen aller Experimente abgelegt. Diese sind nach \texttt{group{\{\_}}id} (vgl. Kapitel XYZ) in einzelnen Unterordner gruppiert.\\\\
+      % \texttt{docs/} & Ist der Ordner, in welchem alle Dokumente, welche für das Erstellen des Berichts benötigt, liegen.\\\\
+      % \texttt{embeddings/} & Ist standardmässig leer, sollte verwendet werden um die Word-Embeddings, welche für die Experimente benötigt werden, darin abzuspeichern.\\\\
+      % \texttt{preprocessed/} & In diesem Ordner werden die vorverarbeiteten Trainingsdaten für die Distant-Supervised Phase abgelegt. Diese werden mittels des \texttt{BULLSHIT}-Skripts erstellt.\\\\
+      % \texttt{results/} & Hier werden die Resultate aller durchgeführt Experimente abgespeichert. Wie bereits bei den Konfigurationen werden die Resultat hier nach \texttt{group{\_}id} gruppiert. Jedes Experiment erhält einen Ordner in welchem das finale Modell, die Evaluierungs-Metriken während und am Ende des Trainings, sowie die Konfiguration des Modells abgespeichert.\\\\
+      % \texttt{scripts/} & Im Ordner \texttt{scripts/} liegen alle Skripts, welche im Kapitel XYZ erläutert werden.\\\\
+      % \texttt{source/} & Hier liegt der eigentliche Source-Code des Systems. Darin befinden sich alle Teile, welche im Kapitel XYZ erläutert wurden. Ausserdem befinden sich dort diverse Python Module (z.B. \texttt{data{\_}utils}), welche ebenfalls im Rahmen der Skripts benötigt werden.\\\\
+      % \texttt{testdata/} & Alle Trainings-/Validierungs-Daten, welche für die Experimente benötigt werden, liegen in diesem Ordner.\\\\
+      % \texttt{vocabularies/} & Die zu den Word-Embeddings im Ordner \texttt{embeddings/} gehörenden Vokabulare.\\\\
+      % \texttt{web/} & Im Ordner \texttt{web/} liegt der Source-Code der Weboberfläche (vgl. Kapitel XYZ).\\
+      \bottomrule
+    \end{tabularx}
+  \end{adjustbox}
+  \caption{Erklärungen zum Aufbau des Repositories}
+\end{table}
+
+In der obigen Tabelle wurden nur die wichtigsten Skripte im Ordner \texttt{scripts/} erläutert.
 
 \section{Benötigte Daten}
-\blindtext
+Um Experimente mit dem System durchzuführen müssen mindestens die folgendne Daten vorhanden sein:
+
+\begin{itemize}[noitemsep]
+  \item Trainingsdaten im Ordner 
+\end{itemize}
 
 \section{Durchführung von Experimenten}
-\blindtext
+Um ein Experiment durchzuführen wird eine Konfiguration benötigt. Diese liegen alle im Ordner \texttt{configs/}. Im Folgenden werden die einzelnen Konfigurationsparameter erläutert:
+
+\begin{table}[H]
+  \centering
+  \ra{1.3}
+  \begin{adjustbox}{max width=\textwidth, max height=\textheight}
+    \begin{tabular}{@{}l|l|p{10cm}@{}}
+      \toprule
+      Parametername & Standartwert & Beschreibung\\ \midrule
+      \texttt{batch{\_}size} & \texttt{500} & Mithilfe dieses Parameters kann konfiguriert werden mit welcher Batch-Size das Training des CNN durchgeführt wird.\\
+      \texttt{early{\_}stopping{\_}monitor{\_}metric} & \texttt{val{\_}f1{\_}score{\_}pos{\_}neg} & Darüber wird konfiguriert, welche Metrik durch das Early-Stopping überwacht werden soll.\\
+      \texttt{early{\_}stopping{\_}patience} & \texttt{75} & Über diesen Parameter kann konfiguriert werden wieviel Epochen ohne Fortschritt bezüglich der \texttt{early{\_}stopping{\_}monitor{\_}stopping} trainiert wird, bevor das Training abgebrochen wird.\\
+      \texttt{max{\_}sent{\_}length} & \texttt{140} & Mithilfe dieses Parameters kann angegeben werden, wieviele Wörter pro Satz maximal erlaubt sind. Längere Sätze werden demnach gekürzt.\\
+      \texttt{nb{\_}epoch} & \texttt{1000} & Dieser Parameter ist dafür zuständig, über wieviel Epochen hinweg das Training durchgeführt wird.\\
+      \texttt{nb{\_}kfold{\_}cv} & \texttt{4} & Wenn dieser Parameter vorhanden ist, wird während des Trainings k-fold Cross-Validation verwendet. Bei einem Parameterwerte $< 2$ wird keine k-fold Cross-Validation durchgeführt.\\
+      \texttt{early{\_}stopping{\_}patience} & \texttt{75} & Über diesen Parameter kann konfiguriert werden wieviel Epochen ohne Fortschritt bezüglich der \texttt{early{\_}stopping{\_}monitor{\_}stopping} trainiert wird, bevor das Training abgebrochen wird.\\
+      \texttt{group{\_}id} & \texttt{null} & Muss gesetzt werden, da Experimente nach diesem Namen im \texttt{results/} Verzeichnis gruppiert werden.\\
+      \texttt{model{\_}json{\_}path} & \texttt{null} & Gibt den Pfad zur JSON Datei mit dem zu ladenden Keras Modell an. Darf nur angegeben werden sofern auch ein Wert für \texttt{model{\_}weights{\_}path} gesetzt ist.\\
+      \texttt{model{\_}id} & \texttt{1} & Damit können verschiedene Versionen des verwendeten CNN geladen werden (z.B. unterschiedliche Anzahl Convolutional Schichten). Welche ID für welches Modell steht ist in der Datei \texttt{source/model.py} ersichtlich.\\
+      \texttt{model{\_}weights{\_}path} & \texttt{null} & Gibt den Pfad zur H5 Datei mit den zu ladenden Gewichten an. Darf nur angegeben werden sofern auch ein Wert für \texttt{model{\_}json{\_}path} gesetzt ist.\\
+      \texttt{monitor{\_}metric} & \texttt{val{\_}f1{\_}score{\_}pos{\_}neg} & Mithilfe dieses Parameters kann konfiguriert werden, welche Metrik ausschlaggebend ist um am Ende des Trainings zu entscheiden, welcher der beste Fold war. Sollte nur verwendet werden wenn k-fold CV aktiviert ist.\\
+      \texttt{monitor{\_}metric{\_}mode} & \texttt{max} & Mithilfe dieses Parameter wird konfiguriert ob die \texttt{monitor{\_}metric} nach dem maximalen oder minimalen Wert überwacht werden soll.\\
+      \texttt{monitor{\_}metric{\_}mode} & \texttt{max} & Mithilfe dieses Parameter wird konfiguriert ob die \texttt{monitor{\_}metric} nach dem maximalen oder minimalen Wert überwacht werden soll.\\
+      \texttt{preprocessed{\_}data} & \texttt{null} & Hier kann die HDF5 Datei, aus welcher die Trainingsdaten stammen, referenziert werden. Dann werden die Parameter \texttt{validation{\_}data{\_}path} sowie \texttt{test{\_}data} ignoriert. Ausserdem muss der Parameter \texttt{samples{\_}per{\_}epoch} gesetzt werden.\\
+      \texttt{randomize{\_}test{\_}data} & \texttt{true} & Wenn diser Parameter auf \texttt{true} gesetzt wird, werden die geladenen Trainingsdaten zufällig durchmischt.\\
+      \texttt{set{\_}class{\_}weights} & \texttt{false} & Entscheidet ob Klassengewichte verwendet werden sollen während des Trainings.\\
+      \texttt{set{\_}class{\_}weights} & \texttt{false} & Entscheidet ob Klassengewichte verwendet werden sollen während des Trainings.\\
+      \texttt{use{\_}random{\_}embeddings} & \texttt{false} & Falls dieser Parameter auf \texttt{true} gesetzt wird werden die Word-Embeddings zufällig initialisiert.\\
+      \texttt{set{\_}class{\_}weights} & \texttt{false} & Entscheidet ob Klassengewichte verwendet werden sollen während des Trainings.\\
+      \texttt{samples{\_}per{\_}epoch} & \texttt{0} & Falls die Parameter \texttt\texttt{use{\_}preprocessed{\_}data} und \texttt{preprocessed{\_}data} gesetzt sind, muss hier angegeben werden wieviel Trainingsdaten verwendet werden sollen.\\
+      \texttt{test{\_}data} & \texttt{null} & Über diesen Parameter kann konfiguriert werden, welche Trainingsdaten verwendet werden sollen. Dabei muss entweder der Pfad zu einer TSV Datei angegeben werden, oder ein Objekt welches als Schlüssel die Pfade zu den zu ladenden TSV Dateien und als Werte die zu ladenden Anzahl Datensätze enthält.\\
+      \texttt{use{\_}preprocessed{\_}data} & \texttt{false} & Muss auf \texttt{true} gesetzt werden falls der Parameter \texttt{preprocessed{\_}data} gesetzt wurde.\\
+      \texttt{validation{\_}data{\_}path} & \texttt{null} & Über diesen Parameter wird konfiguriert, welche Daten für die Validierung während und am Ende des Trainings verwendet werden sollen. Der Aufbau ist dabei derselbe wie beim Parameter \texttt{test{\_}data}.\\
+      \texttt{validation{\_}split} & \texttt{0.0} & Dieser Parameter gibt an, welcher Bruchteil der Trainingsdaten als Validierungsdaten verwendet werden sollen. Falls der Parameter \texttt{validation{\_}data{\_}path} gesetzt ist wird dieser Parameter ignoriert.\\
+      \bottomrule
+    \end{tabular}
+  \end{adjustbox}
+  \caption{Erklärungen der einzelnen Konfigurationsparameter des Software-Systems}
+\end{table}
+
+Die obigen Erläuterungen sind nicht abschliessend oder vollständig. Für die genaue Funktionsweise gewisser Parameter wird empfohlen den Source-Code hinzu zu ziehen.
+
+Eine Beispiel-Konfiguration für ein einfaches Experiment sieht wie folgt aus:
+
+\begin{lstlisting}[frame=none]
+{
+  "test_data": {
+    "testdata/MPQ_reviews_full.tsv": 3000,
+    "testdata/DIL_Reviews.tsv": 3000
+  },
+  "name": "my-fancy-experiment",
+  "group_id": "really-cool-group",
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 4,
+  "vocabulary_embeddings": "embeddings/emb_smiley_tweets_embedding_english_590M.npy",
+  "validation_data_path": "testdata/MPQ_News.tsv",
+  "vocabulary_path": "vocabularies/vocab_en300M_reduced.pickle"
+}
+\end{lstlisting}
+
+Eine Beispiel-Konfiguration um eine Distant-Supervised Phase durchzuführen kann wie folgt aussehen:
+
+\begin{lstlisting}[frame=none]
+{
+  "group_id": "amazon_distant_model",
+  "use_preprocessed_data": true,
+  "preprocessed_data": "preprocessed/amazon_distant_train_preprocessed.hdf5",
+  "samples_per_epoch": 82400000,
+  "test_data": "testdata/amazon_distant_train.tsv",
+  "name": "amazon_distant_model_82M_dedup_v2",
+  "nb_epoch": 1,
+  "max_sent_length": 140,
+  "batch_size": 1000,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle"
+}
+\end{lstlisting}
+
+Um ein Experiment zu starten sollte das \texttt{run.sh} Skript im Repository verwendet werden. Dabei können als Parameter alle JSON Konfigurationen jener Experimente mitgegeben werden, welche durchgeführt werden sollen. Wenn im \texttt{configs/} Verzeichnis die beiden Konfigurationen \texttt{config-1.json} und \texttt{config-2.json} liegen würden, könnten diese mit folgendem Befehl gestartet werden:
+
+\begin{lstlisting}[frame=none]
+$ ./run.sh configs/config-1.json configs/config-2.json
+\end{lstlisting}
+
+Die Resultat werden dann im entsprechenden Verzeichnis innerhalb des \texttt{results/} Verzeichnisses abgelegt.
 
 \section{Weboberfläche}
-\blindtext
+Mithilfe der bereitgestellten Weboberfläche können durchgeführte Experimente analysiert werden. Um dies zu ermöglichen sind drei Funktionalitäten implementiert: Es wird eine Übersicht über alle JSON Dateien im entsprechenden Resultat-Ordner angezeigt, Metriken können mittels \texttt{math.js}\footnote{http://mathjs.org/} ausgewertet und es ist möglich Plots über Metriken mittels \texttt{matplotlib}\footnote{http://matplotlib.org/} zu erstellen.
+
+Die Weboberfläche selbst kann über den Befehl \texttt{python web/app.py} gestartet werden. Diese ist dann über den Browser mittels der URL \texttt{http://localhost:5000} erreichbar.
+
 \end{appendices}

@@ -55,11 +55,11 @@ Die Aktivierungsfunktion $\varphi$ ist dafür zuständig, den aus der Berechnung
 
 Über die Eingabeschicht treten die Eingabedaten $\mathbf{x} = (x_1, x_2, \dots, x_n)$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht vorwärtspropagiert und diese berechnen damit ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Eine solche Schicht wird auch als \emph{fully-conncted} Schicht bezeichnet. Dieser Vorgang des "Vorwärtsrechnens" wird auch als Vorwärtspropagierung bezeichnet. Bei einem neuronalen Netzwerk mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}. Die Anzahl der Schichten und Neuronen in einem Neuronalen Netzwerk hängt von der konkreten Problemstellung ab.
 
-\paragraph{Backpropagation mit Gradient-Descent} Wie bei fast allen Modelle des maschinellen Lernens, lernt das neuronale Netztwerk mittels dem Optimieren einer Fehlerfunktion. Das Optimieren dieser Fehlerfunktion wird im Normalfalls mittels dem \emph{Backpropagation}-Algorithmus in Verbindung mit \emph{Gradient-Descent} erzielt. Als Fehlerfunktion kann jede Funktion dienen, mit welcher der Aussagefehler des Netzwerks quanitifiziert werden kann. Als Beispiele können hier der $\operatorname{mse}(x) = $, MAE oder auch Categorical Cross-Entropy aufgeführt werden. Der Algorithmus kann in den folgenden Schritten zusammegefasst werden:
+\paragraph{Backpropagation mit Gradient-Descent} Wie bei fast allen Modelle des maschinellen Lernens, lernt das neuronale Netztwerk mittels dem Optimieren einer Fehlerfunktion. Das Optimieren dieser Fehlerfunktion wird im Normalfalls mittels dem \emph{Backpropagation}-Algorithmus in Verbindung mit \emph{Gradient-Descent} erzielt. Als Fehlerfunktion kann jede Funktion dienen, mit welcher der Aussagefehler des Netzwerks quanitifiziert werden kann. Als Beispiele können hier der \emph{Mean Squared Error} $\operatorname{MSE}(y_{true}, y_{pred}) = \frac{1}{n}\sum_{i=0}^{n} (y_{pred} - y_{true})^2$ oder auch die in dieser Arbeit verwendete Categorical Cross-Entropy \fixme{Formula?} aufgeführt werden. Der Algorithmus kann in den folgenden Schritten zusammegefasst werden:
 
 \begin{enumerate}
   \item Die Eingabewerte in das Netzwerk einführen und die Vorwärtspropagierung durchführen.
-  \item Die Ausgabewerte des Netzwerks werden mit dem erwarteten Resultat vergleichen. Die Differenz der Ausgabewerte von den erwarteten Werten wird als Aussagefehler des Netzwerkes bezeichnet.
+  \item Die Ausgabewerte des Netzwerks werden mit dem erwarteten Resultat verglichen. Die Differenz der Ausgabewerte von den erwarteten Werten wird als Aussagefehler des Netzwerkes bezeichnet.
   \item Der Aussagefehler wird nun durch das neuronale Netzwerk hindurch zurückpropagiert. Dabei werden die Gewichte der einzelnen Schichten abhängig von ihrem Einfluss auf die berechneten Ausgangswerte verändert.
 \end{enumerate}
 
@@ -91,7 +91,7 @@ Die durch diese Convolution-Operation resultierende Werte werden der Form einer 
 	\caption{Schematische Darstellung Filter und Feature-Map}
 \end{figure}
 
-Eine Schicht, welche diese Art von Berechnung verwendet wird auch Convolutional (dt. fallten) Schicht genannt.
+Eine Schicht, welche diese Art von Berechnung verwendet wird auch Convolutional (dt. sich falltend) Schicht genannt.
 
 \paragraph{Max-Pooling Schicht} In der \emph{Max-Pooling} Schicht wird ein grossteil der in den Feature-Maps vorhandenen Informationen verworfen. Dabei wird ein Fenster über die resultierenden Feature-Maps der vorhergehenden Schicht bewegt und der jeweils maximale Wert des entsprechenden Ausschnitts der aktuellen Feature-Map als Wert in die gepoolte Represäntation übernommen. Das Fenster, welches über die Feature-Map bewegt wird, ist definiert durch die Dimensionalität des Fensters und dem Stride. Der Stride steht für das Bewegunsmuster des Fenster analog zum Filter. Die gepoolten Represäntationen der Feature-Maps dienen dann als Eingabewerte für die nächste Convolutional oder Ausgabeschicht.
 
@@ -111,7 +111,7 @@ Die Max-Pooling Schicht erfüllt zwei Aufgaben: Einerseits reduziert sie die Dim
 	\caption{Schematische Darstellung des in dieser Arbeit verwendeten CNN \protect\cite{deriu2016swisscheese}}
 \end{figure}
 
-\paragraph{Ausgabeschicht}\label{basic:cnn:output_layer} Die Ausgabeschicht des CNN ist gleich aufgebaut wie die eines \quotes{traditionellen} Neuronalen Netzwerks. Dabei wird eine fully-connected Schicht verwendet bei welcher alle Neuronen als Eingabewerte alle Aktivierungen der letzten Max-Pooling Schicht verknüpft sind. Die Anzahl Neuronen entspricht dabei der Anzahl zu unterscheidenden Klassen.
+\paragraph{Ausgabeschicht}\label{basic:cnn:output_layer} Die Ausgabeschicht des CNN ist gleich aufgebaut wie die eines \quotes{traditionellen} Neuronalen Netzwerks. Dabei wird eine fully-connected Schicht verwendet bei welcher alle Neuronen als Eingabewerte alle Aktivierungen der letzten Max-Pooling Schicht verknüpft sind. Die Anzahl Neuronen in der Ausgabeschicht entspricht dabei der Anzahl zu unterscheidenden Klassen.
 
 \section{3-Phasen Lernen}
 
@@ -128,13 +128,9 @@ Das Training des CNNs wird mithilfe des 3-stufigen Lernverfahren von Severyn et.
 
 Mithilfe der Word-Embeddings kann ein gegebener Satz nun als Konkatenation der Vektoren der einzelnen Wörter aufgefasst werden. Das bedeutet, dass ein Satz als $d \times n$ Matrix dargestellt werden kann, wenn $n$ die Anzahl Wörter des Satzes darstellt und $d$ die Anzahl Dimensionen der Word-Embeddings. Die $i$-te Zeile in der resultierenden Satz-Matrix entspricht dann dem Wort-Vektor für das $i$-te Wort im abzubildenden Satz.
 
-\paragraph{Distant-Supervision Phase} In einem zweiten Schritt wird die sogenannte \emph{Distant-Supervised} Phase durchgeführt. Dabei wird das CNN mit einer grossen Menge an \emph{weakly-labeled} (dt. schwach annotiert) Texten über eine Epoche hinweg vortrainiert. Weakly labeled bedeutet, dass der Sentiment eines Textes aus der Eigenschaft des Textes abgeleitet wird und nicht von Hand annotiert wurde. Beispiele für Eigenschaften, aus welchen sich ein Sentiment ableiten lässt sind Emoticons in Tweets oder die Anzahl der vergebenen Sterne bei einer Produktbewertung. Bei Emoticons lässt sich zum Beispiel aus dem lachenden Emoticon \quotes{:-)} ein positiver bzw. aus dem traurigen Emoticon \quotes{:-(} ein negativer Sentiment ableiten.\fixme{more informations on how the distant phase works in our case!}
+\paragraph{Distant-Supervision Phase} In einem zweiten Schritt wird die sogenannte \emph{Distant-Supervised} Phase durchgeführt. Dabei wird das CNN mit einer grossen Menge an \emph{weakly-labeled} (dt. schwach annotiert) Texten über eine Epoche hinweg vortrainiert. Weakly labeled bedeutet, dass der Sentiment eines Textes aus der Eigenschaft des Textes abgeleitet wird und nicht von Hand annotiert wurde. Beispiele für Eigenschaften, aus welchen sich ein Sentiment ableiten lässt sind Emoticons in Tweets oder die Anzahl der vergebenen Sterne bei einer Produktbewertung. Bei Emoticons lässt sich zum Beispiel aus dem lachenden Emoticon \quotes{:-)} ein positiver bzw. aus dem traurigen Emoticon \quotes{:-(} ein negativer Sentiment ableiten.
 
-% Wie bereits in \ref{basics:neural_network} erläutert benötigen NNs, vor allem CNNs, sehr viele annotierte Trainingsdaten \fixme{Referenz} um am Ende des Trainings ein zufriedenstellendes Modell zu erhalten. Ein grossteil der vorhandenen Datensätze umfassen allerdings nicht mehr als 10'000 Texte. Des Weiteren sind die Sentiments in diesen Datensätzen sehr oft nicht gleichverteilt. Das führt dazu, dass gewisse Sentiments unterrepräsentiert sind, während andere überdurchschnittlich oft vorhanden sind. Im Falle der in dieser Arbeit verwendeten Datensätze ist es so, dass der positive und negative Sentiment unterdurchschnittlich oft vorkommen, während es überdurchschnittlich viele Texte mit einem neutralen Sentiment gibt (vgl. \ref{data:supervised_data}). Dadurch lernt das CNN zwar sehr gut Texte mit neutralem Sentiment zu erkennen, allerdings tut es sich sehr schwer mit den anderen beiden Sentiments.
-
-% Um dieses Problem zu beheben kann das Training mit sogenannter \emph{Distant Supervision} \cite{} durchgeführt werden. Die Grundidee dabei ist einen grossen, unsupervised Corpus an Trainingsdaten zu verwenden bei welchem sich der Sentiment eines einzelnen Datensatzes aus einer Eigenschaft des Datensatzes ableiten lässt. Beispiele für Eigenschaften aus welchen sich der Sentiment ableiten lässt sind zum Beispiel Emoticons in Tweets oder die Anzahl der vergebenen Sterne bei einer Produktbewertung auf Amazon aufführen. Bei den Emoticons in Tweets lässt sich so zum Beispiel aus dem lachenden Emoticon \quotes{:-)} ein positiver bzw. aus dem traurigen Emoticon \quotes{:-(} ein negativer Sentiment ableiten. Erläuterungen wie die Distant Supervision im Rahmen dieser Arbeit verwendet wurde wird im Kapitel Methodik genauer erläutert (vgl. \ref{methods:distant_supervision}).
-
-\paragraph{Supervised Phase} Im letzten Schritt wird das CNN mit den von Hand annotierten Texten trainiert. Dieses Training wird mithilfe von Backpropagation mit AdaDelta durchgeführt. Dabei wird sogenanntes \emph{Early Stopping verwendet}: Das Netzwerk wird solange trainiert, bis eine definierte Metrik über eine bestimmte Anzahl Epochen nicht mehr verbessert hat.
+\paragraph{Supervised Phase} Im letzten Schritt wird das CNN mit den von Hand annotierten Texten trainiert. Dieses Training wird mithilfe von Backpropagation mit AdaDelta durchgeführt. Dabei wird sogenanntes \emph{Early Stopping} verwendet: Das Netzwerk wird solange trainiert, bis eine definierte Metrik über eine bestimmte Anzahl Epochen nicht mehr verbessert hat.
 
 \section{Evaluierungsmetrik}
 Im folgenden wird die verwendete Evaluierungsmetrik, der \emph{F1-Score}, erläutert.
@@ -159,28 +155,6 @@ Durch diese Metrik kann die Performanz eines Systems mittels eines Wertes quanti
 \operatorname{F1}_{k_0, k_1, \dots, k_n} = \frac{\sum_{i=0}^{n} \operatorname{F1}_{k_i}}{n}
 \end{equation}
 Diese Art des F1-Score über mehrere Klassen hinweg wird auch \emph{macro-average} F1-Score genannt.
-
-% \subsection{Präzision {\&} Ausbeute}
-% \label{basics:metrics:precision_recall}
-
-% \subsection{F1-Score}
-% Die in \ref{basics:metrics:precision_recall} beschriebenen Metriken Präzision und Ausbeute haben ein fundamentales Problem: Wenn die Klassen ungleich verteilt sind kann eine hohe Präzision bzw. Ausbeute erreicht werden indem einfach immer die am stärksten vertretene als Resultat zurückgegeben wird.
-
-% Am Beispiel der Testdaten aus den JCR{\_}quotations (vgl. \ref{data:supervised_data}) ist einfach ersichtlich wo das Problem liegt. Der neutrale Sentiment ist hier überdurchschnittlich hoch vertreten mit $66.9\%$. Wenn der Klassifizierer also immer also Resultat den neutralen Sentiment zurückgibt führt das automatisch zu einer Ausbeute von $100\%$ und einer Präzision von $66.9\%$. Dies entspricht zwar der Realität ist aber irreführend.
-
-% Um dieses Problem zu umgehen wird im Rahmen dieser Arbeit der F1-Score verwendet. Diese wird als Kombination der Präzision und der Ausbeute mithilfe der Gleichung \ref{basic:metrics:f1_eq} berechnet.
-
-% \begin{equation}
-% \label{basic:metrics:f1_eq}
-% F1 = \frac{2*precision*recall}{precision + recall}
-% \end{equation}
-
-% Der zusammengefasste F1-Score über die zwei Klassen $x$ und $y$ wird mithilfe der Gleichung \ref{basic:metrics:f1_comb_eq} berechnet.
-
-% \begin{equation}
-% \label{basic:metrics:f1_comb_eq}
-% F1_{x|y} = \frac{F1_x + F1_y}{2}
-% \end{equation}
 
 \section{Technischer Aufbau}
 Im folgenden Abschnitt wird der technische Aufbau, welcher implementiert wurde, um die in \ref{experiments} beschriebenen Experimente durchzuführen. Eine genaue Beschreibung der Funktionsweise und Verwendung des Systems befindet sich in Anhang \ref{appendix:software_usage}.
@@ -244,7 +218,7 @@ Zur Auswertung der Experimente stehen drei Funktionen zur Verfügung:
 	\item Mittels der Plotting Funktion können Plots von Trainingsmetriken erstellt werden. Weiterhin können Plots und Boxplots über die die Validierungsmetriken der einzelnen Schritte der Crossdomain-Experimente (vgl. \ref{methods:v8}) erstellt werden.
 	\item Die gespeicherten Validierungs- und Trainingsmetriken können mithilfe von math.js\footnote{http://mathjs.org/} direkt im Browser ausgewertet werden.\fixme{Code-Style}
 \end{itemize}
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\textwidth]{img/web_gui}
 	\caption{Ansicht Experiment über Weboberfläche}
