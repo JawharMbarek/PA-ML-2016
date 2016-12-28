@@ -42,8 +42,8 @@ if not path.isdir(META_RESULTS_PATH):
     os.mkdir(META_RESULTS_PATH)
 
 train_data_path = argv[0]
-test_data_path = argv[1]
-val_data_path = argv[2]
+val_data_path = argv[1]
+test_data_path = argv[2]
 
 def get_domain_model_dir(d):
     return path.join(MODELS_PATH, 'best_model_crossdomain_we_ds_%s' % d)
@@ -114,14 +114,14 @@ for vocab in vocabs:
         val_sents, val_txts, _, _ = DataLoader.load(val_data_path, vocab_dict, randomize=True)
         train_sents, train_txts, _, _ = DataLoader.load(train_data_path, vocab_dict, randomize=True)
 
-        test_data_per_vocab[vocab_length] = test_txts[0:10]
-        val_data_per_vocab[vocab_length] = val_txts[0:10]
-        train_data_per_vocab[vocab_length] = train_txts[0:10]
+        test_data_per_vocab[vocab_length] = test_txts
+        val_data_per_vocab[vocab_length] = val_txts
+        train_data_per_vocab[vocab_length] = train_txts
 
         if y_train_true is None:
-            y_train_true = train_sents[0:10]
-            y_val_true = val_sents[0:10]
-            y_train_true = train_sents[0:10]
+            y_train_true = train_sents
+            y_val_true = val_sents
+            y_test_true = test_sents
 
 print('Loaded vocabularies and data!')
 print('Starting to preprocess the data for the combined network...')
@@ -158,7 +158,12 @@ expert_net.add(Dense(3, activation='softmax'))
 expert_net = Model.compile(expert_net)
 
 class_weights = compute_class_weights(y_train_true)
-validation_data = (combined_val_x, to_categorical(y_val_true, 3))
+
+y_train_true = to_categorical(y_train_true, 3)
+y_test_true = to_categorical(y_test_true, 3)
+y_val_true = to_categorical(y_val_true, 3)
+
+validation_data = (combined_val_x, y_val_true)
 early_stopping = EarlyStopping(patience=50, verbose=1, mode='max', monitor='val_f1_score_pos_neg')
 model_checkpoint = ModelCheckpoint(filepath=model_checkpoint_path, mode='max', save_best_only=True,
                                    monitor='val_f1_score_pos_neg')
@@ -166,15 +171,14 @@ model_checkpoint = ModelCheckpoint(filepath=model_checkpoint_path, mode='max', s
 with open(model_json_path, 'w+') as f:
     f.write(expert_net.to_json())
 
-y_train_true = to_categorical(y_train_true, 3)
-
 history = expert_net.fit(combined_train_x, y_train_true,
                          validation_data=validation_data,
-                         nb_epoch=1, batch_size=500,
+                         nb_epoch=1000, batch_size=500,
+                         class_weight=class_weights,
                          callbacks=[early_stopping, model_checkpoint])
 
 expert_net.load_weights(model_checkpoint_path)
-score = expert_net.evaluate(combined_test_x, y_train_true)
+score = expert_net.evaluate(combined_test_x, y_test_true)
 
 metrics = {}
 metrics_names = expert_net.metrics_names
