@@ -2,6 +2,7 @@ import numpy as np
 import parse_utils
 
 from keras import backend as K
+from itertools import chain, combinations
 
 POLARITY_TASK_CONVERSION = {
     'negative': 0,
@@ -61,6 +62,9 @@ def tsv_sentiment_loader(fname, alphabet, tokenizer, delimiter='\t'):
 
     return [], lables, tweet_idx, data_raw, nlabels
 
+def powerset(iterable):
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
 def fbeta_score(y_true, y_pred, beta=1):
     '''Compute F score, the weighted harmonic mean of precision and recall.
