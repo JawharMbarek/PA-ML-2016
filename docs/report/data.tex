@@ -1,113 +1,124 @@
 \chapter{Daten}
-Im  folgenden Kapitel werden die im Laufe dieser Arbeit verwendeten Trainingsdaten und Text Corpora genauer beschrieben. Es wird erläutert woher die Daten stammen, welchen Zweck sie erfüllen und wie die einzelnen Datensätze aufgebaut sind.
+Im  folgenden Kapitel werden die im Laufe dieser Arbeit verwendeten Trainingsdaten und Text Corpora genauer beschrieben. Es wird erläutert woher die Daten stammen, welchen Zweck sie erfüllen und wie die einzelnen Datensätze aufgebaut sind. Des Weiteren wird erläutert wie die Word-Embeddings und Datensätze für die Distant-Supervised Phase generiert werden.
 
-\section{Art der Datensätze}
-\subsection{Trainings- und Validierungsdaten}
-Die Trainingsdaten, welche in dieser Arbeit verwendet wurden können in zwei Klassen unterteilt werden:
+Die Trainingsdaten, welche in dieser Arbeit verwendet werden, können in zwei Klassen unterteilt werden:
 
 \begin{itemize}
-	\item Die Daten, welche Annotationen mit den entsprechenden Sentiments bereits mitlieferern, im Folgenden \emph{Supervised} genannt.
-	\item Die zweite Klasse beinhaltet Daten, welche keine Annotationen mitliefern. Bei diesen lässt sich der Sentiment der einzelen Datensätze über Eigenschaften des Textes ableiten. Als Beispiel kann hier zum Beispiel die Emoticon-Annotation aus \cite{deriu2016sentiment} erwähnt werden. Dabei wurde der Sentiment eines Tweets daraus abgeleitet ob positive oder negative Emoticon im Tweet vorhanden sind. Diese Art von Daten wird im Folgenden \emph{Unsupervised} genannt.
+	\item \emph{Supervised}: Datensätze, welche Texte und dazugehörige Sentiments mitliefern werden gehören zur Klasse der Supervised Datensätze. Dazu zählen beispielsweise alle Trainings- und Testdaten welche in den Folgenden Experimente verwendet werden.
+	\item \emph{Unsupervised}: Datensätze, welche Texte aber keine zugehörigen Sentiments mitliefern gehören zur Klasse der Unsupervised Datensäte. Dazu zählen einerseits die Daten, mit welchen die Distant-Supervised Phase durchgeführt wird. Andererseits gehören hierzu auch die Text-Corpora mit welchen die Word-Embeddings generiert werden.
 \end{itemize}
 
 \clearpage
 
-\subsubsection{Supervised}
+\subsection{Supervised}
 \label{data:supervised_data}
-In der Klasse der Supervised Datensätze befinden sich alle, welche bereits Annotationen zum Sentiment mitliefern. Die hier verwendeten Datensätze wurden von Cieliebak et al. \cite{cieliebak2013potential} zur Verfügung gestellt.\\
-\fixme{Tabelle erweitern, da wir nun alle Domänen verwenden, auch crossdomain Datensatz hier erwähnen}
-
-\begin{table}[h]
-	\begin{adjustbox}{max width=\columnwidth}
-		\begin{tabular}{clrrrrr}
-			\hline
-			\textbf{Phase} & \textbf{Dataset} & \textbf{Total} & \textbf{Neutral} & \textbf{Neg.} & \textbf{Pos.} & \textbf{Source} \\
-			\hline
-			\multirow{3}{*}{\specialcell{Word \\ Embeddings}} 
-			
-			& Twitter & 590M & - & - & - & Public Twitter-API\tablefootnote{https://dev.twitter.com/rest/public \label{twitter-api}}\\
-			& News & 90M & - & - & - & STATMT website\tablefootnote{http://www.statmt.org/wmt14/training-monolingual-news-crawl/}\\
-			& Wikipedia & 4.5M & - & - & - & Wikimedia\tablefootnote{https://dumps.wikimedia.org/enwiki/latest/} \\
-			\hline
-			\multirow{2}{*}{\specialcell{Distant \\ Phase}} 
-			
-			& Reviews & 82M & 7M & 11M & 64M & \cite{Zhang:2015}\\
-			& Twitter & 100M & - & 20M & 80M & Public Twitter-API\textsuperscript{\ref{twitter-api}} \\
-			\hline
-			\multirow{8}{*}{\specialcell{Supervised \\ Phase (Train)}}
-			& DAI (Tweets)    & 3274  & 2191 & 447 & 636 & \cite{Narr:2012}\\
-			& SEval (Tweets)  & 8226  & 3958 & 1210 & 3058 & \cite{SemEval:2016:task4} \\
-			& DIL (Reviews)   & 3420  & 1739 & 615 & 1066 & \cite{Ding:2008} \\
-			& HUL (Reviews)   & 3156  & 1822 & 438 & 896 & \cite{Hu:2004} \\
-			& TAC (Reviews)   & 2152  & 381 & 991 & 780 & \cite{Tackstrom:2011}\\
-			& MPQ (News)    & 8888  & 4934 & 2637 & 1317 & \cite{Wiebe:2005} \\
-			& JCR (Quotations)  & 1032  & 736 & 141 & 155 & \cite{Balahur:2013} \\
-			& SEM (Headlines)   & 1000  & 610 & 246 & 144 & \cite{strapparava2007semeval}  \\
-			\hline
-			\multirow{8}{*}{\specialcell{Supervised \\ Phase (Test)}}
-			& DAI (Tweets)    & 819   & 556 & 101 & 162 & \cite{Narr:2012}\\
-			& SEval (Tweets)  & 3813  & 1640 & 601 & 1572 & \cite{SemEval:2016:task4} \\
-			& DIL (Reviews)   & 855   & 441 & 144 & 270 & \cite{Ding:2008} \\
-			& HUL (Reviews)   & 789 & 421 & 197 & 171 & \cite{Hu:2004} \\
-			& TAC (Reviews)   & 537   & 65 & 329 & 143 & \cite{Tackstrom:2011} \\
-			& MPQ (News)    & 2223  & 1225 & 708 & 290 & \cite{Wiebe:2005} \\
-			& JCR (Quotations)  & 258 & 127 & 93 & 38 & \cite{Balahur:2013} \\
-			& SEM (Headlines)   & 250 & 154 & 66 & 30 & \cite{strapparava2007semeval} \\
-			\hline
-			\hline
-		\end{tabular}
-	\end{adjustbox}
-	\caption{\textit{Data used for training the CNN model.}}
-	\label{tbl:data}
-\end{table}
-
-\begin{table}[h]
+Alle Datensätze welche während des Trainings und der Evaluierung eines \gls{CNN} verwendet werden liefern Texte und die dazugehörigen Sentiments mit. Da die Datensätze nur als ganzes zur Verfügung stehen werden diese von uns im Verhältnis 80\% Trainingsdaten und 20\% Testdaten zufällig unterteilt.
+\paragraph{Trainingsdaten} Die in der folgenden Tabelle aufgelisteten Datensätze werden für das Training der \gls{CNN}s verwendet.
+\begin{table}[H]
 	\ra{1.3}
 	\begin{adjustbox}{max width=\textwidth}
 		\begin{tabular}{@{}lllcccccccl@{}}
 			\toprule
 			& & & & & & \multicolumn{3}{c}{Verteilung Sentiments} &\\
 			\cmidrule(r){7-9}
-			& Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Referenz &\\ \midrule
-			& JCR{\_}quotations & Zitate aus Reden & $1'290$ & $147.4$ & $33.4$ & $15.0\%$ & $66.9\%$ & $18.1\%$ & \cite{cieliebak2013potential}\\
-			& MPQ{\_}news & Nachrichtentexte & $11'111$ & $123.5$ & $27.3$ & $14.4\%$ & $55.4\%$ & $30.2\%$ & \cite{cieliebak2013potential}\\
-			& SEM{\_}headlines & Nachrichtenüberschriften & $1'250$ & $34.1$ & $7.1$ & $13.9\%$ & $61.1\%$ & $24.9\&$ & \cite{cieliebak2013potential}\\
-			& DIL{\_}reveiws & Produktbewertungen & $4'275$ & $74.3$ & $19.1$ & $31.3\%$ & $51.0\%$ & $17.7\%$ & \cite{cieliebak2013potential}\\
-			& SemEval{\_}tweets & Tweets & $12'039$ & $89.3$ & $22.5$ & $38.5\%$ & $45.5\%$ & $15.0\%$ & \cite{SemEval:2016:task4}\\
+			& Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Quelle &\\ \midrule
+			& DAI{\_}tweets & Tweets & $3274$ & $63.4$ & $16.1$ & $19.4\%$ & $66.9\%$ & $13.6\%$ & \cite{Narr:2012}\\
+			& DIL{\_}reviews & Produktbewertungen & $3420$ & $74.0$ & $19.0$ & $31.1\%$ & $50.8\%$ & $17.9\%$ & \cite{Ding:2008}\\
+			& HUL{\_}reviews & Produktbewertungen & $3156$ & $70.7$ & $18.6$ & $28.4\%$ & $57.7\%$ & $13.9\%$ & \cite{Hu:2004}\\
+			& JCR{\_}quotations & Zitate aus Reden & $1032$ & $148.4$ & $33.6$ & $15.0\%$ & $71.3\%$ & $13.7\%$ & \cite{Balahur:2013}\\
+			& MPQ{\_}news & Nachrichtentexte & $8888$ & $123.3$ & $26.9$ & $14.8\%$ & $55.5\%$ & $29.7\%$ & \cite{Wiebe:2005}\\
+			& SEM{\_}headlines & Nachrichtenüberschriften & $1000$ & $34.3$ & $7.1$ & $14.4\%$ & $61.0\%$ & $24.6\%$ & \cite{Strapparava:2007}\\
+			& SemEval{\_}tweets & Tweets & $8226$ & $89.1$ & $22.4$ & $37.2\%$ & $48.1\%$ & $14.7\%$ & \cite{SemEval:2016:task4}\\
+			& TAC{\_}news & Nachrichtentexte & $2152$ & $88.6$ & $22.4$ & $36.3\%$ & $17.7\%$ & $46.0\%$ & \cite{Tackstrom:2011}\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
-	\caption{Statistiken zu Supervised Datensätzen}
+	\caption{Statistiken zu Texten der Trainingsdaten.}
 \end{table}
 
-Für die Experimente wurden die Daten einmalig, zufällig aufgeilt. Wobei 80 \% der Daten für das Training verwendet werden und 20\% für das testen des Sentiment Classifiers.
-\fixme{stimmt das noch 80/20}
-
-\subsubsection{Unsupervised}
-Für die Distant-Phase wurde ein Corpus von 82 Mio. Amazon Reviews verwendet, welche im Rahmen der Veröffentlichung von \cite{zhang2015character} öffentlich bereitgestellt wurden. Aus den zur Verfügung stehenden Bewertungen wurden nur die Texte und die numerische Beurteilung (1-5 Sterne) verwendet. Details zur Verwendung während der Distant-Phase befinden sich im Kapitel \ref{methods}.\\\\
-\fixme{Kapitel überarbeiten, Tabelle erweitern (tweets, no supervision, reviews )}
-\begin{table}[h]
+\paragraph{Testdaten} Die in der folgenden Tabelle aufgelisteten Datensätze werden verwendet um die Performanz eines trainierten \gls{CNN} zu evaluieren.
+\begin{table}[H]
 	\ra{1.3}
-	\centering
 	\begin{adjustbox}{max width=\textwidth}
-		\begin{tabular}{@{}cccccc@{}}
+		\begin{tabular}{@{}lllcccccccl@{}}
 			\toprule
-			& & & \multicolumn{3}{c}{Verteilung Bewertungen}\\
-			\cmidrule(r){4-6}
-			Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & $x >= 4$ & $x = 3$ & $x < 3$\\ \midrule
-			$142831980$ & $347.60$ & $88.02$ & $12.44\%$ & $8.56\%$ & $79.00\%$\\
+			& & & & & & \multicolumn{3}{c}{Verteilung Sentiments} &\\
+			\cmidrule(r){7-9}
+			& Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Quelle &\\ \midrule
+			& DAI{\_}tweets & Tweets & $819$ & $66.5$ & $16.8$ & $19.8\%$ & $67.9\%$ & $12.3\%$ & \cite{Narr:2012}\\
+			& DIL{\_}reviews & Produktbewertungen & $855$ & $74.9$ & $19.2$ & $31.6\%$ & $51.6\%$ & $16.8\%$ & \cite{Ding:2008}\\
+			& HUL{\_}reviews & Produktbewertungen & $789$ & $63.3$ & $17.1$ & $21.7\%$ & $53.3\%$ & $25.0\%$ & \cite{Hu:2004}\\
+			& JCR{\_}quotations & Zitate aus Reden & $258$ & $143.6$ & $32.6$ & $14.7\%$ & $49.2\%$ & $36.1\%$ & \cite{Balahur:2013}\\
+			& MPQ{\_}news & Nachrichtentexte & $2223$ & $121.6$ & $26.5$ & $13.1\%$ & $55.1\%$ & $31.8\%$ & \cite{Wiebe:2005}\\
+			& SEM{\_}headlines & Nachrichtenüberschriften & $255$ & $33.4$ & $7.1$ & $12.0\%$ & $61.6\%$ & $26.4\%$ & \cite{Strapparava:2007}\\
+			& SemEval{\_}tweets & Tweets & $3813$ & $89.6$ & $21.8$ & $41.2\%$ & $43.0\%$ & $15.8\%$ & \cite{SemEval:2016:task4}\\
+			& TAC{\_}news & Nachrichtentexte & $537$ & $110.4$ & $26.7$ & $26.6\%$ & $12.1\%$ & $61.2\%$ & \cite{Tackstrom:2011}\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
-	\caption{Statistiken zu Unsupervised Amazon Datensatz}
+	\caption{Statistiken zu Texten der Testdaten.}
 \end{table}
-\fixme{Update with dedup statistics!}
-\fixme{Embeddings erweitern: random, wiki, tweets, news}
-\subsection{Text Corpora}
-Um die Word-Embeddings für die durchgeführten Experimente zu generieren wurden die unten beschriebenen Text Corpora verwendet.
 
-\subsubsection{Tweets}
-Für die Experimente, welche mit annotierten Tweets als Trainingsdaten durchgeführt wurden, wurden Word-Embeddings von Jan Deriu zur Verfügung gestellt. Diese Word-Embeddings wurden auf einem Corpus von 600 Mio. Tweets generiert.
+\clearpage
 
-\subsubsection{News}
-Für die Experimente, welche mit annotierten Filmbewertungen durchgeführt wurden, wurden Word-Embeddings auf einem Corpus von englischen Nachrichten-Texten aus den Jahren 2007-2013 generiert. Diese wurden im Rahmen des neunten \emph{workshop on statistical machine translation} öffentlich zur Verfügung gestellt wurde\footnote{http://www.statmt.org/wmt14/training-monolingual-news-crawl/}. Der Corpus setzt sich aus 90.2 Mio Nachrichtentexten und -überschriften zusammen, welche per Web-Crawling im Internet gesammelt wurden. \fixme{Missing reference for news data?}
+\subsection{Unsupervised}
+Im Folgenden werden die \emph{Unsupervised} Datensätze erläutert. Einerseits beinhalten diese die Text-Corpora mit welchen die Word-Embeddings generiert werden, andererseits gehören hierzu auch die Datensätze welche für das Training der \gls{CNN}s während der Distant-Supervised Phasen eingesetzt werden.
+
+\paragraph{Text-Corpora} Im Rahmen dieser Arbeit werden vier verschiedene Arten von Word-Embeddings verwendet. Diese werden auf verschiedenen Text-Corpora generiert, welche in der folgenden Tabelle aufgelistet sind:
+
+\begin{table}[H]
+	\centering
+	\ra{1.3}
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{tabular}{@{}lllcccccccl@{}}
+			\toprule
+			Name & Beschreibung & Anzahl Sätze & Quelle\\ \midrule
+			\emph{News} & News-Texte von diversen Webseiten & 90 Mio. & STATMT Webseite\tablefootnote{http://www.statmt.org/wmt14/training-monolingual-news-crawl/}\\
+			\emph{Tweets} & Sammlung von öffentlich verfügbaren Tweets & 590 Mio. & Twitter-API\tablefootnote{https://dev.twitter.com/rest/public}\\
+			\emph{Wiki} & Texte aller Artikel auf Wikipedia mit mehr als 50 Wörtern & 4.5 Mio. & Wikimedia\tablefootnote{https://dumps.wikimedia.org/enwiki/latest/}\\
+			\bottomrule
+		\end{tabular}
+	\end{adjustbox}
+	\caption{Text-Corpora, welche für die Generierung der Word-Embeddings verwendet werden.}
+\end{table}
+Zusätzlich werden während der Experimente zufällig initialisierte Word-Embeddings verwendet; diese werden im Folgenden mit \emph{Random} gekennzeichnet. Die Generierung der Word-Embeddings wurde mittels \emph{word2vec} \cite{mikolov2013distributed} durchgeführt. Dabei wurden die folgenden Hyperparameter verwendet:
+
+\begin{table}[H]
+	\centering
+	\ra{1.3}
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{tabular}{@{}lllcccccccl@{}}
+			\toprule
+			Name & Wert\\ \midrule
+			\emph{algorithm} & skip-gram\\
+			\emph{dimensions} & $52$\\
+			\emph{window size} & $5$\\
+			\emph{minimum count} & $15$\\
+			\emph{sample} & $10^{-5}$\\
+			\bottomrule
+		\end{tabular}
+	\end{adjustbox}
+	\caption{Hyperparameter, welche für die Generierung der Word-Embeddings mit \emph{word2vec} verwendet werden.}
+\end{table}
+
+\clearpage
+
+\paragraph{Datensätze für Distant-Supervised Phase} Im Rahmen dieser Arbeit werden zwei verschiedene Datensätze für die Distant-Supervised Phase verwendet: Produktbewertungen von Amazon\footnote{https://www.amazon.com/} und Kurznachrichtentexte von Twitter\footnote{https://twitter.com/}. Dabei werden die Sentiments bei den Produktbewertungen anhand der vergebenen Wertung und bei den Tweets anhand der im Text vorhandenen Emoticons abgeleitet. Bei den Produktbewertungen werden alle Texte, welche mit einer Wertung von $x >= 4$ als positiv, $x < 3$ als negativ klassifiziert; die Restlichen werden als neutral angenommen. Bei den Tweets wird ein Lexikon von positiven (z.B. \quotes{:-)}) und negativen (z.B. \quotes{:-(}) Emoticons verwendet. Dabei werden die positiven und negativen Emoticons im Tweet gezählt; die Klasse welche öfter vorhanden ist gibt den Sentiment des Tweets vor.\\\\
+Dieses Schema führt zu folgenden Datensätzen, welche während der Distant-Supervised Phase verwendet werden:
+\begin{table}[H]
+	\ra{1.3}
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{tabular}{@{}lllcccccccl@{}}
+			\toprule
+			& & & & & & \multicolumn{3}{c}{Verteilung Sentiments} &\\
+			\cmidrule(r){7-9}
+			& Name & Textart & Anzahl Texte & \specialcell{Durchschnittliche\\Anzahl Zeichen} & \specialcell{Durchschnittliche\\Anzahl Wörter} & positiv & neutral & negativ & Quelle &\\ \midrule
+			& Amazon Reviews & Produktbewertungen & $82.4$ Mio. & $382.2$ & $96.2$ & $78.2\%$ & $8.5\%$ & $13.2\%$ & \cite{Zhang:2015}\\
+			& Tweets & Tweets & $100.0$ Mio. & $46.9$ & $12.4$ & $79.1\%$ & $0.0\%$ & $20.9\%$ & Twitter-API\tablefootnote{https://dev.twitter.com/rest/public}\\
+			\bottomrule
+		\end{tabular}
+	\end{adjustbox}
+	\caption{Statistiken zu Texten der Distant-Supervised Datensätze.}
+\end{table}
+
+Des Weiteren werden auch Experimente ohne Distant-Supervised Phase durchgeführt; diese werden mit \emph{None} gekennzeichnet.
