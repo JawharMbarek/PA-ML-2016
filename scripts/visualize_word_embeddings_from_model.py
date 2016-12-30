@@ -72,15 +72,8 @@ print('Loaded embeddings for given words!')
 
 only_word_vectors = np.array(list(word_vectors.values()))
 
-tsne = TSNE(n_components=2, random_state=0)
-np.set_printoptions(suppress=True)
-
 pca = PCA(n_components=2)
 Y_pca = pca.fit(only_word_vectors).transform(only_word_vectors)
-Y = tsne.fit_transform(only_word_vectors)
-
-import pdb
-pdb.set_trace()
 
 plt.xlim(-2.0, 2.0)
 plt.ylim(-2.0, 2.0)
