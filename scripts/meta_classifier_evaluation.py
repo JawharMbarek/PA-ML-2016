@@ -30,7 +30,7 @@ from model import Model
 
 argv = sys.argv[1:]
 
-if len(argv) < 3:
+if len(argv) < 4:
     print('ERROR: Missing mandatory argument')
     print('       python scripts/meta_classifier_evaluation.py <opt-tsv> <val-tsv> <test-tsv>')
     sys.exit(2)
@@ -59,6 +59,13 @@ train_data_path = argv[0]
 val_data_path = argv[1]
 test_data_path = argv[2]
 used_domains = argv[3].split(',')
+
+model_to_load = None
+weights_to_load = None
+
+if len(argv) == 6:
+    model_to_load = argv[4]
+    weights_to_load = argv[5]
 
 def get_domain_model_dir(d):
     return path.join(MODELS_PATH, 'best_model_crossdomain_we_ds_%s' % d)
@@ -188,7 +195,14 @@ combined_train_x = []
 combined_val_x = []
 combined_test_x = []
 
-for j, (domain, model) in enumerate(models.items()):
+if model_to_load is not None:
+    with open(model_to_load, 'r') as f:
+        m = json.load(f)
+        used_domains = [m['config'][0]['config']['layers'][x]['config'][0]['config']['name'] for x in range(len(m['config']))]
+        used_domains = list(map(lambda x: x.split('_')[2], used_domains))
+
+for j, domain in enumerate(used_domains):
+    model = models[domain]
     trained_models.append(model)
 
     vocab_len = model.layers[0].input_dim - 1
@@ -223,14 +237,22 @@ print('Starting to assemble and optimize the meta-classifier...')
 for k in models.keys():
     models[k] = Model.compile(models[k])
 
-expert_net = Sequential()
-expert_net.add(Merge(trained_models, mode='concat'))
-expert_net.add(Flatten())
-expert_net.add(Dense(200))
-expert_net.add(Dropout(0.2))
-expert_net.add(Activation('relu'))
-expert_net.add(Dense(3, activation='softmax'))
-expert_net = Model.compile(expert_net)
+expert_net = None
+
+if model_to_load and weights_to_load:
+    with open(model_to_load, 'r') as model_f:
+        expert_net = keras.models.model_from_json(model_f.read())
+        expert_net.load_weights(weights_to_load)
+        expert_net = Model.compile(expert_net)
+else:
+    expert_net = Sequential()
+    expert_net.add(Merge(trained_models, mode='concat'))
+    expert_net.add(Flatten())
+    expert_net.add(Dense(200))
+    expert_net.add(Dropout(0.2))
+    expert_net.add(Activation('relu'))
+    expert_net.add(Dense(3, activation='softmax'))
+    expert_net = Model.compile(expert_net)
 
 validation_data = (combined_val_x, y_val_true)
 early_stopping = EarlyStopping(patience=50, verbose=1, mode='max', monitor='val_f1_score_pos_neg')
@@ -240,13 +262,17 @@ model_checkpoint = ModelCheckpoint(filepath=model_checkpoint_path, mode='max', s
 with open(model_json_path, 'w+') as f:
     f.write(expert_net.to_json())
 
-history = expert_net.fit(combined_train_x, y_train_true,
-                         validation_data=validation_data,
-                         nb_epoch=1000, batch_size=300,
-                         class_weight=class_weights,
-                         callbacks=[early_stopping, model_checkpoint])
+history = None
 
-expert_net.load_weights(model_checkpoint_path)
+if model_to_load is None and weights_to_load is None:
+    history = expert_net.fit(combined_train_x, y_train_true,
+                             validation_data=validation_data,
+                             nb_epoch=1000, batch_size=300,
+                             class_weight=class_weights,
+                             callbacks=[early_stopping, model_checkpoint])
+
+    expert_net.load_weights(model_checkpoint_path)
+
 score = expert_net.evaluate(combined_test_x, y_test_true)
 
 metrics = {}
@@ -256,7 +282,8 @@ for i in range(len(metrics_names)):
     name = metrics_names[i]
     metrics[name] = score[i]
 
-metrics['history'] = history.history
+if history is not None:
+    metrics['history'] = history.history
 
 with open(metrics_json_path, 'w+') as f:
     f.write(json.dumps(metrics, sort_keys=True, indent=4))
