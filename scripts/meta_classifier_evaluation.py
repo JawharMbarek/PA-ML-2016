@@ -273,7 +273,7 @@ if model_to_load is None and weights_to_load is None:
 
     expert_net.load_weights(model_checkpoint_path)
 
-score = expert_net.evaluate(combined_test_x, y_test_true)
+score = expert_net.evaluate(combined_test_x, y_test_true, batch_size=len(y_test_true))
 
 metrics = {}
 metrics_names = expert_net.metrics_names
