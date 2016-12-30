@@ -1,0 +1,14 @@
+{
+    "np_seed": 2812161337,
+    "test_data_path": "testdata/DAI_tweets_test.tsv",
+    "train_data_path": "testdata/DAI_tweets_train.tsv",
+    "used_domain_models": [
+        "dai",
+        "dil",
+        "hul",
+        "mpq",
+        "semeval",
+        "tac"
+    ],
+    "valid_data_path": "testdata/DAI_tweets_test.tsv"
+}
