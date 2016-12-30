@@ -1,11 +1,11 @@
 \chapter{Grundlagen}
-Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Dabei werden zuerst grundlegende Begriffe wie Sentiment und Domäne eingeführt. Dannch folgt eine Einführung in das maschinelle Lernen mit Neuronalen Netzwerken sowie einer speziellen Variante, dem sogenannten \emph{Convolutional Neural Network}. Zu guter Letzt wird das 3-stufige Lernverfahren, mit welchem die zuvor genannten Netzwerke trainiert werden, erläutert.
+Im ersten Teil dieses Kapitels werden die theoretischen Grundlagen, welche in den folgenden Kapitel dieser Arbeit Verwendung finden, erläutert. Dabei werden zuerst grundlegende Begriffe wie Sentiment und Domäne eingeführt. Danach folgt eine Einführung in das maschinelle Lernen mit Neuronalen Netzwerken sowie einer speziellen Variante, dem sogenannten \gls{cnn}. Zu guter Letzt wird das 3-stufige Lernverfahren, mit welchem die zuvor genannten Netzwerke trainiert werden, erläutert.
 
-Die folgenden Erläuterungen müssen im Kontext von Sentiment-Analyse beachtet werden. Natürlich lassen sich mit Neuronalen Netzen auch ganz andere Aufgaben (z.b. Dimensionalitätsreduktion, Vorraussagen von Werten) lösen, allerdings werden diese Themen in den folgenden Äusserungen nicht mit einbezogen.
+Die folgenden Erläuterungen müssen im Kontext von Sentiment-Analyse beachtet werden. Sentiment-Analyse ist ein Klassifizierungsproblem. Natürlich lassen sich Neuronale Netze auch für weitere Aufgaben (z.B. Dimensionalitätsreduktion, Vorraussagen von Werten) einsetzen, allerdings werden diese Themen in den folgenden Äusserungen nicht mit einbezogen.
 
 \section{Definitionen}
 \paragraph{Sentiment}
-Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches ein Text bei einem Leser auslöst. Im Rahmen dieser Arbeit werden die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfniss lässt sich diese Skala natürlich noch weiter verfeinern, so z.B. mit \emph{eher negativ} oder \emph{eher positiv} als Sentiments.
+Der \emph{Sentiment} beschreibt das subjektive Empfinden welches beim Leser eines Textes ausgelöst wird. Ein Sentiment kann für einzelne Sätze, Abschnitte oder ganze Texte bestimmt werden. Im Rahmen dieser Arbeit werden die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfnis lässt sich diese Skala noch weiter verfeinern (z.B. mit emph{eher negativ} oder \emph{eher positiv} als Sentiments).
 
 \begin{table}[h]
   \centering
@@ -18,33 +18,39 @@ Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches ein Text bei e
     negativ & Die Auflösung dieser Handy-Kamera ist sehr schlecht.\\
     \bottomrule
   \end{tabular}
-  \caption{Beispiele für Texte mit verschiedenen Sentiments.}
+  \caption{Beispieltexte für die drei verschiedenen Sentiments}
   \label{basics:sentiments_example_table}
 \end{table}
 
-Da der Sentiment eines Textes nach dem subjektiven Empfinden einer Person bestimmt wird ist dieser auch nicht eindeutig. Je nachdem wer einen Text beurteilt kann also ein anderes Ergebnis zur Folge haben. Ein Sentiment kann für einzelne Sätze, Abschnitte oder ganze Texte bestimmt werden.
-
-\fixme{Erwähnen von formaler Definition z.b. MS Paper}
+Der Sentiment eines Textes ist nicht eindeutig bestimmt, da dieser vom subjektiven Empfinden der annotierenden Person bestimmt wird. Je nachdem wer den Sentiment eines Textes bestimmt kann ein anderes Ergebnis zur Folge haben.
+Da der Sentiment eines Textes nach dem subjektiven Empfinden einer Person bestimmt wird ist dieser nicht eindeutig. Je nachdem wer einen Text beurteilt kann also ein anderes Ergebnis zur Folge haben.
 
 \paragraph{Domäne} Texte, welche die gleiche Struktur aufweisen werden zu einer Domäne zusammengefasst. Als Beispiele lassen sich hier Produktbewertungen, Tweets oder auch Nachrichtentexte erwähnen.\fixme{Besser beschreiben!}
 
 \paragraph{Crossdomain} 
-Mit \emph{Crossdomain} (dt. domänenübergreifend) \fixme{complete!}
+Mit \emph{Crossdomain} (dt. domänenübergreifend) ist die Verwendung von Trainings- und Testdaten aus mehreren verschiedenen Domänen zum Training und/oder zur Validierung eines Sentiment-Klassifiziers gemeint.
+
+\paragraph{Formale Definitionen}
+
+Für die Durchführung dieser Arbeit sind keine formale Definitionen der zuvor genannten Begriffe nötig. Solche können allerdings in diversen anderen Arbeiten, unter anderem \ref{...} und \ref{...}, gefunden werden.
 
 \section{Neuronale Netzwerke}
 \label{basics:neural_network}
 
-Neuronale Netzwerke sind ein Modell des maschinellen Lernens, welches biologisch motiviert ist und sich lose am menschlichen Gehirn orientiert. Im folgenden wird auf die einzelnen Komponenten eines neuronal Netzwerkes eingegangen.
+Neuronale Netzwerke, im Folgenden \emph{\gls{NN}} genannt, sind ein Modell des maschinellen Lernens, welches biologisch motiviert ist und sich lose an der Struktur menschlichen Gehirn orientiert. Im folgenden wird auf die einzelnen Komponenten eines NN eingegangen.
 
-\paragraph{Neuron}\label{basic:neural_network:neuron} Ein neuronales Netz besteht aus \emph{Neuronen}, manchmal auch Perceptronen genannt. Diese bilden einen mathematische Funktion ab und sind die Grundbausteine eines Neuronalen Netzwerkes.
+\paragraph{Neuron}\label{basic:neural_network:neuron} Ein NN besteht aus \emph{Neuronen}, manchmal auch Perceptronen genannt. Diese bilden einen mathematische Funktion ab und sind die Grundbausteine eines NN.
 
-Diese Neuronen nehmen $n$ Eingangswerte $\mathbf{x} = (x_0, x_1, \dots, x_n)$ entgegen. Jedem dieser Eingangswerte $x_n$ wird ein Gewicht $w_n$ aus der Menge $\mathbf{w} = (w_0, w_1, \dots, w_n)$ zugewiesen. Der Eingangswert $x_0$ bzw. das zugehörige Gewicht $w_0$ werden fast immer auf $1$ gesetzt und als Bias-Wert bzw. -Gewicht bezeichnet. Mithilfe der Eingangswerte $\mathbf{x}$, den zugehörigen Gewichten $\mathbf{w}$ und der Aktivierungsfunktion $\varphi$ wird die Aktivierung $o$ des Neurons wie folgt berechnet:
+Diese Neuronen nehmen $n$ Eingangswerte $\mathbf{x} = (x_0, x_1, \dots, x_n)$ entgegen. Jedem dieser Eingangswerte $x_n$ wird ein Gewicht $w_n$ aus der Menge $\mathbf{w} = (w_0, w_1, \dots, w_n)$ zugewiesen. Der Eingangswert $x_0$ bzw. das zugehörige Gewicht $w_0$ werden fast immer auf $1$ gesetzt und als Bias-Wert bzw. -Gewicht bezeichnet. Mithilfe der Eingangswerte $\mathbf{x}$, den zugehörigen Gewichten $\mathbf{w}$ und der Aktivierungsfunktion $\varphi$ wird die Ausgabe $o$, auch Aktivierung genannt, des Neurons wie folgt berechnet:
 \begin{equation}
 o = \varphi(\mathbf{w} \cdot \mathbf{x}) = \varphi\bigg(\sum_{i=0}^{n} w_i x_i\bigg)
 \label{basics:neural_network:compute_equation}
 \end{equation}
-Die Aktivierungsfunktion $\varphi$ ist dafür zuständig, den aus der Berechnung resultiernden Wert $o$ in eine vordefinierte Spanne von Werten zu bringen. Beispiele für häufig verwendete Aktivierungsfunktionen sind $\tanh(x) = (e^x - e^{-x})/(e^x + e^{-x})$, $\operatorname{relu}(x) = \max\{0,x\}$ oder die sigmoid-Funktion $s(x) = 1/(1 + e^{-x})$.
-\paragraph{Schicht}\label{basic:neural_network:layer} Mithilfe der zuvor erwähnten Neuronen werden die einzelnen Schichten eines Neuronalen Netzwerks modelliert. Eine Schicht setzt sich dabei aus mehreren Neuronen zusammen. Um ein vollständiges neuronales Netzwerk zu erhalten werden mehrere dieser Schichten hintereinander gereiht. Dabei gibt es drei essentielle Schichten, welches fast jedes neuronale Netzwerk (im klassischen Sinne) hat: Eine \emph{Eingabeschicht}, eine oder mehrere \emph{Hiddenschichten} oder \emph{verborgene Schichten} und eine \emph{Ausgabeschicht}; vgl.\ Abbildung~\ref{fig:schichten}.
+Die Aktivierungsfunktion $\varphi$ ist dafür zuständig den aus der Berechnung resultierenden Wert $o$ in eine vordefinierte Spanne von Werten zu bringen. Beispiele für häufig verwendete Aktivierungsfunktionen sind $\tanh(x) = (e^x - e^{-x})/(e^x + e^{-x})$, $\operatorname{relu}(x) = \max\{0,x\}$ oder die sigmoid-Funktion $s(x) = 1/(1 + e^{-x})$.
+
+Im Rahmen dieser Arbeit wird ausschliesslich $\operatorname{relu}$ als Aktivierungsfunktion verwendet.
+
+\paragraph{Schicht}\label{basic:neural_network:layer} Mithilfe der zuvor erwähnten Neuronen werden die einzelnen Schichten eines NN aufgebaut. Eine Schicht setzt sich dabei aus mehreren Neuronen zusammen. Um ein vollständiges NN zu erhalten werden mehrere dieser Schichten hintereinander gereiht. Dabei gibt es drei essentielle Schichten, welches fast jedes neuronale Netzwerk (im klassischen Sinne) hat: Eine \emph{Eingabeschicht}, eine oder mehrere \emph{Hiddenschichten} oder \emph{verborgene Schichten} und eine \emph{Ausgabeschicht}; vgl.\ Abbildung~\ref{fig:schichten}.
 
 \begin{figure}[h]
   \centering
@@ -53,23 +59,25 @@ Die Aktivierungsfunktion $\varphi$ ist dafür zuständig, den aus der Berechnung
   \label{fig:schichten}
 \end{figure}
 
-Über die Eingabeschicht treten die Eingabedaten $\mathbf{x} = (x_1, x_2, \dots, x_n)$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht vorwärtspropagiert und diese berechnen damit ihre Aktivierungen. Diese Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierung berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Eine solche Schicht wird auch als \emph{fully-conncted} Schicht bezeichnet. Dieser Vorgang des "Vorwärtsrechnens" wird auch als Vorwärtspropagierung bezeichnet. Bei einem neuronalen Netzwerk mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}. Die Anzahl der Schichten und Neuronen in einem Neuronalen Netzwerk hängt von der konkreten Problemstellung ab.
+Über die Eingabeschicht treten die Eingabedaten $\mathbf{x} = (x_1, x_2, \dots, x_n)$ in das Netzwerk ein. Diese werden dann an die Neuronen der Hiddenschicht vorwärtspropagiert und diese berechnen damit ihre Aktivierungen $o_{11}, o_{12}, \dots, o_{1n}$. Die Aktivierungen werden dann von der Hiddenschicht zur Ausgabeschicht weitergereicht wo die sich darin enthaltenen Neuronen wiederum ihre Aktivierungen $o_{21}, o_{22}, \dots, o_{2n}$ berechnen. Die Eingabewerte der einzelnen Neuronen der Ausgabeschicht sind dabei die Aktivierungen aller Neuronen der vorhergehenden Schicht. Eine solche Schicht wird auch als \emph{fully-connected} Schicht bezeichnet, da die Eingabewerte jedes Neurons die Aktivierung aller Neuronen in der vorhergehenden Schicht sind.
 
-\paragraph{Backpropagation mit Gradient-Descent} Wie bei fast allen Modelle des maschinellen Lernens, lernt das neuronale Netztwerk mittels dem Optimieren einer Fehlerfunktion. Das Optimieren dieser Fehlerfunktion wird im Normalfalls mittels dem \emph{Backpropagation}-Algorithmus in Verbindung mit \emph{Gradient-Descent} erzielt. Als Fehlerfunktion kann jede Funktion dienen, mit welcher der Aussagefehler des Netzwerks quanitifiziert werden kann. Als Beispiele können hier der \emph{Mean Squared Error} $\operatorname{MSE}(y_{true}, y_{pred}) = \frac{1}{n}\sum_{i=0}^{n} (y_{pred} - y_{true})^2$ oder auch die in dieser Arbeit verwendete Categorical Cross-Entropy \fixme{Formula?} aufgeführt werden. Der Algorithmus kann in den folgenden Schritten zusammegefasst werden:
+Dieser Vorgang des "Vorwärtsrechnens" wird auch als Vorwärtspropagierung bezeichnet. Bei einem NN mit mehr als einer Hiddenschicht spricht man auch von einem \emph{Deep Neural Network}. Die Anzahl der Schichten und Neuronen in einem NN hängt stark von der konkreten Problemstellung ab.
+
+\paragraph{Backpropagation mit Gradient-Descent} Wie bei fast allen Modellen des maschinellen Lernens lernt das NN mittels dem Optimieren einer Fehlerfunktion $E$. Als Fehlerfunktion kann jede Funktion dienen, mit welcher der Aussagefehler des Netzwerks quanitifiziert werden kann. Als Beispiele können hier der \emph{Mean Squared Error} $\operatorname{MSE}(y_{true}, y_{pred}) = \frac{1}{n}\sum_{i=0}^{n} (y_{pred} - y_{true})^2$ oder auch die in dieser Arbeit verwendete Categorical Cross-Entropy \fixme{Formula?} aufgeführt werden. Das Optimieren dieser Fehlerfunktion wird meistens mittels dem \emph{Backpropagation}-Algorithmus in Verbindung mit \emph{Gradient-Descent} durchgeführt. Der Algorithmus kann in folgenden Schritten zusammengefasst werden:
 
 \begin{enumerate}
-  \item Die Eingabewerte in das Netzwerk einführen und die Vorwärtspropagierung durchführen.
-  \item Die Ausgabewerte des Netzwerks werden mit dem erwarteten Resultat verglichen. Die Differenz der Ausgabewerte von den erwarteten Werten wird als Aussagefehler des Netzwerkes bezeichnet.
-  \item Der Aussagefehler wird nun durch das neuronale Netzwerk hindurch zurückpropagiert. Dabei werden die Gewichte der einzelnen Schichten abhängig von ihrem Einfluss auf die berechneten Ausgangswerte verändert.
+  \item Die Eingabewerte in das NN einführen und die Vorwärtspropagierung durchführen.
+  \item Die Ausgabewerte des NN werden mit dem erwarteten Resultat verglichen. Die Differenz der Ausgabewerte von den erwarteten Werten wird als Aussagefehler des NN bezeichnet.
+  \item Der Aussagefehler wird nun durch das NN hindurch zurückpropagiert. Dabei werden die Gewichte der einzelnen Schichten abhängig von ihrem Einfluss auf die berechneten Ausgangswerte verändert.
 \end{enumerate}
 
-Die Berechnung des Einfluss eines einzelnen Gewichtes wird mittels der partiellen Ableitung der Fehlerfunktion $E$ bezüglich dem entsprechenden Gewicht festgestellt. Danach wird das Gewicht neu berechnet indem man den Wert der partiellen Ableitung mal der Lernrate $\eta$ vom aktuellen Gewicht subtrahiert. Die Lernrate gibt dabei an wie stark sich ein einzelner Durchlauf von Backpropagation auf die Gewichte auswirken soll. Das neue Gewicht für das Neuron $i$ in der Schicht $k$ berechnet sich bei gegebener Lernrate $\eta$ und Fehlerfunktion $E$ also wie folgt:
+Die Berechnung des Einfluss eines einzelnen Gewichtes wird mittels der partiellen Ableitung der Fehlerfunktion $E$ bezüglich dem entsprechenden Gewicht festgestellt. Danach wird das Gewicht neu berechnet indem der Wert der partiellen Ableitung multipliziert mit der Lernrate $\eta$ vom aktuellen Gewicht subtrahiert. Die Lernrate gibt dabei an wie stark sich ein einzelner Durchlauf von Backpropagation auf die Gewichte auswirken soll. Das neue Gewicht für das Neuron $i$ in der Schicht $k$ berechnet sich bei gegebener Lernrate $\eta$ und Fehlerfunktion $E$ also wie folgt:
 
 \begin{equation}
 w_{ik} = w_{ik} - \eta \frac{\delta E}{\delta w_{ik}}
 \end{equation}
 
-Gradient-Descent besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen oder der Werte der Fehlerfunktion divergiert sogar, bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird (vgl. Abbildung~\ref{fig:learn_rates}). Darum wird im Rahmen dieser Arbeit eine weiterentiwckelte Variante mit dem Namen \emph{AdaDelta} \cite{zeiler2012adadelta} verwendet. Diese hat den grossen Vorteil das keine Lernrate mehr definiert werden muss.
+Gradient-Descent besitzt das Problem, dass der Erfolg des Algorithmus stark von der gewählten Lernrate $\eta$ abhängt. Bei einer zu grossen Lernrate wird das Optimum möglicherweise übersprungen oder der Wert der Fehlerfunktion divergiert sogar; bei einer zu kleinen Lernrate dauert es sehr lange bis das Optimum der Fehlerfunktion gefunden wird (vgl. Abbildung~\ref{fig:learn_rates}). Darum wird im Rahmen dieser Arbeit die weiterentwickelte Variante \emph{AdaDelta} \cite{zeiler2012adadelta} verwendet. Diese hat den grossen Vorteil das keine Lernrate mehr definiert werden muss.
 
 \begin{figure}[h]
   \centering
@@ -79,7 +87,7 @@ Gradient-Descent besitzt das Problem, dass der Erfolg des Algorithmus stark von 
 \end{figure}
 
 \section{Convolutional Neural Network}
-\emph{Convolutional Neural Networks}, abgekürzt \gls{cnn}, sind eine spezielle Form der zuvor beschriebenen Neuronalen Netzen. Der grundlegende Unterschied besteht darin, dass die einzelnen Schichten nicht fully-conntected sind, sondern mittels Filter über lokale Konnektivität versucht wird Muster zu erkennen. Im folgenden werden die einzelnen Komponenten des in dieser Arbeit verwendeten CNNs erläutert.
+\emph{Convolutional Neural Networks}, im Folgenden \gls{CNN} genannt, sind eine spezielle Form der zuvor beschriebenen NN. Der grundlegende Unterschied besteht darin, dass die einzelnen Schichten nicht fully-conntected sind, sondern mittels Filter über lokale Konnektivität versucht wird Muster zu erkennen. Im folgenden werden die einzelnen Komponenten des in dieser Arbeit verwendeten CNNs erläutert.
 
 \paragraph{Filter}\label{basic:cnn:filter} Anstatt Neuronen wie im klassischen Neuronalen Netzwerk lernt eine CNN über die sogenannten Filter. Dabei handelt es sich um $n\times m$-Matrizen, welche Gewichte enthalten, analog zu den Gewichten der eingehenden Verbindungen bei Neuronen. Dabei werden die Filter-Matrizen über die Eingabedaten bewegt und es wird jeweils das innere Produkt der aktuellen Filter-Matrix und dem aktuellen Ausschnitt der Eingabedaten berechnet auf welchem der Filter positioniert ist. Das Bewegungsmuster des Filters wird \emph{Stride} (dt. durchschreiten) genannt. Im Rahmen dieser Arbeit wird nur ein eindimensionaler Stride entlang der Satz-Matrix (vgl. \ref{missing!}) verwendet.
 
@@ -164,7 +172,7 @@ Im folgenden Abschnitt wird der technische Aufbau, welcher implementiert wurde, 
 Der Grundaufbau der verwendeten Software wurde vom InIT mithilfe von Keras\footnote{https://keras.io/} implementiert und zur Durchführung dieser Arbeit zur Verfügung gestellt. Im Rahmen dieses Grundaufbaus wurde die folgende Funktionalität bereits implementiert:
 
 \begin{itemize}[noitemsep]
-	\item Implementation des CNN in Keras und verwendung von Theano \cite{theanoCitShort} als Backend für die GPUs (vgl. Abschnitt \ref{technichal_setup:hardware}).
+	\item Implementation des CNN in Keras und verwendung von Theano \cite{theanoCitShort} als Backend für die \gls{GPU}s (vgl. Abschnitt \ref{technichal_setup:hardware}).
 	\item Implementation von Evaluations-Metriken
 	\item Skripte mit den folgenden Funktionalitäten: Trainieren des CNN, Laden von TSV Dateien, Vorverarbeiten von Word-Embeddings
 \end{itemize}
