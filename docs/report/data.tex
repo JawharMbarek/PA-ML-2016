@@ -95,6 +95,7 @@ Zusätzlich werden während der Experimente zufällig initialisierte Word-Embedd
 			\emph{window size} & $5$\\
 			\emph{minimum count} & $15$\\
 			\emph{sample} & $10^{-5}$\\
+			\emph{hierarchical softmax} & \texttt{false}\tablefootnote{Bedeutet das \emph{negative sampling} verwendet wird.}\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
@@ -103,7 +104,7 @@ Zusätzlich werden während der Experimente zufällig initialisierte Word-Embedd
 
 \clearpage
 
-\paragraph{Datensätze für Distant-Supervised Phase} Im Rahmen dieser Arbeit werden zwei verschiedene Datensätze für die Distant-Supervised Phase verwendet: Produktbewertungen von Amazon\footnote{https://www.amazon.com/} und Kurznachrichtentexte von Twitter\footnote{https://twitter.com/}. Dabei werden die Sentiments bei den Produktbewertungen anhand der vergebenen Wertung und bei den Tweets anhand der im Text vorhandenen Emoticons abgeleitet. Bei den Produktbewertungen werden alle Texte, welche mit einer Wertung von $x >= 4$ als positiv, $x < 3$ als negativ klassifiziert; die Restlichen werden als neutral angenommen. Bei den Tweets wird ein Lexikon von positiven (z.B. \quotes{:-)}) und negativen (z.B. \quotes{:-(}) Emoticons verwendet. Dabei werden die positiven und negativen Emoticons im Tweet gezählt; die Klasse welche öfter vorhanden ist gibt den Sentiment des Tweets vor.\\\\
+\paragraph{Datensätze für Distant-Supervised Phase} Im Rahmen dieser Arbeit werden zwei verschiedene Datensätze für die Distant-Supervised Phase verwendet: Produktbewertungen von Amazon\footnote{https://www.amazon.com/} und Kurznachrichtentexte von Twitter\footnote{https://twitter.com/}. Dabei werden die Sentiments bei den Produktbewertungen anhand der vergebenen Wertung und bei den Tweets anhand der im Text vorhandenen Emoticons abgeleitet. Bei den Produktbewertungen werden alle Texte, welche mit einer Wertung von $x >= 4$ als positiv, $x < 3$ als negativ klassifiziert; die Restlichen werden als neutral angenommen. Bei den Tweets wird ein Lexikon von positiven (z.B. \quotes{:-)}) und negativen (z.B. \quotes{:-(}) Emoticons verwendet. Die Emoticons werden nach der Klassifizierung aus den Tweets entfernt.\\\\
 Dieses Schema führt zu folgenden Datensätzen, welche während der Distant-Supervised Phase verwendet werden:
 \begin{table}[H]
 	\ra{1.3}
