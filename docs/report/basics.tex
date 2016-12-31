@@ -5,7 +5,7 @@ Die folgenden Erläuterungen müssen im Kontext von Sentiment-Analyse beachtet w
 
 \section{Definitionen}
 \paragraph{Sentiment}
-Der \emph{Sentiment} beschreibt das subjektive Empfinden welches beim Leser eines Textes ausgelöst wird. Ein Sentiment kann für einzelne Sätze, Abschnitte oder ganze Texte bestimmt werden. Im Rahmen dieser Arbeit werden die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfnis lässt sich diese Skala noch weiter verfeinern (z.B. mit emph{eher negativ} oder \emph{eher positiv} als Sentiments).
+Der \emph{Sentiment} beschreibt das subjektive Empfinden, welches bei einer Person beim lesen eines Textes ausgelöst wird. Ein Sentiment kann für einzelne Sätze, Abschnitte oder ganze Texte bestimmt werden. Im Rahmen dieser Arbeit werden die drei Sentiments \emph{positiv}, \emph{neutral} und \emph{negativ} verwendet (vgl. Beispiele in Tabelle \ref{basics:sentiments_example_table}). Je nach Bedürfnis lässt sich diese Skala noch weiter verfeinern (z.B. mit emph{eher negativ} oder \emph{eher positiv} als Sentiments).
 
 \begin{table}[h]
   \centering
@@ -22,8 +22,7 @@ Der \emph{Sentiment} beschreibt das subjektive Empfinden welches beim Leser eine
   \label{basics:sentiments_example_table}
 \end{table}
 
-Der Sentiment eines Textes ist nicht eindeutig bestimmt, da dieser vom subjektiven Empfinden der annotierenden Person bestimmt wird. Je nachdem wer den Sentiment eines Textes bestimmt kann ein anderes Ergebnis zur Folge haben.
-Da der Sentiment eines Textes nach dem subjektiven Empfinden einer Person bestimmt wird ist dieser nicht eindeutig. Je nachdem wer einen Text beurteilt kann also ein anderes Ergebnis zur Folge haben.
+Der Sentiment eines Textes ist nicht eindeutig bestimmt, da dieser vom subjektiven Empfinden der annotierenden Person bestimmt wird. Je nachdem wer den Sentiment eines Textes bestimmt kann also ein anderes Ergebnis zur Folge haben. Dadurch ist der Sentiment eines Textes auch nie eindeutig bestimmt.
 
 \paragraph{Domäne} Texte, welche die gleiche Struktur aufweisen werden zu einer Domäne zusammengefasst. Als Beispiele lassen sich hier Produktbewertungen, Tweets oder auch Nachrichtentexte erwähnen.\fixme{Besser beschreiben!}
 
@@ -31,8 +30,7 @@ Da der Sentiment eines Textes nach dem subjektiven Empfinden einer Person bestim
 Mit \emph{Crossdomain} (dt. domänenübergreifend) ist die Verwendung von Trainings- und Testdaten aus mehreren verschiedenen Domänen zum Training und/oder zur Validierung eines Sentiment-Klassifiziers gemeint.
 
 \paragraph{Formale Definitionen}
-
-Für die Durchführung dieser Arbeit sind keine formale Definitionen der zuvor genannten Begriffe nötig. Solche können allerdings in diversen anderen Arbeiten, unter anderem \ref{...} und \ref{...}, gefunden werden.
+Für die Durchführung dieser Arbeit sind keine formale Definitionen der zuvor genannten Begriffe nötig. Solche können allerdings in diversen anderen Arbeiten, unter anderem in \cite{Pan:2010} und \cite{Bollegala:2016}, gefunden werden.
 
 \section{Neuronale Netzwerke}
 \label{basics:neural_network}
@@ -116,7 +114,7 @@ Die Max-Pooling Schicht erfüllt zwei Aufgaben: Einerseits reduziert sie die Dim
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=10cm]{img/semeval_cnn_structure}
-	\caption{Schematische Darstellung des in dieser Arbeit verwendeten CNN \protect\cite{deriu2016swisscheese}}
+	\caption{Schematische Darstellung des in dieser Arbeit verwendeten CNN \protect\cite{Deriu:2016}}
 \end{figure}
 
 \paragraph{Ausgabeschicht}\label{basic:cnn:output_layer} Die Ausgabeschicht des CNN ist gleich aufgebaut wie die eines \quotes{traditionellen} Neuronalen Netzwerks. Dabei wird eine fully-connected Schicht verwendet bei welcher alle Neuronen als Eingabewerte alle Aktivierungen der letzten Max-Pooling Schicht verknüpft sind. Die Anzahl Neuronen in der Ausgabeschicht entspricht dabei der Anzahl zu unterscheidenden Klassen.

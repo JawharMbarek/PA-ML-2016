@@ -1,15 +1,15 @@
 \chapter{Einführung}
 \label{introduction}
 
-Seit den frühen 2000er Jahren berfindet sich das stark Internet im Wandel: Aus einer grösstenteils statischen Sammlung von Informationen entwickelte sich im Lauf der Zeit eine dyamische, interaktive Plattform auf welcher Menschen aus der ganzen Welt Inhalte erstellen und teilen können. Dieser Wandel wurde durch das Aufkommen von sozialen Netzwerken, wie zum Beispiel Facebook oder Twitter, nochmals beschleunigt. Durch diese massive Flut an benutzererstellten Inhalten sind ganz neue Bedürfnisse entstanden, diese Inhalte automatisch zu analysieren \cite{pang2008opinion}.\\\\
+Seit den frühen 2000er Jahren berfindet sich das stark Internet im Wandel: Aus einer grösstenteils statischen Sammlung von Informationen entwickelte sich im Lauf der Zeit eine dyamische, interaktive Plattform auf welcher Menschen aus der ganzen Welt Inhalte erstellen und teilen können. Dieser Wandel wurde durch das Aufkommen von sozialen Netzwerken, wie zum Beispiel Facebook oder Twitter, nochmals beschleunigt. Durch diese massive Flut an benutzererstellten Inhalten sind ganz neue Bedürfnisse entstanden, diese Inhalte automatisch zu analysieren \cite{Pang:2008}.\\\\
 Bei der Sentiment Analyse geht es darum, einen ganzen Text oder einen einzelnen Satz nach desen Polarität, zum Beispiel positiv oder negative, zu klassifizieren. Diese Klassifizierung kann dazu verwendet werden die generelle Stimmung von Benutzer bezüglich eines Themas zu analysieren. Als Beispiel könnte man hier aufführen dass ein Filmproduzent überwachen und analysieren möchte wie gut sein neuster Film bei den Zuschauern, welche sich z.B. auf Twitter dazu äussern, ankommt.\\\\
 Die menschliche Sprache enthält allerdings viele Konstrukte, welche es erschweren diese Aufgabe zu automatisieren. Dazu zählen Sprachkonstrukte wie Synonyme oder Homonyme, also Wörter welche gleich geschrieben werden aber eine andere Bedeutung haben (z.B. die Bank). Dann kommen noch sozialgesellschaftliche Phänomene wie Sarkasmus oder Zynismus, welche nur mit einem genügend grossen Kontextwissen richtig verstanden und interpretiert werden können.\\\\
-Der Schwerpunkt dieser Arbeit liegt darin, zu analysieren, inwiefern sich Sentiment Analyse auf mehreren Domänen gleichzeitig durchführen lässt. Dafür bauen wir auf vorarbeiten von \cite{deriu2016swisscheese} und \cite{deriu2016sentiment} auf und verwenden das dort jeweils verwendete \emph{Convolutional Neural Network}.\\\\
+Der Schwerpunkt dieser Arbeit liegt darin, zu analysieren, inwiefern sich Sentiment Analyse auf mehreren Domänen gleichzeitig durchführen lässt. Dafür bauen wir auf vorarbeiten von \cite{Deriu:2016} und \cite{Deriu:2016:MS} auf und verwenden das dort jeweils verwendete \emph{Convolutional Neural Network}.\\\\
 In dieser Arbeit sollen die folgenden Forschungsfragen analysiert werden:\\
 \begin{itemize}
 	\item Lässt sich ein auf mehrere Domänen trainiertes Neuronales Netz, durch schritteweises Hinzufügen von Trainingsdaten der Zieldomäne, verbessern?
 	\item Lässt sich ein bereits auf eine Zieldomäne trainiertes Neuronales Netz durch Hinzuziehen von weiteren Daten aus anderen Domänen, welche eine ähnliche Struktur aufweisen, verbessern?
-	\item Inwiefern beeinflussen verschiedene Word Embeddings und die Distant-Phase \cite{deriu2016sentiment} die Performanz des Systems?
+	\item Inwiefern beeinflussen verschiedene Word Embeddings und die Distant-Phase \cite{Deriu:2016:MS} die Performanz des Systems?
 \end{itemize}
 
 Anmerkungen von Stephan Neuhaus:
