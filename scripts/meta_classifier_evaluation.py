@@ -247,15 +247,19 @@ if model_to_load and weights_to_load:
 else:
     expert_net = Sequential()
     expert_net.add(Merge(trained_models, mode='concat'))
+    expert_net.add(MaxPooling1D(pool_length=4, stride=2))
+    expert_net.add(Convolution1D(nb_filter=200, filter_length=6, border_mode='valid'
+                                 activation='relu', subsample_length=1))
+    expert_net.add(MaxPolling1D(pool_length=4, stride=2))
     expert_net.add(Flatten())
-    expert_net.add(Dense(200))
+    expert_net.add(Dense(512))
     expert_net.add(Dropout(0.2))
     expert_net.add(Activation('relu'))
     expert_net.add(Dense(3, activation='softmax'))
     expert_net = Model.compile(expert_net)
 
 validation_data = (combined_val_x, y_val_true)
-early_stopping = EarlyStopping(patience=50, verbose=1, mode='max', monitor='val_f1_score_pos_neg')
+early_stopping = EarlyStopping(patience=75, verbose=1, mode='max', monitor='val_f1_score_pos_neg')
 model_checkpoint = ModelCheckpoint(filepath=model_checkpoint_path, mode='max', save_best_only=True,
                                    monitor='val_f1_score_pos_neg')
 
@@ -273,7 +277,7 @@ if model_to_load is None and weights_to_load is None:
 
     expert_net.load_weights(model_checkpoint_path)
 
-score = expert_net.evaluate(combined_test_x, y_test_true, batch_size=len(y_test_true))
+score = expert_net.evaluate(combined_test_x, y_test_true, batch_size=1000)
 
 metrics = {}
 metrics_names = expert_net.metrics_names
