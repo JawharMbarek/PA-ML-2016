@@ -45,7 +45,7 @@ else:
 
 np.random.seed(np_seed)
 
-ALL_DOMAINS = ['dai', 'dil', 'hul', 'mpq', 'semeval', 'tac']
+ALL_DOMAINS = ['dai', 'dil', 'hul', 'mpq', 'semeval', 'tac', 'jcr', 'sem']
 SENTENCE_LENGTH = 140
 ROOT_PATH = path.abspath(path.join(path.dirname(__file__), '..'))
 MODELS_PATH = path.join(ROOT_PATH, 'models')
@@ -248,9 +248,9 @@ else:
     expert_net = Sequential()
     expert_net.add(Merge(trained_models, mode='concat'))
     expert_net.add(MaxPooling1D(pool_length=4, stride=2))
-    expert_net.add(Convolution1D(nb_filter=200, filter_length=6, border_mode='valid'
+    expert_net.add(Convolution1D(nb_filter=200, filter_length=6, border_mode='valid',
                                  activation='relu', subsample_length=1))
-    expert_net.add(MaxPolling1D(pool_length=4, stride=2))
+    expert_net.add(MaxPooling1D(pool_length=4, stride=2))
     expert_net.add(Flatten())
     expert_net.add(Dense(512))
     expert_net.add(Dropout(0.2))
