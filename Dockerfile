@@ -38,15 +38,11 @@ RUN conda install -y python=${python_version} && \
     pip install git+git://github.com/fchollet/keras.git && \
     conda clean -yt
 
+WORKDIR /PA-ML-2016/
 ADD theanorc /home/keras/.theanorc
 
 ENV PYTHONPATH='/src/:$PYTHONPATH'
 
-RUN apt-get update
-RUN apt-get install -y git
-RUN apt-get install -y libtcmalloc-minimal4
-
-WORKDIR /PA-ML-2016/
 ADD /requirements.txt /PA-ML-2016/requirements.txt
 RUN pip install cython
 RUN pip install -r /PA-ML-2016/requirements.txt
