@@ -70,7 +70,11 @@ RUN pip install --ignore-installed --upgrade https://storage.googleapis.com/tens
 # Install Keras
 RUN pip install --no-cache-dir --upgrade keras
 
-RUN mkdir /root/.keras
+# Fix problems with the scipy.signal package beeing missing..
+RUN pip uninstall scipy
+RUN pip install scipy --no-cache-dir
+
+RUN mkdir -p /root/.keras
 RUN echo "{"floatx": "float32",\n"epsilon": 1e-07,\n"backend": "theano",\n"image_data_format": "channels_last"}" \
     > /root/.keras/keras.json
 
@@ -85,7 +89,6 @@ CMD python3 main.py -c config_vae.json
 
 WORKDIR /PA-ML-2016/
 
-RUN mkdir -p /root/.keras
 ADD keras.json /root/.keras/keras.json
 ADD .theanorc /root/.theanorc
 
