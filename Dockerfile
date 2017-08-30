@@ -75,7 +75,7 @@ RUN echo 'y' | pip uninstall scipy
 RUN pip install scipy --no-cache-dir
 
 RUN mkdir -p /root/.keras
-RUN echo "{"floatx": "float32",\n"epsilon": 1e-07,\n"backend": "theano",\n"image_data_format": "channels_last"}" \
+RUN echo "{\"floatx\": \"float32\",\n\"epsilon\": 1e-07,\n\"backend\": \"theano\",\n\"image_data_format\": \"channels_last\"}" \
     > /root/.keras/keras.json
 
 RUN pip install --no-cache-dir --upgrade nltk
