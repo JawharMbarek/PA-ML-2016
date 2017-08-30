@@ -4,9 +4,9 @@ LABEL authors="Dirk von Gruenigen"
 
 WORKDIR /PA-ML-2016/
 
-RUN mkdir -p ~/.keras
-ADD keras.json ~/.keras/keras.json
-ADD .theanorc ~/.theanorc
+RUN mkdir -p /root/.keras
+ADD keras.json /root/.keras/keras.json
+ADD .theanorc /root/.theanorc
 
 ADD /requirements.txt /PA-ML-2016/requirements.txt
 RUN pip install cython
