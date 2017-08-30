@@ -39,7 +39,7 @@ RUN conda install -y python=${python_version} && \
     conda clean -yt
 
 WORKDIR /PA-ML-2016/
-ADD theanorc /home/keras/.theanorc
+ADD .theanorc /home/keras/.theanorc
 
 ENV PYTHONPATH='/src/:$PYTHONPATH'
 
