@@ -2,3 +2,4 @@
 ./**/*
 !requirements.txt
 !.theanorc
+!keras.json
