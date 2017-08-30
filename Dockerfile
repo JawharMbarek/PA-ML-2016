@@ -71,7 +71,7 @@ RUN pip install --ignore-installed --upgrade https://storage.googleapis.com/tens
 RUN pip install --no-cache-dir --upgrade keras
 
 # Fix problems with the scipy.signal package beeing missing..
-RUN pip uninstall scipy
+RUN echo 'y' | pip uninstall scipy
 RUN pip install scipy --no-cache-dir
 
 RUN mkdir -p /root/.keras
