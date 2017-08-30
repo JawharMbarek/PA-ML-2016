@@ -89,9 +89,6 @@ CMD python3 main.py -c config_vae.json
 
 WORKDIR /PA-ML-2016/
 
-ADD keras.json /root/.keras/keras.json
-ADD .theanorc /root/.theanorc
-
 ADD /requirements.txt /PA-ML-2016/requirements.txt
 RUN pip install cython
 RUN pip install -r /PA-ML-2016/requirements.txt
