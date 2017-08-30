@@ -40,7 +40,7 @@ RUN conda install -y python=${python_version} && \
 
 WORKDIR /PA-ML-2016/
 
-RUN mkdir -p .keras
+RUN mkdir -p /home/keras/.keras
 ADD keras.json /home/keras/.keras/keras.json
 ADD .theanorc /home/keras/.theanorc
 
