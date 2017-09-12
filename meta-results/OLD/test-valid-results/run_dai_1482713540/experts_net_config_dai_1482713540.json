@@ -1,0 +1,1 @@
+{"train_data_path": "testdata/DAI_tweets_train.tsv", "test_data_path": "testdata/DAI_tweets_test.tsv", "valid_data_path": "testdata/DAI_tweets_valid.tsv"}

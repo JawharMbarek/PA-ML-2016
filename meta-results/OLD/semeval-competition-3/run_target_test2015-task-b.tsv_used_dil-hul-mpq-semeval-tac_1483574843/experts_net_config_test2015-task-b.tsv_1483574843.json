@@ -1,0 +1,13 @@
+{
+    "np_seed": 2812161337,
+    "test_data_path": "testdata/semeval_competition_test.tsv",
+    "train_data_path": "testdata/semeval_competition_train.tsv",
+    "used_domain_models": [
+        "dil",
+        "hul",
+        "mpq",
+        "semeval",
+        "tac"
+    ],
+    "valid_data_path": "testdata/test2015-task-B.tsv"
+}
