@@ -1,0 +1,11 @@
+{
+  "group_id": "crossdomain_we_ds_semeval16",
+  "set_class_weights": true,
+  "test_data": "testdata/semeval16_tweets_train.tsv",
+  "nb_epoch": 1000,
+  "nb_kfold_cv": 1,
+  "vocabulary_embeddings": "embeddings/word2vec_embeddings_en_news_emb.npy",
+  "validation_data_path": "testdata/semeval16_tweets_test.tsv",
+  "vocabulary_path": "vocabularies/vocab_news_emb.pickle",
+  "use_random_embeddings": true
+}
