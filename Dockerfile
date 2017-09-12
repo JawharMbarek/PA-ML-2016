@@ -92,7 +92,7 @@ WORKDIR /PA-ML-2016/
 ADD /requirements.txt /PA-ML-2016/requirements.txt
 RUN pip install cython
 RUN pip install -r /PA-ML-2016/requirements.txt
-RUN pip install murmurhash
+RUN pip uninstall numpy && pip install -U numpy
 RUN python -m nltk.downloader punkt
 
 RUN ["/bin/bash"]
