@@ -47,7 +47,7 @@ def tsv_sentiment_loader(fname, alphabet, tokenizer, delimiter='\t'):
 
     lables = np.fromiter(
         map(lambda x:
-            POLARITY_TASK_CONVERSION.get(x[-2]),
+            POLARITY_TASK_CONVERSION.get(x[-2], POLARITY_TASK_CONVERSION['neutral']),
             data_raw), dtype=np.int
     )
 
