@@ -486,7 +486,7 @@ class Executor(object):
             2: 'positive'
         }
 
-        with open(file_path, 'w+') as f:
+        with open(file_path, 'w+', encoding='utf-8') as f:
             for d in raw_data:
                 f.write('%s\n' % '\t'.join(d))
 
